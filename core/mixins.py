@@ -16,7 +16,7 @@ class ActivityListMixin(object):
     
     def get_context_data(self, **kwargs):
         context = super(ActivityListMixin, self).get_context_data(**kwargs)
-        course = self.get_object()
+        course = self.get_object().collection
         nodes = [
             course.discussions.all(),
             course.essays.all(),
