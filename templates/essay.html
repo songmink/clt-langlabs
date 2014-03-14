@@ -1,0 +1,19 @@
+<!-- essay.html -->
+{% extends "base_activity.html" %}
+{% load staticfiles %}
+
+{% block contentwrap %}
+	<!-- {{ block.super }} -->
+	<h1 class="page-header">{{ activity.title }}</h1>
+	<p class="sub-header"><span class="text-muted">{{ activity.instructions }}</span></p>
+	<div>
+		{% for post in activity.posts.all %}
+			<p>{{ post.creator }}</p>
+			<p>{{ post.created }}</p>
+			<p>{{ post.text }} </p>
+		{% empty %}
+			<p>There are no posts to display. :(</p>
+		{% endfor %}
+	</div>	
+
+{% endblock contentwrap %}

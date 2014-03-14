@@ -1,0 +1,24 @@
+<!-- lesson_create.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+<!-- To clear the navbar -->
+{% block navbar %}
+{% endblock navbar %}
+
+{% block contentwrap %}
+
+<h1 class="page-header">Create a new Lesson</h1>
+<div class="row">
+	<div class="col-md-3"></div>
+	<div class="col-md-6">
+		<form action="" method="post" role="form">{% csrf_token %}
+			{{ form|crispy }}
+			<input type="submit" value="Create" />
+		</form>		
+	</div>
+	<div class="col-md-3"></div>
+</div>
+<br>
+{% endblock contentwrap %}

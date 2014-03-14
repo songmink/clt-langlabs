@@ -1,0 +1,126 @@
+<!-- discussion.html -->
+{% extends "base_activity.html" %}
+{% load staticfiles %}
+
+{% block contentwrap %}
+	<h1 class="page-header">{{ activity.title }}</h1>
+	<div class="container-fluid" style='height:100%;'>
+		<div class="row " >
+			<div class="col-xs-4" > <!-- style="border-right: 1px solid #ccc;" -->
+				<h2>Instructions:</h2>
+				{{ activity.instructions }}
+			</div>
+			<div class="col-xs-8 ">
+	            <div>
+					<form role="form">
+                    <div class='row'>
+						<div class='col-xs-10'><textarea class="form-control" rows="4"></textarea></div>
+						<div class="btn-group-vertical btn-group-sm col-xs-2">  
+							<button type="button" class="btn btn-default"><span class="glyphicon glyphicon-send"></span> send </button>
+							<button type="button" class="btn btn-default"><span class="glyphicon glyphicon-file"></span> upload</button>
+							<button type="button" class="btn btn-default"><span class="glyphicon glyphicon-record"></span> record</button>
+						</div>
+					</div>
+					</form>
+             	</div>
+                 <ul class="chat">
+                 	{% for post in activity.posts.all %}
+                        
+                        {% if not post.parent_post %}
+
+                        {% if post.creator != user %}
+                        <!-- Other's posts -->
+                        <li class="left clearfix chatlist">
+                    	<span class="chat-img pull-left">
+                            <img src="http://placehold.it/50/55C1E7/fff&text=U" alt={{ post.creator }} class="img-circle img-responsive" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">{{ post.creator }}</strong> <small class="pull-right text-muted">
+                                        <span class="glyphicon glyphicon-time"></span>{{ post.created }}</small>
+                                </div>
+                                <p>
+									{{ post.text }}
+                                </p>
+                            </div>
+                        </li>
+
+                        {% else %}
+                        <!-- User's posts -->
+                        <li class="right clearfix chatlist">
+                    	<span class="chat-img pull-right">
+                            <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt={{ post.creator }} class="img-circle  img-responsive" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>{{ post.created }}</small>
+                                    <strong class="pull-right primary-font">{{ post.creator }}</strong>
+                                </div>
+                                <p>
+									{{ post.text }}
+                                </p>
+                            </div>
+                        </li>
+                        <!-- Comment Section for posts -->
+                        <div>
+                            <ul class="comment">
+		                 	{% for post2 in activity.posts.all %}
+		                 	    {% if post2.parent_post == post %}
+		                        <li class="left clearfix commentlist">
+	                        	<span class="chat-img pull-left">
+		                            <img src="http://placehold.it/50/55C1E7/fff&text=U" alt={{ post2.creator }} class="img-circle  img-responsive" />
+		                        </span>
+		                            <div class="chat-body clearfix">
+		                                <div class="header">
+		                                    <strong class="primary-font">{{ post2.creator }}</strong> <small class="pull-right text-muted">
+		                                        <span class="glyphicon glyphicon-time"></span>{{ post2.created }}</small>
+		                                </div>
+		                                <p>
+											{{ post2.text }}
+		                                </p>
+		                            </div>
+		                        </li>
+		                        {% endif %}
+	                        {% endfor %}
+	                        <li class="left clearfix commentlist">
+	                        	<span class="chat-img pull-left">
+		                            <img src="http://placehold.it/50/55C1E7/fff&text=U" alt={{ user.username }} class="img-circle  img-responsive" />
+		                        </span>
+		                            <div class="chat-body clearfix">
+										<textarea class="form-control" rows="2"></textarea>
+		                            </div>
+		                        </li>
+	                        
+		                    </ul>
+
+		                </div>
+                        <!--End of Comment Section-->
+                        {% endif %}
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+
+
+
+
+       				
+
+
+
+
+
+
+
+
+			</div>
+		</div>
+	</div>
+
+{% endblock contentwrap %}
+
+{% block stylesheets %} 
+<link href="{% static "css/discussion.css" %}" rel="stylesheet">
+{% endblock stylesheets%}
+{% block more_javascript %} 
+<script src="{% static "js/discussion.js" %}"></script>
+{% endblock more_javascript %}

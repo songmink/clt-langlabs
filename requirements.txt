@@ -1,0 +1,4 @@
+# requirements.txt (required mainly for heroku deployment)
+# Points to production requirements (i.e., no django-debug etc.)
+# USE THE REQUIREMENTS/DEV.TXT TO INSTALL DEPENDENCIES FOR LOCAL DEVELOPMENT
+-r requirements/prod.txt

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+
+{% block contentwrap %}
+
+<h1 class="page-header">{{ course.nickname }}<span class="text-muted">{{ course.title }}</span></h1>
+
+<div class="row placeholders">
+		<div class="col-xs-6 col-sm-3 col-lg-2 placeholder">
+		  <img src="{% static "img/CLTicon2013-300x294.jpg"%}" class="img-responsive" alt="Generic placeholder ">
+		  <a href="{% url 'create_discussion' course.id %}"><h3>Create Discussion</h3></a>
+		  <span class="text-muted">  </span>
+		</div>
+	
+		<div class="col-xs-6 col-sm-3 col-lg-2 placeholder">
+		  <img src="{% static "img/CLTicon2013-300x294.jpg"%}" class="img-responsive" alt="Generic placeholder ">
+		  <a href="{% url 'create_essay' course.id %}"><h3>Create Essay</h3></a>
+		  <span class="text-muted"> </span>
+		</div>
+</div>
+
+{% endblock contentwrap %}

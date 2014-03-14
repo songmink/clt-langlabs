@@ -1,0 +1,37 @@
+{% extends "base_activity.html" %}
+{% load staticfiles %}
+
+{% block contentwrap %}
+<h1 class="page-header">{{ course.nickname }}<span class="text-muted">{{ course.title }}</span></h1>
+
+
+{% regroup activity_list by lesson as lesson_list %}
+
+
+	{% for activities in lesson_list %}
+
+		<h2 class=" text-primary ">{{ activities.grouper.title }}</h2>
+        <div class="row placeholders">
+	    {% for activity in activities.list %}
+			<div class="col-xs-6 col-sm-3 col-lg-2 placeholder">
+			<img src="{% static "img/CLTicon2013-300x294.jpg"%}" class="img-responsive" alt="Generic placeholder ">
+			<a href="{{ activity.get_absolute_url }}"><h3>{{ activity.display_order }} {{ activity.title }}</h3></a>
+			<span class="text-muted">{{ activity.instructions }} </span>
+			</div>
+        {% empty %}
+    	<p>There are no activities that are current.</p>
+	    {% endfor %}
+	    </div>
+
+	{% endfor %}
+
+{% for activity in orphan_list %}
+<div class="row placeholders">
+			<div class="col-xs-6 col-sm-3 col-lg-2 placeholder">
+			<img src="{% static "img/CLTicon2013-300x294.jpg"%}" class="img-responsive" alt="Generic placeholder ">
+			<a href="{{ activity.get_absolute_url }}"><h3>{{ activity.display_order }} {{ activity.title }}</h3></a>
+			<span class="text-muted">{{ activity.instructions }} </span>
+			</div>
+</div>
+{% endfor %}
+{% endblock contentwrap %}
