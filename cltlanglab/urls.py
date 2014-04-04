@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import admin
 admin.autodiscover()
 
-from core.views import IndexView, HomeView, CourseIndexView, CourseCreateView, ActivityCreateIndexView, LessonCreateView, LessonAddView
+from core.views import IndexView, HomeView, CourseIndexView, CourseCreateView, ActivityCreateIndexView, LessonCreateView, LessonAddView, savePost
 from discussions.views import DiscussionCreateView, DiscussionDetailView
 from essays.views import EssayCreateView, EssayDetailView
 
@@ -20,6 +20,7 @@ urlpatterns = patterns('',
     url(r'^essay/(?P<pk>\d+)$', EssayDetailView.as_view(), name='essay'),
     url(r'^essay/add/(?P<pk>\d+)$', EssayCreateView.as_view(), name='create_essay'),
     url(r'^overdub/(?P<pk>\d+)$', 'overdub_discussions.views.overdub_detail_view', name='overdub'),
+    url(r'^post/save/$',savePost, name='save_post'),
     
     url(r'^admin/', include(admin.site.urls)),
 

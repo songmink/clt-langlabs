@@ -47,7 +47,8 @@ class ActivityListMixin(object):
         # display order
         acts = sorted(acts, key=attrgetter(
             'lesson.display_order', 'display_order'))
-
+        
+        context['course'] = course
         context['activity_list'] = acts
         context['orphan_list'] = act_orphans
 
