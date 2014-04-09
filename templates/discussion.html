@@ -11,11 +11,15 @@
 				{{ activity.instructions }}
 				<button id='debug_toggle' type="button" class="btn btn-default btn-lg">toggle debug</button>
 			</div>
-			<div class="col-xs-8 ">
-	            <div >
+     		<div id='connectingDIV' class='row col-xs-8 show'>
+	            <div id='sysMessage' class="col-xs-4 col-xs-offset-4"><i class="fa fa-spinner fa-spin fa-5x"></i> Connecting to server ...</div>
+     		</div>
+			<div id="connectedDIV" class="col-xs-8 hidden">
+	            <div>
 					<form role="form">{% csrf_token %}
 					<input id='activityType' type="hidden" name="activityTypes" value='{{ activity.activity_type }}'>
 					<input id='activityID' type="hidden" name="activityIDs" value='{{ activity.id }}'>
+					<input id='activityUSER' type="hidden" name="activityUSERs" value='{{ user }}'>
 					<textarea id='postTextarea' class="form-control" rows="4"></textarea>
 
 					<div class="input-group">
@@ -29,124 +33,102 @@
 					</form>
              	</div>
              	<div id='posts'>
-                 <ul id='posts2' class="chat">
-                 	{% for post in activity.posts.all reversed%}
-                        
-                        {% if not post.parent_post %}
+	                 <ul id='posts2' class="chat">
+	                 	{% for post in activity.posts.all reversed%}
+	                        
+	                        {% if not post.parent_post %}
 
-	                        {% if post.creator != user %}
-	                        <!-- Other's posts -->
-	                        <li class="left clearfix chatlist">
-	                    	<span class="chat-img pull-left">
-	                            <img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt={{ post.creator }} class="img-circle img-responsive" />
-	                        </span>
-	                            <div class="chat-body clearfix">
-	                                <div class="header">
-	                                    <strong class="primary-font">{{ post.creator|capfirst }}</strong> <small class="pull-right text-muted">
-	                                        <span class="glyphicon glyphicon-time"></span>{{ post.created }}</small>
-	                                </div>
-	                                <p>
-										{{ post.text }}
-	                                </p>
-	                            </div>
-	                        </li>
-	                        <!-- Comment Section for posts -->
-	                        <div>
-	                            <ul class="comment">
-			                 	{% for post2 in activity.posts.all reversed%}
-			                 	    {% if post2.parent_post == post %}
-			                        <li class="left clearfix commentlist">
-		                        	<span class="chat-img pull-left">
-			                            <img src="http://placehold.it/50/55C1E7/fff&amp;ltext=U" alt={{ post2.creator }} class="img-circle  img-responsive" />
-			                        </span>
-			                            <div class="chat-body clearfix">
-			                                <div class="header">
-			                                    <strong class="primary-font">{{ post2.creator|capfirst }}</strong> <small class="pull-right text-muted">
-			                                        <span class="glyphicon glyphicon-time"></span>{{ post2.created }}</small>
-			                                </div>
-			                                <p>
-												{{ post2.text }}
-			                                </p>
-			                            </div>
-			                        </li>
-			                        {% endif %}
-		                        {% endfor %}
-		                        <li class="left clearfix commentlist">
-		                        	<span class="chat-img pull-left">
-			                            <img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt={{ user.username }} class="img-circle  img-responsive" />
-			                        </span>
-			                            <div class="chat-body clearfix">
-											<textarea class="form-control" rows="2"></textarea>
-			                            </div>
-			                        </li>
-		                        
-			                    </ul>
+		                        <!-- Other's posts -->
+		                        <li class="left clearfix chatlist" data-postid={{post.id}}>
+		                    	<span class="chat-img pull-left">
+		                            <img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt={{ post.creator }} class="img-circle img-responsive" />
+		                        </span>
+		                            <div class="chat-body clearfix">
+		                                <div class="header">
+		                                    <strong class="primary-font">{{ post.creator|capfirst }}</strong> <small class="pull-right text-muted">
+		                                        <span class="glyphicon glyphicon-time"></span>{{ post.created }}</small>
+		                                </div>
+		                                <p>
+											{{ post.text }}
+		                                </p>
+		                            </div>
+		                        </li>
+		                        <!-- Comment Section for posts -->
+		                        <div>
+		                            <ul class="comment">
+				                 	{% for post2 in activity.posts.all reversed%}
+				                 	    {% if post2.parent_post == post %}
+				                        <li class="left clearfix commentlist" data-postid={{post2.id}}>
+				                        	<span class="chat-img pull-left">
+					                            <img src="http://placehold.it/50/55C1E7/fff&amp;ltext=U" alt={{ post2.creator }} class="img-circle  img-responsive" />
+					                        </span>
+				                            <div class="chat-body clearfix">
+				                                <div class="header">
+				                                    <strong class="primary-font">{{ post2.creator|capfirst }}</strong> <small class="pull-right text-muted">
+				                                        <span class="glyphicon glyphicon-time"></span>{{ post2.created }}</small>
+				                                </div>
+				                                <p>
+													{{ post2.text }}
+				                                </p>
+				                            </div>
+				                        </li>
+				                        {% endif %}
+			                        {% endfor %}
+				                        <li class="left clearfix commentlist">
+				                        	<span class="chat-img pull-left">
+					                            <img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt={{ user.username }} class="img-circle  img-responsive" />
+					                        </span>
+				                            <div class="chat-body clearfix">
+												<textarea class="form-control" rows="2"></textarea>
+				                            </div>
+				                        </li>
+				                    </ul>
 
-			                </div>
-	                        <!--End of Comment Section-->
+				                </div>
+		                        <!--End of Comment Section-->
 
-	                        {% else %}
-	                        <!-- User's posts -->
-	                        <li class="right clearfix chatlist">
-	                    	<span class="chat-img pull-right">
-	                            <img src="http://placehold.it/50/FA6F57/fff&amp;text=ME" alt={{ post.creator }} class="img-circle  img-responsive" />
-	                        </span>
-	                            <div class="chat-body clearfix">
-	                                <div class="header">
-	                                    <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>{{ post.created }}</small>
-	                                    <strong class="pull-right primary-font">{{ post.creator|capfirst }}</strong>
-	                                </div>
-	                                <p>
-										{{ post.text }}
-	                                </p>
-	                            </div>
-	                        </li>
-	                        <!-- Comment Section for posts -->
-	                        <div>
-	                            <ul class="comment">
-			                 	{% for post2 in activity.posts.all reversed%}
-			                 	    {% if post2.parent_post == post %}
-			                        <li class="left clearfix commentlist">
-		                        	<span class="chat-img pull-left">
-			                            <img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt={{ post2.creator }} class="img-circle  img-responsive" />
-			                        </span>
-			                            <div class="chat-body clearfix">
-			                                <div class="header">
-			                                    <strong class="primary-font">{{ post2.creator|capfirst }}</strong> <small class="pull-right text-muted">
-			                                        <span class="glyphicon glyphicon-time"></span>{{ post2.created }}</small>
-			                                </div>
-			                                <p>
-												{{ post2.text }}
-			                                </p>
-			                            </div>
-			                        </li>
-			                        {% endif %}
-		                        {% endfor %}
-		                        <li class="left clearfix commentlist">
-		                        	<span class="chat-img pull-left">
-			                            <img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt={{ user.username }} class="img-circle  img-responsive" />
-			                        </span>
-			                            <div class="chat-body clearfix">
-											<textarea class="form-control" rows="2"></textarea>
-			                            </div>
-			                        </li>		                  
-			                    </ul>
-			                </div>
-	                        <!--End of Comment Section-->
 	                        {% endif %}
-                        {% endif %}
-                    {% endfor %}
-                </ul>
+	                    {% endfor %}
+	                </ul>
             </div>
 			</div>
 		</div>
 	</div>
+	<div id='test'>
+	</div>
+<!-- *******************Temporary chat section*************************** -->
+<!-- <h1>{{ object.name }} Thread:</h1>
+<input id="thread_id" type="hidden" value="{{ object.id }}"/>
+<input id="user_id" type="hidden" value="{{ user }}"/>
+<div id="chat"> -->
+<!--   <div id="connecting">  --><!-- overlaid over entire panel while estabishing connection -->
+<!--     <div class="wrap">Connecting to socket.io server</div>
+  </div>
+
+  <div id="messages">
+    <div id="nicknames"><span>Online:</span></div>
+    <div id="lines"></div>
+  </div>
+
+  <form id="send-message">
+    <input id="message">
+    <button>Send</button>
+  </form>
+</div> -->
+
+<!-- *******************Temporary chat section*************************** -->
 
 {% endblock contentwrap %}
 
 {% block stylesheets %} 
 <link href="{% static "css/discussion.css" %}" rel="stylesheet">
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 {% endblock stylesheets%}
 {% block more_javascript %} 
+<!-- ************************************* -->
+<script src="{% static "js/socket.io.js" %}"></script>
+<script>WEB_SOCKET_SWF_LOCATION="{{ STATIC_URL }}flashsocket/WebSocketMain.swf"; window.room = "{{ room.id }}";</script>
 <script src="{% static "js/discussion.js" %}"></script>
+<script src="{% static "js/discussions_socket.js" %}"></script>
+<!-- ************************************* -->
 {% endblock more_javascript %}

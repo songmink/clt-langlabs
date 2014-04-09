@@ -10,6 +10,9 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
+# Added by Hao
+DEBUG_TOOLBAR_PATCH_SETTINGS = False
+
 ALLOWED_HOSTS = []
 
 # Append apps used in development not production.

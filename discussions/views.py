@@ -1,4 +1,5 @@
 # discussions/views.py
+
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import DetailView, CreateView
 from django.forms import ModelChoiceField

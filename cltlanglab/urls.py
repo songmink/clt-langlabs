@@ -9,7 +9,12 @@ from core.views import IndexView, HomeView, CourseIndexView, CourseCreateView, A
 from discussions.views import DiscussionCreateView, DiscussionDetailView
 from essays.views import EssayCreateView, EssayDetailView
 
+import socketio.sdjango
+socketio.sdjango.autodiscover()
+
+
 urlpatterns = patterns('',
+
     url(r'^course/(?P<pk>\d+)$', CourseIndexView.as_view(), name='course'),
     url(r'^course/add/$', CourseCreateView.as_view(), name='create_collection'),
     url(r'^lesson/add/(?P<addpk>\d+)$', LessonCreateView.as_view(), name='create_lesson'),
@@ -23,6 +28,7 @@ urlpatterns = patterns('',
     url(r'^post/save/$',savePost, name='save_post'),
     
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^socket\.io', include(socketio.sdjango.urls)),
 
     url(r'^accounts/login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
