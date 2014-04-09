@@ -40,6 +40,11 @@ body {
   }
 }
 
+.navbar {
+  background-color: white;
+}
+
+
 /* Sidebar navigation */
 .nav-sidebar {
   margin-left: -20px;
