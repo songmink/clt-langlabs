@@ -3,12 +3,13 @@
 from django.conf.urls import patterns, include, url
 from django.contrib.auth.decorators import login_required
 from django.contrib import admin
+from django.conf.urls.static import static
 admin.autodiscover()
 
-from core.views import IndexView, HomeView, CourseIndexView, CourseCreateView, ActivityCreateIndexView, LessonCreateView, LessonAddView, savePost
+from core.views import IndexView, HomeView, CourseIndexView, CourseCreateView, ActivityCreateIndexView, LessonCreateView, LessonAddView, savePost, fileUpload
 from discussions.views import DiscussionCreateView, DiscussionDetailView
 from essays.views import EssayCreateView, EssayDetailView
-
+from settings import base
 import socketio.sdjango
 socketio.sdjango.autodiscover()
 
@@ -26,6 +27,7 @@ urlpatterns = patterns('',
     url(r'^essay/add/(?P<pk>\d+)$', EssayCreateView.as_view(), name='create_essay'),
     url(r'^overdub/(?P<pk>\d+)$', 'overdub_discussions.views.overdub_detail_view', name='overdub'),
     url(r'^post/save/$',savePost, name='save_post'),
+    url(r'^upload/$', fileUpload, name='file_upload'),
     
     url(r'^admin/', include(admin.site.urls)),
     url(r'^socket\.io', include(socketio.sdjango.urls)),
@@ -33,4 +35,4 @@ urlpatterns = patterns('',
     url(r'^accounts/login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
     url(r'^$', HomeView.as_view(), name='home'),
-)
+)+ static(base.MEDIA_URL, document_root=base.MEDIA_ROOT)

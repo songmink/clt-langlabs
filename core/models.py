@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+import os
 
 ACTIVITY_TYPES = (
     ('DiscussionActivity',  'Discussion Activity'),
@@ -47,6 +48,10 @@ class Post(models.Model):
 
     def __unicode__(self):
         return self.text
+    
+    # used to obtain the attached documents for the post
+    def get_documents(self):
+        return Document.objects.filter(post=self)
 
 
 class AbstractActivity(models.Model):
@@ -88,10 +93,19 @@ class Document(models.Model):
     file_upload = models.FileField(
         upload_to='documents', null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, null=True)
-    post = models.ForeignKey(Post)
+    post = models.ForeignKey(Post, null=True, blank=True)
+    # This is a url field used to filter objects
+    accessURL = models.URLField(max_length=200, blank=True, null=True)
+
 
     def get_absolute_url(self):
-        return reverse('document', args=[str(self.id)])
+        return self.file_upload.url
 
     def __unicode__(self):
-        return self.file_upload.name
+        return os.path.basename(self.file_upload.name)
+
+    def save(self, *args, **kwargs):
+        # has to save first to make the accessURL appear right
+        super(Document, self).save(*args, **kwargs)
+        self.accessURL = self.file_upload.url
+        super(Document, self).save(*args, **kwargs)

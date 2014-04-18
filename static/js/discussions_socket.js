@@ -53,9 +53,18 @@ var testtt=0;
         // Prepend post to the top of posts
         $("#sendPost").click(function() {
             //Post textarea is not empty 
-            if ($('#postTextarea').val().trim()){
+            if ($('#postTextarea').html().trim()){
+                console.log($("#postTextarea").html())
+                var tempATT=[]
+                $("#inputAttachments").find('a').each(function(index){ tempATT.push($(this).attr('href'))})
+                var tempATT_name=[]
+                $("#inputAttachments").find('.fileName').each(function(index){ tempATT_name.push($(this).text())})
                 // send Post to server and get a reply of post id
-                socket.emit('user message', $("#postTextarea").val());
+                console.log("tempATT")
+                console.log(tempATT)
+                console.log("tempATT_name")
+                console.log(tempATT_name)
+                socket.emit('user message', {msg : $("#postTextarea").html() ,attaches: tempATT, attachesName:tempATT_name});
                 clear();
                 return false;
             }
@@ -66,28 +75,50 @@ var testtt=0;
                event.preventDefault();
                console.log($(this).val())
                // comment($('#activityUSER').val(), $(this).val(), $(this).closest(".comment"))
-               socket.emit('user comment',$(this).val(), $(this).closest(".comment").parent().prev().data('postid'));
+               socket.emit('user comment',{cmt : $(this).val(),parentID: $(this).closest(".comment").parent().prev().data('postid')});
                //clear the input
                $(this).val('')
             }
         });
 
         function clear () {
-            $('#postTextarea').val('')
+            $('#postTextarea').html('')
+            $("#inputAttachments").html('')
         };
     });
     
 
-    function message (from, msg, created, msgID) {
-        console.log(from+" says: "+msg);
-        var temp = '<li class="left clearfix chatlist" data-postid='+msgID+'><span class="chat-img pull-left"><img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt='+from+' class="img-circle img-responsive" /></span><div class="chat-body clearfix"><div class="header"><strong class="primary-font">'+from.substr(0,1).toUpperCase()+from.substr(1)+'</strong> <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span>'+created+'</small></div><p>'+msg+'</p></div></li><div><ul class="comment"> <li class="left clearfix commentlist"><span class="chat-img pull-left"><img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt={{ user.username }} class="img-circle  img-responsive" /></span><div class="chat-body clearfix"><textarea class="form-control" rows="2"></textarea></div></li></ul></div>' ;
+    function message (message) {
+        var mess=eval ("(" + message + ")");
+        from = mess.fromMessage
+        msg = mess.message
+        created = mess.createTime
+        msgID = mess.msgID
+        console.log(mess.message)
+        console.log(from+" says: "+msg.msg);
+        if(msg.attaches.length>0){
+            var tempAttachments ='<p class="attachDIV well " style="padding:8px;">'
+            for(var i=0; i<msg.attaches.length;i++){
+                   tempAttachments+='<span><a class="fileLink text-muted" href="'+msg.attaches[i]+'"  > <i class="icon-file-alt"></i> '+msg.attachesName[i]+'</a></span>'
+            }
+            tempAttachments+='</p>'
+        }else{
+            tempAttachments=''
+        }
+        var temp = '<li class="left clearfix chatlist" data-postid='+msgID+'><span class="chat-img pull-left"><img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt='+from+' class="img-circle img-responsive" /></span><div class="chat-body clearfix"><div class="header"><strong class="primary-font">'+from.substr(0,1).toUpperCase()+from.substr(1)+'</strong> <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span>'+created+'</small></div><p>'+msg.msg+'</p>'+tempAttachments+'</div></li><div><ul class="comment"> <li class="left clearfix commentlist"><span class="chat-img pull-left"><img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt={{ user.username }} class="img-circle  img-responsive" /></span><div class="chat-body clearfix"><textarea class="form-control" rows="2"></textarea></div></li></ul></div> ' ;
         $( "#posts2" ).prepend(temp);
     }
-    function comment (from, msg, created, msgID, parentPost) {
+    function comment (message) {
+        var mess=eval ("(" + message + ")");
+        from = mess.fromMessage
+        msg = mess.message
+        created = mess.createTime
+        msgID = mess.msgID
+        parentPost = mess.parentPost
         var pp =$("li[data-postid="+parentPost+"]").next().find('.comment')
-        console.log(from+" says(comment): "+msg);
+        console.log(from+" says(comment): "+msg.cmt);
         console.log(parentPost)
         testtt=pp
-        var temp =  '<li class="left clearfix commentlist" data-postid='+msgID+'><span class="chat-img pull-left"><img src="http://placehold.it/50/55C1E7/fff&amp;ltext=U" alt='+from+' class="img-circle  img-responsive" /></span><div class="chat-body clearfix"><div class="header"><strong class="primary-font">'+from.substr(0,1).toUpperCase()+from.substr(1)+'</strong> <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span>'+created+'</small></div><p>'+msg+'</p></div></li>';
+        var temp =  '<li class="left clearfix commentlist" data-postid='+msgID+'><span class="chat-img pull-left"><img src="http://placehold.it/50/55C1E7/fff&amp;ltext=U" alt='+from+' class="img-circle  img-responsive" /></span><div class="chat-body clearfix"><div class="header"><strong class="primary-font">'+from.substr(0,1).toUpperCase()+from.substr(1)+'</strong> <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span>'+created+'</small></div><p>'+msg.cmt+'</p></div></li>';
         pp.prepend(temp);
     }

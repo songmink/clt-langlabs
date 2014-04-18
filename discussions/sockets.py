@@ -1,5 +1,6 @@
 # sockets.py
 import logging
+import json
 
 from socketio.namespace import BaseNamespace
 from socketio.mixins import RoomsMixin, BroadcastMixin
@@ -8,7 +9,7 @@ from django.contrib.auth.models import User
 
 from datetime import datetime
 import pdb
-from core.models import Post
+from core.models import Post, Document
 from .models import DiscussionActivity
 
 
@@ -39,7 +40,6 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         self.log('Connected nickname is: {0}'.format(nickname))
         self.nicknames.append(nickname)
         self.socket.session['nickname'] = nickname
-        # pdb.set_trace()
         try:
             self.socket.session['DjangoUser']= User.objects.get(username=nickname)
         except:
@@ -61,28 +61,31 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         return True
 
     def on_user_message(self, msg):
-        # save to threadmessage model: threadspace, user, content
-        self.log('User message: {0}'.format(msg))
-        savedMessage=self.postSave(msg)
+        # save to Post model: 
+        self.log('User message: {0}'.format(msg["msg"]))
+        savedMessage=self.postSave(msg["msg"], attachments = msg["attaches"], attachmentsName = msg["attachesName"])
         thisID = savedMessage.id
         if savedMessage:
-            self.emit_to_room_include_me(self.room, 'msg_to_room', self.socket.session['nickname'], msg, str(savedMessage.created.strftime("%B %d, %Y, %I:%M %p")), thisID)
+            responseMessage = {"fromMessage":self.socket.session['nickname'], "message":msg, "createTime":str(savedMessage.created.strftime("%B %d, %Y, %I:%M %p")), "msgID":thisID}
+            self.emit_to_room_include_me(self.room, 'msg_to_room', json.dumps(responseMessage))
             return True
         else:
             return False
 
-    def on_user_comment(self, msg, parentID):
-        # save to threadmessage model: threadspace, user, content
-        self.log('User comment: {0}'.format(msg))
-        savedMessage=self.postSave(msg, parent_post=parentID)
+    def on_user_comment(self, msg):
+        # save to Post model as a comment
+        self.log('User comment: {0}'.format(msg["cmt"]))
+        savedMessage=self.postSave(msg["cmt"], parent_post=msg["parentID"])
         thisID = savedMessage.id
+        # respond to js part and append the message in the html
         if savedMessage:
-            self.emit_to_room_include_me(self.room, 'cmt_to_room', self.socket.session['nickname'], msg, str(savedMessage.created.strftime("%B %d, %Y, %I:%M %p")), thisID, parentID)
+            responseMessage = {"fromMessage":self.socket.session['nickname'], "message":msg, "createTime": str(savedMessage.created.strftime("%B %d, %Y, %I:%M %p")), "msgID":thisID, "parentPost": msg["parentID"]}
+            self.emit_to_room_include_me(self.room, 'cmt_to_room', json.dumps(responseMessage))
             return True
         else:
             return False
 
-    def postSave(self, msg, parent_post=None, audio_URL=None):
+    def postSave(self, msg, parent_post=None, audio_URL=None, attachments = None, attachmentsName = None):
         postuser = self.socket.session['DjangoUser']
         textcontent = msg
         # activity to assign post to
@@ -99,6 +102,13 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         if mess:
             mess.save()
             print "message successfully saved to database"
+            #  bind message to the document
+            if attachments:
+                for attachment in attachments:
+                    # accessURL is "media/documents/filename"
+                    targetDoc = Document.objects.filter(accessURL = attachment)[0]
+                    targetDoc.post = mess
+                    targetDoc.save()
             #  save mess with that activity
             activity = self.socket.session['DjangoRoom']
             activity.posts.add(mess)

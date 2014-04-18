@@ -20,18 +20,27 @@
 					<input id='activityType' type="hidden" name="activityTypes" value='{{ activity.activity_type }}'>
 					<input id='activityID' type="hidden" name="activityIDs" value='{{ activity.id }}'>
 					<input id='activityUSER' type="hidden" name="activityUSERs" value='{{ user }}'>
-					<textarea id='postTextarea' class="form-control" rows="4"></textarea>
-
+					<div id='postTextarea' class="form-control" ></div>
 					<div class="input-group">
 					<button id='sendPost' type="button" class="btn btn-default btn-xs full-width" value='{% url "save_post" %}'><span class="glyphicon glyphicon-send"></span> send</button>
 					<div class="input-group-btn">
-					<button type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-file"></span> upload</button>
+					<button id='uploadTrigger' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-file"></span> upload</button>
 					<button type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-record"></span> record</button>
 					</div>
 					</div>
-
 					</form>
              	</div>
+             	<!-- *******************file upload****************** -->
+			    <!-- The file input field used as target for the file upload widget -->
+			    <input id="fileupload" type="file" name="file" style="display:none;" multiple>
+				<!-- The global progress bar -->
+				<div id="progress" class="progress" style='height:1px;margin:0px;opacity:0.7;'>
+				    <div class="progress-bar progress-bar-success"></div>
+				</div>
+				<!-- The container for the uploaded files -->
+				<div id='inputAttachments'></div>
+				<br>
+				<!-- ************************************************ -->
              	<div id='posts'>
 	                 <ul id='posts2' class="chat">
 	                 	{% for post in activity.posts.all reversed%}
@@ -49,8 +58,17 @@
 		                                        <span class="glyphicon glyphicon-time"></span>{{ post.created }}</small>
 		                                </div>
 		                                <p>
-											{{ post.text }}
+											{{ post.text|safe }}
 		                                </p>
+		                                {% if post.get_documents %}
+		                                <!-- get attachments from fat Post Model -->
+		                                <p class="attachDIV well " style="padding:8px;">
+		                                	{% for document in post.get_documents %}
+		                                	<span><a class="fileLink text-muted" href="{{ document.accessURL }}"  ><i class="icon-file-alt"></i> {{ document }} </a></span>
+		                                	{% endfor %}
+		                                </p>
+										{% endif %}	
+
 		                            </div>
 		                        </li>
 		                        <!-- Comment Section for posts -->
@@ -68,7 +86,7 @@
 				                                        <span class="glyphicon glyphicon-time"></span>{{ post2.created }}</small>
 				                                </div>
 				                                <p>
-													{{ post2.text }}
+													{{ post2.text|safe }}
 				                                </p>
 				                            </div>
 				                        </li>
@@ -101,11 +119,17 @@
 
 {% block stylesheets %} 
 <link href="{% static "css/discussion.css" %}" rel="stylesheet">
-<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+<link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
 {% endblock stylesheets%}
 {% block more_javascript %} 
-<!-- ************************************* -->
+<!-- *****************upload libs******************** -->
+<script src="{% static "jqueryUpload/jquery.ui.widget.js" %}"></script>
+<script src="{% static "jqueryUpload/jquery.iframe-transport.js" %}"></script>
+<script src="{% static "jqueryUpload/jquery.fileupload.js" %}"></script>
+<script src="{% static "jqueryUpload/jquery.cookie.js" %}"></script>
+<!-- *****************Chat libs******************** -->
 <script src="{% static "js/socket.io.js" %}"></script>
+<script src="{% static "js/tinymce/tinymce.min.js" %}"></script>
 <script>WEB_SOCKET_SWF_LOCATION="{{ STATIC_URL }}flashsocket/WebSocketMain.swf"; window.room = "{{ room.id }}";</script>
 <script src="{% static "js/discussion.js" %}"></script>
 <script src="{% static "js/discussions_socket.js" %}"></script>

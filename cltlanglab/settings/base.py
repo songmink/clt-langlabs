@@ -9,6 +9,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 PROJECT_DIR = Path(__file__).ancestor(3)  # Points to <project root>
 
+MEDIA_URL = '/media/'
 MEDIA_ROOT = PROJECT_DIR.child('media')
 
 # Disable this when static directories are managed outside of individual apps
