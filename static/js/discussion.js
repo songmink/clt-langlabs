@@ -18,9 +18,17 @@ $(document).ready(function(){
 	$("#connectedDIV").on( "click", ".removeIcon", function() {
 		$(this).closest('span').remove()
 	});
-    //  initialize the rich text editor
-	rteInit()
-    
+
+
+    //***initialize the rich text editor********************************************************
+       rteInit()
+    // **initialize the recorder****************************************************************
+       recorderInit()
+       $("#CLTREC_container").hide("fast")
+       $("#recordTrigger").click(function() {
+           $("#CLTREC_container").toggle("fast")
+       })
+       
     //*************************jquery upload plugin*********************************************
 	/*jslint unparam: true */
 	/*global window, $ */
@@ -147,3 +155,71 @@ function rteInit()
         // }); 
     }
 
+function recorderInit(){
+
+        var recMessageArray = new Array();
+        recMessageArray[0] = "entering demo mode.";
+        recMessageArray[1] = "Ready to go!";
+        recMessageArray[2] = "Recording";
+        recMessageArray[3] = "Stopped recording";
+        recMessageArray[4] = "Stopped playing";
+        recMessageArray[5] = "Moved to beginning";
+        recMessageArray[6] = "Playing";
+        recMessageArray[7] = "Starting to save";
+        recMessageArray[8] = "hmm. nothing to save";
+        recMessageArray[9] = "Truncating the file to 10 seconds";
+        recMessageArray[10] = "Encoding to MP3";
+        recMessageArray[11] = "...";
+        recMessageArray[12] = "Encoding error";
+        recMessageArray[13] = "Encode complete";
+        recMessageArray[14] = "Uploading...";
+        recMessageArray[15] = "Upload complete";
+        recMessageArray[16] = "Pause recording";
+        recMessageArray[17] = "Pause playing";      
+
+        window.onload = function(){
+            var flashvars = {};
+            
+            flashvars.myFilename="barebones-test-audio";
+            flashvars.myServer="http://192.168.1.8/";
+            flashvars.myHandler="phpinc/save.php";
+            flashvars.myDirectory="uploads";
+            flashvars.timeLimit="30";
+            flashvars.showLink="Y";
+            flashvars.hideFlash ="Y";
+
+            flashvars.saveLabelText = "save with post";
+            flashvars.stopLabelText = "stop";
+            flashvars.cancelLabelText = "delete";
+            
+            var parameters = {};
+            var attributes = {};
+            attributes.id="recorder";
+            attributes.name="recorder";
+            
+            var swfobjectURL =  $("#recordTrigger").data('swfurl')
+            // server
+            // swfobject.embedSWF("../../static/wautest/swf/barebonesRecorder6-demo.swf","CLTREC","430","180","11.2", "expressInstall.swf", flashvars, parameters, attributes);
+            // Test
+            swfobject.embedSWF(swfobjectURL,"CLTREC","430","180","11.2", "expressInstall.swf", flashvars, parameters, attributes);
+            // swfobject.embedSWF("http://192.168.1.8/dev/llc-rec-dev/swf/barebonesRecorder6-demo.swf?ID="+Math.random()*100,"CLTREC","450","180","11.2", "expressInstall.swf", flashvars, parameters, attributes);
+
+        }
+
+
+        function recorderMessage(x){
+            switch(x){
+                default:
+                    console.log("message: " + recMessageArray[x]);
+            }
+        }
+        
+        function thisMovie(movieName) {
+            if (navigator.appName.indexOf("Microsoft") != -1) {
+                return window[movieName];
+            } else {
+                return document[movieName];
+            }
+        }
+
+}

@@ -25,7 +25,7 @@
 					<button id='sendPost' type="button" class="btn btn-default btn-xs full-width" value='{% url "save_post" %}'><span class="glyphicon glyphicon-send"></span> send</button>
 					<div class="input-group-btn">
 					<button id='uploadTrigger' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-file"></span> upload</button>
-					<button type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-record"></span> record</button>
+					<button id='recordTrigger' type="button" class="btn btn-default btn-xs" data-swfurl="{% static "swf/barebonesRecorder6-demo.swf" %}"><span class="glyphicon glyphicon-record"></span> record</button>
 					</div>
 					</div>
 					</form>
@@ -39,8 +39,10 @@
 				</div>
 				<!-- The container for the uploaded files -->
 				<div id='inputAttachments'></div>
-				<br>
+				<!-- *The container for recorder********* -->
+				<div id='CLTREC_container'><div id='CLTREC'></div></div>
 				<!-- ************************************************ -->
+				<br>
              	<div id='posts'>
 	                 <ul id='posts2' class="chat">
 	                 	{% for post in activity.posts.all reversed%}
@@ -133,5 +135,7 @@
 <script>WEB_SOCKET_SWF_LOCATION="{{ STATIC_URL }}flashsocket/WebSocketMain.swf"; window.room = "{{ room.id }}";</script>
 <script src="{% static "js/discussion.js" %}"></script>
 <script src="{% static "js/discussions_socket.js" %}"></script>
+<!-- ******************Recorder libs****************** -->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
 <!-- ************************************* -->
 {% endblock more_javascript %}

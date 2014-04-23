@@ -1,5 +1,5 @@
 // socket.io specific code
-var socket = io.connect("http://localhost:9000/discussionsPosts");
+var socket = io.connect("192.168.1.182:9000/discussionsPosts");
 
 socket.on('connect', function () {
 

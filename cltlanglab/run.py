@@ -30,4 +30,4 @@ sys.path.insert(0, os.path.join(settings.dev.PROJECT_DIR, ""))
 
 if __name__ == '__main__':
     print 'Listening on http://127.0.0.1:%s and on port 10843 (flash policy server)' % PORT
-    SocketIOServer(('', PORT), application, resource="socket.io").serve_forever()
+    SocketIOServer(('192.168.1.182', PORT), application, resource="socket.io").serve_forever()
