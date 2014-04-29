@@ -63,7 +63,7 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
     def on_user_message(self, msg):
         # save to Post model: 
         self.log('User message: {0}'.format(msg["msg"]))
-        savedMessage=self.postSave(msg["msg"], attachments = msg["attaches"], attachmentsName = msg["attachesName"])
+        savedMessage=self.postSave(msg["msg"], attachments = msg["attaches"], attachmentsName = msg["attachesName"], audio_URL=msg["audioURL"])
         thisID = savedMessage.id
         if savedMessage:
             responseMessage = {"fromMessage":self.socket.session['nickname'], "message":msg, "createTime":str(savedMessage.created.strftime("%B %d, %Y, %I:%M %p")), "msgID":thisID}

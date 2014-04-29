@@ -1,4 +1,6 @@
 $(document).ready(function(){
+    // Information of user
+    var userinfo = $("#recordTrigger").data('userinfo')
     //  Toggle for comments from posts
 	$( "#posts" ).on( "click", ".chatlist", function(e) {
         if($(e.target).is('.fileLink')){
@@ -11,7 +13,7 @@ $(document).ready(function(){
        $("#fileupload").trigger("click");
    })
 	//  Toggle for attached files
-	$( "#connectedDIV" ).on( "mouseenter", ".attachedFile", function() {
+	$( "#connectedDIV" ).on( "mouseenter", ".attachedFile, .attachedAudio", function() {
 		$(this).find('.removeIcon').css("opacity",0.95);})
 	             .on( "mouseleave", ".attachedFile", function() {
 		$(this).find('.removeIcon').css("opacity",0.05);})
@@ -25,10 +27,17 @@ $(document).ready(function(){
     // **initialize the recorder****************************************************************
        recorderInit()
        $("#CLTREC_container").hide("fast")
+       var toggleFlag = 1
        $("#recordTrigger").click(function() {
            $("#CLTREC_container").toggle("fast")
+           if(toggleFlag == 0){
+              toggleFlag=1
+           }else{
+              recorderInit()
+              toggleFlag=0
+           }
+            
        })
-       
     //*************************jquery upload plugin*********************************************
 	/*jslint unparam: true */
 	/*global window, $ */
@@ -154,6 +163,14 @@ function rteInit()
         //     menubar: false
         // }); 
     }
+// *************************recorder**************************
+var audioName = '';
+var recorderID = 'recorder'
+var recorderServer =  $("#recordTrigger").data('recorderserver')
+var recorderHandler = $("#recordTrigger").data('recorderhandler')
+var recorderDirectory = $("#recordTrigger").data('recorderdirectory')
+var userinfo = $("#recordTrigger").data('userinfo')
+var swfobjectURL =  $("#recordTrigger").data('swfurl')
 
 function recorderInit(){
 
@@ -177,41 +194,55 @@ function recorderInit(){
         recMessageArray[16] = "Pause recording";
         recMessageArray[17] = "Pause playing";      
 
-        window.onload = function(){
-            var flashvars = {};
-            
-            flashvars.myFilename="barebones-test-audio";
-            flashvars.myServer="http://192.168.1.8/";
-            flashvars.myHandler="phpinc/save.php";
-            flashvars.myDirectory="uploads";
-            flashvars.timeLimit="30";
-            flashvars.showLink="Y";
-            flashvars.hideFlash ="Y";
+        if (swfobject.hasFlashPlayerVersion("10")) {
 
-            flashvars.saveLabelText = "save with post";
-            flashvars.stopLabelText = "stop";
-            flashvars.cancelLabelText = "delete";
+            // check if SWF hasn't been removed, if this is the case, create a new alternative content container
+            if ( $('#'+recorderID) ) swfobject.removeSWF( recorderID );     
             
-            var parameters = {};
-            var attributes = {};
-            attributes.id="recorder";
-            attributes.name="recorder";
-            
-            var swfobjectURL =  $("#recordTrigger").data('swfurl')
-            // server
-            // swfobject.embedSWF("../../static/wautest/swf/barebonesRecorder6-demo.swf","CLTREC","430","180","11.2", "expressInstall.swf", flashvars, parameters, attributes);
-            // Test
-            swfobject.embedSWF(swfobjectURL,"CLTREC","430","180","11.2", "expressInstall.swf", flashvars, parameters, attributes);
-            // swfobject.embedSWF("http://192.168.1.8/dev/llc-rec-dev/swf/barebonesRecorder6-demo.swf?ID="+Math.random()*100,"CLTREC","450","180","11.2", "expressInstall.swf", flashvars, parameters, attributes);
+            /**SWF Container: Bare Bones Recorder*/
+            $('<div/>', { id: recorderID }).appendTo('#CLTREC_container');
 
+            var d = new Date();
+            var timestamp = d.getFullYear()+""
+                            +(d.getMonth()+1)+""
+                            +d.getDate()+""
+                            +d.getHours()+""
+                            +d.getMinutes()+""
+                            +d.getSeconds()+""
+            var att = {
+                id          : recorderID,
+                name        : recorderID,
+                data        : swfobjectURL, 
+                width       : "430", 
+                height      : "180"
+            };
+            
+            var barebones  = "myFilename="  + userinfo+"_"+timestamp;
+                barebones += "&myServer="   + recorderServer;
+                barebones += "&myHandler="  + recorderHandler;
+                barebones += "&myDirectory="+ recorderDirectory;
+                barebones += "&timeLimit="  + "30";
+                barebones += "&showLink="   + "N";
+                barebones += "&hideFlash"   + "Y";
+            audioName = userinfo+"_"+timestamp
+                        
+            var params = { 
+                flashvars   : barebones
+            };                        
+            // Now create the new (or reinitialized) scrubber
+            swfobject.createSWF(att, params, recorderID);
         }
+}
 
-
-        function recorderMessage(x){
+        function recorderMessage(x,y){
             switch(x){
-                default:
-                    console.log("message: " + recMessageArray[x]);
-            }
+                case 15:
+                    console.log("upload complete")
+                    var attFile='<span class="attachedAudio" style="cursor:pointer;"><a class="audioLink text-muted" href='+ recorderServer+recorderDirectory+"/"+audioName+".mp3"+'  ><i class="icon-file-alt"></i> <span class="audioName">'+audioName+".mp3"+'</span></a> <small> <i class="icon-remove removeIcon" style="color:grey; opacity:0.01;"></i></small></span>'
+                    $('#inputAttachments').append(attFile)
+                    $( "#recordTrigger" ).trigger( "click" );
+                    break;   
+            };
         }
         
         function thisMovie(movieName) {
@@ -221,5 +252,16 @@ function recorderInit(){
                 return document[movieName];
             }
         }
+// ***********************************************
 
-}
+
+
+
+
+
+
+
+
+
+
+

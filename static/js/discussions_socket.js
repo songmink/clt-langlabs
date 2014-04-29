@@ -1,5 +1,5 @@
 // socket.io specific code
-var socket = io.connect("192.168.1.182:9000/discussionsPosts");
+var socket = io.connect("192.168.1.8:8001/discussionsPosts");
 
 socket.on('connect', function () {
 
@@ -55,16 +55,20 @@ var testtt=0;
             //Post textarea is not empty 
             if ($('#postTextarea').html().trim()){
                 console.log($("#postTextarea").html())
+                // get the attached files
                 var tempATT=[]
-                $("#inputAttachments").find('a').each(function(index){ tempATT.push($(this).attr('href'))})
+                $("#inputAttachments").find('.fileLink').each(function(index){ tempATT.push($(this).attr('href'))})
                 var tempATT_name=[]
                 $("#inputAttachments").find('.fileName').each(function(index){ tempATT_name.push($(this).text())})
+                // get the attached audio
+                var tempATT_audio=''
+                tempATT_audio+=$("#inputAttachments").find('.audioName').first().text();
                 // send Post to server and get a reply of post id
                 console.log("tempATT")
                 console.log(tempATT)
                 console.log("tempATT_name")
                 console.log(tempATT_name)
-                socket.emit('user message', {msg : $("#postTextarea").html() ,attaches: tempATT, attachesName:tempATT_name});
+                socket.emit('user message', {msg : $("#postTextarea").html() ,attaches: tempATT, attachesName:tempATT_name, audioURL:tempATT_audio});
                 clear();
                 return false;
             }
@@ -105,6 +109,8 @@ var testtt=0;
         }else{
             tempAttachments=''
         }
+        // temporarily add audio to links below the message
+        if(msg.audioURL) tempAttachments+='<p class="attachDIV well " style="padding:8px;">'+'<span><a class="fileLink text-muted" href="'+recorderServer+recorderDirectory+"/"+msg.audioURL+'"  > <i class="icon-file-alt"></i> '+msg.audioURL+'</a></span>'+'</p>'
         var temp = '<li class="left clearfix chatlist" data-postid='+msgID+'><span class="chat-img pull-left"><img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt='+from+' class="img-circle img-responsive" /></span><div class="chat-body clearfix"><div class="header"><strong class="primary-font">'+from.substr(0,1).toUpperCase()+from.substr(1)+'</strong> <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span>'+created+'</small></div><p>'+msg.msg+'</p>'+tempAttachments+'</div></li><div><ul class="comment"> <li class="left clearfix commentlist"><span class="chat-img pull-left"><img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt={{ user.username }} class="img-circle  img-responsive" /></span><div class="chat-body clearfix"><textarea class="form-control" rows="2"></textarea></div></li></ul></div> ' ;
         $( "#posts2" ).prepend(temp);
     }
