@@ -5,6 +5,9 @@ $(document).ready(function(){
 	$( "#posts" ).on( "click", ".chatlist", function(e) {
         if($(e.target).is('.fileLink')){
             return;}
+        if($(e.target).is('.attachDIV')){
+            console.log($(e.target))
+            return;}
 		$(this).next().find('.comment').slideToggle( "fast" );
 	});
 
@@ -19,6 +22,7 @@ $(document).ready(function(){
 		$(this).find('.removeIcon').css("opacity",0.05);})
 	$("#connectedDIV").on( "click", ".removeIcon", function() {
 		$(this).closest('span').remove()
+
 	});
 
 

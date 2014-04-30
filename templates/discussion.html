@@ -28,7 +28,7 @@
 					<button id='sendPost' type="button" class="btn btn-default btn-xs full-width" value='{% url "save_post" %}'><span class="glyphicon glyphicon-send"></span> send</button>
 					<div class="input-group-btn">
 					<button id='uploadTrigger' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-file"></span> upload</button>
-					<button id='recordTrigger' type="button" class="btn btn-default btn-xs" data-swfurl="{% static "swf/barebonesRecorder6-demo.swf" %}" data-recorderserver='{{recorder_myServer}}' data-recorderhandler='{{recorder_myHandler}}' data-recorderdirectory='{{recorder_myDirectory}}' data-userinfo='{{ user.id}}_{{user.username}}'><span class="glyphicon glyphicon-record"></span> record</button>
+					<button id='recordTrigger' type="button" class="btn btn-default btn-xs" data-swfurl="{% static "swf/barebonesRecorder6-demo.swf" %}" data-recorderserver='{{recorder_myServer}}' data-recorderhandler='{{recorder_myHandler}}' data-recorderdirectory='{{recorder_myDirectory}}' data-userinfo='audio_{{ user.id}}_{{user.username}}' data-playerskin="{% static "jwplayer-skins/five.xml" %}"><span class="glyphicon glyphicon-record"></span> record</button>
 					</div>
 					</div>
 					</form>
@@ -65,15 +65,29 @@
 		                                <p>
 											{{ post.text|safe }}
 		                                </p>
-		                                {% if post.get_documents %}
+
 		                                <!-- get attachments from fat Post Model -->
-		                                <p class="attachDIV well " style="padding:8px;">
+		                                {% if post.get_documents %}
+		                                <p class="attachDIV well " style="padding:8px;margin-bottom:0px;border-radius:0px;border:0px;background-color:#F8F8F8;">
+
 		                                	{% for document in post.get_documents %}
 		                                	<span><a class="fileLink text-muted" href="{{ document.accessURL }}"  ><i class="icon-file-alt"></i> {{ document }} </a></span>
 		                                	{% endfor %}
+
 		                                </p>
 										{% endif %}	
-
+                                        <!-- audio files -->
+											{% if post.audio_URL %}
+										    <div id="{{post.audio_URL|cut:"."}}" class='audioDiv'></div>
+										    <script>
+												jwplayer("{{post.audio_URL|cut:"."}}").setup({
+												        file: "{{recorder_myServer}}{{recorder_myDirectory}}/{{post.audio_URL}}",
+												        width: "100%",
+												        skin: "{% static "jwplayer-skins/five.xml" %}",
+												        height: 30
+												    });
+											</script> 
+											{% endif %}
 		                            </div>
 		                        </li>
 		                        <!-- Comment Section for posts -->
@@ -125,6 +139,8 @@
 {% block stylesheets %} 
 <link href="{% static "css/discussion.css" %}" rel="stylesheet">
 <link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
+<!-- *****************video player(need to be put in head to load audio)******************* -->
+<script src="http://jwpsrv.com/library/RJueXGxbEeOB1SIACi0I_Q.js"></script>
 {% endblock stylesheets%}
 {% block more_javascript %} 
 <!-- *****************upload libs******************** -->

@@ -101,7 +101,7 @@ var testtt=0;
         console.log(mess.message)
         console.log(from+" says: "+msg.msg);
         if(msg.attaches.length>0){
-            var tempAttachments ='<p class="attachDIV well " style="padding:8px;">'
+            var tempAttachments ='<p class="attachDIV well " style="padding:8px;margin-bottom:0px;border-radius:0px;border:0px;background-color:#F8F8F8;">'
             for(var i=0; i<msg.attaches.length;i++){
                    tempAttachments+='<span><a class="fileLink text-muted" href="'+msg.attaches[i]+'"  > <i class="icon-file-alt"></i> '+msg.attachesName[i]+'</a></span>'
             }
@@ -110,9 +110,16 @@ var testtt=0;
             tempAttachments=''
         }
         // temporarily add audio to links below the message
-        if(msg.audioURL) tempAttachments+='<p class="attachDIV well " style="padding:8px;">'+'<span><a class="fileLink text-muted" href="'+recorderServer+recorderDirectory+"/"+msg.audioURL+'"  > <i class="icon-file-alt"></i> '+msg.audioURL+'</a></span>'+'</p>'
+        if(msg.audioURL) tempAttachments+='<div id="'+msg.audioURL.slice(0,-4)+'" class="audioDiv"></div>'
+        // if(msg.audioURL) tempAttachments+='<p class="attachDIV well " style="padding:8px;">'+'<span><a class="fileLink text-muted" href="'+recorderServer+recorderDirectory+"/"+msg.audioURL+'"  > <i class="icon-file-alt"></i> '+msg.audioURL+'</a></span>'+'</p>'
         var temp = '<li class="left clearfix chatlist" data-postid='+msgID+'><span class="chat-img pull-left"><img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt='+from+' class="img-circle img-responsive" /></span><div class="chat-body clearfix"><div class="header"><strong class="primary-font">'+from.substr(0,1).toUpperCase()+from.substr(1)+'</strong> <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span>'+created+'</small></div><p>'+msg.msg+'</p>'+tempAttachments+'</div></li><div><ul class="comment"> <li class="left clearfix commentlist"><span class="chat-img pull-left"><img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt={{ user.username }} class="img-circle  img-responsive" /></span><div class="chat-body clearfix"><textarea class="form-control" rows="2"></textarea></div></li></ul></div> ' ;
         $( "#posts2" ).prepend(temp);
+        jwplayer(msg.audioURL.slice(0,-4)).setup({
+            file: recorderServer+recorderDirectory+"/"+msg.audioURL,
+            width: "100%",
+            skin: $("#recordTrigger").data('playerskin'),
+            height: 30
+        });
     }
     function comment (message) {
         var mess=eval ("(" + message + ")");

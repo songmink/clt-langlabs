@@ -26,7 +26,7 @@ DATABASES = {
         'NAME': 'cltlangdb',
         'USER': 'djangodbuser',
         'PASSWORD': '1',
-        'HOST': '192.168.1.182',
+        'HOST': '192.168.1.8',
         'PORT': '5432',
     }
 }
