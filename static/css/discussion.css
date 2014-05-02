@@ -88,3 +88,9 @@ li.right .chat-body
   border-bottom-right-radius: 0;
 }
 
+#postTextarea{
+  /*width:98%;*/
+  height:110px;
+  padding: 5px;
+  overflow:auto;
+}

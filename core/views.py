@@ -1,4 +1,5 @@
 # core/views.py
+import json
 from datetime import datetime
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponse
@@ -13,7 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from core.mixins import CourseListMixin, ActivityListMixin
 
-from .models import AbstractActivity, ActivityCollection, Lesson, Post
+from .models import AbstractActivity, ActivityCollection, Lesson, Post, Document
 
 from discussions.models import DiscussionActivity
 
@@ -103,8 +104,29 @@ def savePost(request):
             mess.audio_URL = request.POST.get('audio', '')
         mess.save()
         #  save mess with that activity
-        if activityType=='discussion':
+        if activityType == 'discussion':
             activity = DiscussionActivity.objects.filter(id=activityID)[0]
             activity.posts.add(mess)
 
     return HttpResponse("Post Success")
+
+
+def fileUpload(request):
+    response = {'files': []}
+    # Loop through our files in the files list
+    for singleFile in request.FILES.getlist('file'):
+        # Create a new entry in our database
+        new_file = Document(file_upload=singleFile)
+        new_file.save()
+        # Grab the file
+        obj = getattr(new_file, "file_upload")
+        # Save output for return as JSON
+        response['files'].append({
+            'name': '%s' % singleFile.name,
+            'size': '%s' % singleFile.size,
+            'url': '%s' % obj.url,
+            # 'deleteUrl': '\/file\/delete\/%s' % obj.name,
+            # 'deleteType': 'DELETE'
+        })
+
+    return HttpResponse(json.dumps(response), content_type='application/json')
