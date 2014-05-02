@@ -1,5 +1,8 @@
 # core/views.py
+import json
+from datetime import datetime
 from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponseRedirect, HttpResponse
 
 from braces.views import LoginRequiredMixin, CsrfExemptMixin
 
@@ -7,10 +10,13 @@ from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
 from django.views.generic import DetailView, CreateView
 from django.views.generic.edit import FormView
+from django.views.decorators.csrf import csrf_exempt
 
 from core.mixins import CourseListMixin, ActivityListMixin
 
-from .models import AbstractActivity, ActivityCollection, Lesson
+from .models import AbstractActivity, ActivityCollection, Lesson, Post, Document
+
+from discussions.models import DiscussionActivity
 
 
 class IndexView(TemplateView):
@@ -76,3 +82,51 @@ class LessonAddView(LessonCreateView):
 
     def get_success_url(self):
         return self.object.collection.get_absolute_url()
+
+# Save Post
+
+
+def savePost(request):
+
+    if request.method == 'POST':
+        postuser = request.user
+        textcontent = request.POST.get("text", '')
+        # activity to assign post to
+        activityType = request.POST.get("activity_type", '')
+        activityID = request.POST.get("activity_id", '')
+        #  validation and save
+        if len(textcontent) > 0:
+            mess = Post(text=textcontent)
+            mess.creator = postuser
+        if request.POST.get('parent_post', '') != '':
+            mess.parent_post = request.POST.get('parent_post', '')
+        if request.POST.get('audio_URL', '') != '':
+            mess.audio_URL = request.POST.get('audio', '')
+        mess.save()
+        #  save mess with that activity
+        if activityType == 'discussion':
+            activity = DiscussionActivity.objects.filter(id=activityID)[0]
+            activity.posts.add(mess)
+
+    return HttpResponse("Post Success")
+
+
+def fileUpload(request):
+    response = {'files': []}
+    # Loop through our files in the files list
+    for singleFile in request.FILES.getlist('file'):
+        # Create a new entry in our database
+        new_file = Document(file_upload=singleFile)
+        new_file.save()
+        # Grab the file
+        obj = getattr(new_file, "file_upload")
+        # Save output for return as JSON
+        response['files'].append({
+            'name': '%s' % singleFile.name,
+            'size': '%s' % singleFile.size,
+            'url': '%s' % obj.url,
+            # 'deleteUrl': '\/file\/delete\/%s' % obj.name,
+            # 'deleteType': 'DELETE'
+        })
+
+    return HttpResponse(json.dumps(response), content_type='application/json')

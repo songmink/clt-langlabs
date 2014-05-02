@@ -1,15 +1,16 @@
 # discussions/views.py
+
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import DetailView, CreateView
 from django.forms import ModelChoiceField
 
 from core.models import ActivityCollection, AbstractActivity, Post, Lesson
-from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin
+from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, RecorderMixin
 
 from .models import DiscussionActivity
 
 
-class DiscussionDetailView(CourseListMixin, ActivityListMixin, DetailView):
+class DiscussionDetailView(CourseListMixin, ActivityListMixin, RecorderMixin,DetailView):
     model = DiscussionActivity
     context_object_name = 'activity'
     template_name = 'discussion.html'

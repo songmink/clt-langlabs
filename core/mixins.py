@@ -5,6 +5,7 @@ from operator import attrgetter
 
 from core.models import ActivityCollection, AbstractActivity, Post, Lesson
 
+from cltlanglab.settings import base
 
 class CourseListMixin(object):
 
@@ -47,7 +48,8 @@ class ActivityListMixin(object):
         # display order
         acts = sorted(acts, key=attrgetter(
             'lesson.display_order', 'display_order'))
-
+        
+        context['course'] = course
         context['activity_list'] = acts
         context['orphan_list'] = act_orphans
 
@@ -71,4 +73,14 @@ class CreateActivityMixin(object):
             ActivityCollection, pk=self.kwargs['pk'])
         # Feed an lesson Adding Form context to activity_create view
         # context['lessonForm'] = LessonForm()
+        return context
+
+class RecorderMixin(object):
+
+    def get_context_data(self, **kwargs):
+        context = super(RecorderMixin, self).get_context_data(**kwargs)
+        context['recorder_myServer'] = base.recorder_myServer
+        context['recorder_myHandler'] = base.recorder_myHandler
+        context['recorder_myDirectory'] = base.recorder_myDirectory
+        print 'my server is : '+context['recorder_myServer']
         return context

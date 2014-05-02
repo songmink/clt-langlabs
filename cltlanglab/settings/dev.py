@@ -10,6 +10,9 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
+# Added by Hao
+DEBUG_TOOLBAR_PATCH_SETTINGS = False
+
 ALLOWED_HOSTS = []
 
 # Append apps used in development not production.
@@ -23,7 +26,7 @@ DATABASES = {
         'NAME': 'cltlangdb',
         'USER': 'djangodbuser',
         'PASSWORD': '1',
-        'HOST': '127.0.0.1',
+        'HOST': '192.168.1.8',
         'PORT': '5432',
     }
 }

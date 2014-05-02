@@ -4,110 +4,157 @@
 
 {% block contentwrap %}
 	<h1 class="page-header">{{ activity.title }}</h1>
-	<!-- <div class="container-fluid" style='height:100%;'> -->
-		<div class="row" >
-			<div class="col-xs-12 col-md-4">
+	<div class="container-fluid" style='height:100%;'>
+		<div class="row " >
+			<div class="col-xs-4" > <!-- style="border-right: 1px solid #ccc;" -->
 				<h2>Instructions:</h2>
 				{{ activity.instructions }}
+	            <button id='test' type="button" class="btn btn-default btn-lg">
+				  <span class="glyphicon glyphicon-star"></span> Star
+				</button>
+
 			</div>
-			<div class="col-xs-12 col-md-8">
+     		<div id='connectingDIV' class='row col-xs-8 show'>
+	            <div id='sysMessage' class="col-xs-4 col-xs-offset-4"><i class="fa fa-spinner fa-spin fa-5x"></i> Connecting to server ...</div>
+     		</div>
+			<div id="connectedDIV" class="col-xs-8 hidden">
 	            <div>
-					<form role="form">
-                    <div class='row'>
-						<div class='col-xs-12 col-md-10'><textarea class="form-control" rows="4"></textarea></div>
-						<div class="btn-group-vertical btn-group-sm col-xs-12 col-md-2">  
-							<button type="button" class="btn btn-default"><span class="glyphicon glyphicon-send"></span> send </button>
-							<button type="button" class="btn btn-default"><span class="glyphicon glyphicon-file"></span> upload</button>
-							<button type="button" class="btn btn-default"><span class="glyphicon glyphicon-record"></span> record</button>
-						</div>
+					<form role="form">{% csrf_token %}
+					<input id='activityType' type="hidden" name="activityTypes" value='{{ activity.activity_type }}'>
+					<input id='activityID' type="hidden" name="activityIDs" value='{{ activity.id }}'>
+					<input id='activityUSER' type="hidden" name="activityUSERs" value='{{ user }}'>
+					<div id='postTextarea' class="form-control" ></div>
+					<div class="input-group">
+					<button id='sendPost' type="button" class="btn btn-default btn-xs full-width" value='{% url "save_post" %}'><span class="glyphicon glyphicon-send"></span> send</button>
+					<div class="input-group-btn">
+					<button id='uploadTrigger' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-file"></span> upload</button>
+					<button id='recordTrigger' type="button" class="btn btn-default btn-xs" data-swfurl="{% static "swf/barebonesRecorder6-demo.swf" %}" data-recorderserver='{{recorder_myServer}}' data-recorderhandler='{{recorder_myHandler}}' data-recorderdirectory='{{recorder_myDirectory}}' data-userinfo='audio_{{ user.id}}_{{user.username}}' data-playerskin="{% static "jwplayer-skins/five.xml" %}"><span class="glyphicon glyphicon-record"></span> record</button>
+					</div>
 					</div>
 					</form>
              	</div>
-                 <ul class="chat">
-                 	{% for post in activity.posts.all %}
-                        
-                        {% if not post.parent_post %}
+             	<!-- *******************file upload****************** -->
+			    <!-- The file input field used as target for the file upload widget -->
+			    <input id="fileupload" type="file" name="file" style="display:none;" multiple>
+				<!-- The global progress bar -->
+				<div id="progress" class="progress" style='height:1px;margin:0px;opacity:0.7;'>
+				    <div class="progress-bar progress-bar-success"></div>
+				</div>
+				<!-- The container for the uploaded files -->
+				<div id='inputAttachments'></div>
+				<!-- *The container for recorder********* -->
+				<div id='CLTREC_container'><div id='CLTREC'></div></div>
+				<!-- ************************************************ -->
+				<br>
+             	<div id='posts'>
+	                 <ul id='posts2' class="chat">
+	                 	{% for post in activity.posts.all reversed%}
+	                        
+	                        {% if not post.parent_post %}
 
-                        {% if post.creator != user %}
-                        <!-- Other's posts -->
-                        <li class="left clearfix chatlist">
-                    	<span class="chat-img pull-left">
-                            <img src="http://placehold.it/50/55C1E7/fff&text=U" alt={{ post.creator }} class="img-circle img-responsive" />
-                        </span>
-                            <div class="chat-body clearfix">
-                                <div class="header">
-                                    <strong class="primary-font">{{ post.creator }}</strong> <small class="pull-right text-muted">
-                                        <span class="glyphicon glyphicon-time"></span>{{ post.created }}</small>
-                                </div>
-                                <p>
-									{{ post.text }}
-                                </p>
-                            </div>
-                        </li>
-
-                        {% else %}
-                        <!-- User's posts -->
-                        <li class="right clearfix chatlist">
-                    	<span class="chat-img pull-right">
-                            <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt={{ post.creator }} class="img-circle  img-responsive" />
-                        </span>
-                            <div class="chat-body clearfix">
-                                <div class="header">
-                                    <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>{{ post.created }}</small>
-                                    <strong class="pull-right primary-font">{{ post.creator }}</strong>
-                                </div>
-                                <p>
-									{{ post.text }}
-                                </p>
-                            </div>
-                        </li>
-                        <!-- Comment Section for posts -->
-                        <div>
-                            <ul class="comment">
-		                 	{% for post2 in activity.posts.all %}
-		                 	    {% if post2.parent_post == post %}
-		                        <li class="left clearfix commentlist">
-	                        	<span class="chat-img pull-left">
-		                            <img src="http://placehold.it/50/55C1E7/fff&text=U" alt={{ post2.creator }} class="img-circle  img-responsive" />
+		                        <!-- Other's posts -->
+		                        <li class="left clearfix chatlist" data-postid={{post.id}}>
+		                    	<span class="chat-img pull-left">
+		                            <img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt={{ post.creator }} class="img-circle img-responsive" />
 		                        </span>
 		                            <div class="chat-body clearfix">
 		                                <div class="header">
-		                                    <strong class="primary-font">{{ post2.creator }}</strong> <small class="pull-right text-muted">
-		                                        <span class="glyphicon glyphicon-time"></span>{{ post2.created }}</small>
+		                                    <strong class="primary-font">{{ post.creator|capfirst }}</strong> <small class="pull-right text-muted">
+		                                        <span class="glyphicon glyphicon-time"></span>{{ post.created }}</small>
 		                                </div>
 		                                <p>
-											{{ post2.text }}
+											{{ post.text|safe }}
 		                                </p>
-		                            </div>
-		                        </li>
-		                        {% endif %}
-	                        {% endfor %}
-	                        <li class="left clearfix commentlist">
-	                        	<span class="chat-img pull-left">
-		                            <img src="http://placehold.it/50/55C1E7/fff&text=U" alt={{ user.username }} class="img-circle  img-responsive" />
-		                        </span>
-		                            <div class="chat-body clearfix">
-										<textarea class="form-control" rows="2"></textarea>
-		                            </div>
-		                        </li>
-	                        
-		                    </ul>
 
-		                </div>
-                        <!--End of Comment Section-->
-                        {% endif %}
-                        {% endif %}
-                        {% endfor %}
-                    </ul>
+		                                <!-- get attachments from fat Post Model -->
+		                                {% if post.get_documents %}
+		                                <p class="attachDIV well " style="padding:8px;margin-bottom:0px;border-radius:0px;border:0px;background-color:#F8F8F8;">
+
+		                                	{% for document in post.get_documents %}
+		                                	<span><a class="fileLink text-muted" href="{{ document.accessURL }}"  ><i class="icon-file-alt"></i> {{ document }} </a></span>
+		                                	{% endfor %}
+
+		                                </p>
+										{% endif %}	
+                                        <!-- audio files -->
+											{% if post.audio_URL %}
+										    <div id="{{post.audio_URL|cut:"."}}" class='audioDiv'></div>
+										    <script>
+												jwplayer("{{post.audio_URL|cut:"."}}").setup({
+												        file: "{{recorder_myServer}}{{recorder_myDirectory}}/{{post.audio_URL}}",
+												        width: "100%",
+												        skin: "{% static "jwplayer-skins/five.xml" %}",
+												        height: 30
+												    });
+											</script> 
+											{% endif %}
+		                            </div>
+		                        </li>
+		                        <!-- Comment Section for posts -->
+		                        <div>
+		                            <ul class="comment">
+				                 	{% for post2 in activity.posts.all reversed%}
+				                 	    {% if post2.parent_post == post %}
+				                        <li class="left clearfix commentlist" data-postid={{post2.id}}>
+				                        	<span class="chat-img pull-left">
+					                            <img src="http://placehold.it/50/55C1E7/fff&amp;ltext=U" alt={{ post2.creator }} class="img-circle  img-responsive" />
+					                        </span>
+				                            <div class="chat-body clearfix">
+				                                <div class="header">
+				                                    <strong class="primary-font">{{ post2.creator|capfirst }}</strong> <small class="pull-right text-muted">
+				                                        <span class="glyphicon glyphicon-time"></span>{{ post2.created }}</small>
+				                                </div>
+				                                <p>
+													{{ post2.text|safe }}
+				                                </p>
+				                            </div>
+				                        </li>
+				                        {% endif %}
+			                        {% endfor %}
+				                        <li class="left clearfix commentlist">
+				                        	<span class="chat-img pull-left">
+					                            <img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt={{ user.username }} class="img-circle  img-responsive" />
+					                        </span>
+				                            <div class="chat-body clearfix">
+												<textarea class="form-control" rows="2"></textarea>
+				                            </div>
+				                        </li>
+				                    </ul>
+
+				                </div>
+		                        <!--End of Comment Section-->
+
+	                        {% endif %}
+	                    {% endfor %}
+	                </ul>
+            </div>
 			</div>
 		</div>
-	<!-- </div> -->
+	</div>
+	<div id='test'>
+	</div>
 
 {% endblock contentwrap %}
 
 {% block stylesheets %} 
 <link href="{% static "css/discussion.css" %}" rel="stylesheet">
+<link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
+<!-- *****************video player(need to be put in head to load audio)******************* -->
+<script src="http://jwpsrv.com/library/RJueXGxbEeOB1SIACi0I_Q.js"></script>
 {% endblock stylesheets%}
 {% block more_javascript %} 
+<!-- *****************upload libs******************** -->
+<script src="{% static "jqueryUpload/jquery.ui.widget.js" %}"></script>
+<script src="{% static "jqueryUpload/jquery.iframe-transport.js" %}"></script>
+<script src="{% static "jqueryUpload/jquery.fileupload.js" %}"></script>
+<script src="{% static "jqueryUpload/jquery.cookie.js" %}"></script>
+<!-- *****************Chat libs******************** -->
+<script src="{% static "js/socket.io.js" %}"></script>
+<script src="{% static "js/tinymce/tinymce.min.js" %}"></script>
+<script>WEB_SOCKET_SWF_LOCATION="{{ STATIC_URL }}flashsocket/WebSocketMain.swf"; window.room = "{{ room.id }}";</script>
 <script src="{% static "js/discussion.js" %}"></script>
+<script src="{% static "js/discussions_socket.js" %}"></script>
+<!-- ******************Recorder libs****************** -->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+<!-- ************************************* -->
 {% endblock more_javascript %}
