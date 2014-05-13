@@ -30,6 +30,7 @@ class ActivityListMixin(object):
         nodes = [
             course.discussions.all(),
             course.essays.all(),
+            course.overdubs.all(),
             # Add new types here...
         ]
 

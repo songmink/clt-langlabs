@@ -13,10 +13,13 @@ class ActivityCollectionAdmin(admin.ModelAdmin):
 class DiscussionActivityAdmin(admin.ModelAdmin):
 	save_as = True
 
+class OverdubActivityAdmin(admin.ModelAdmin):
+	save_as = True
+
 admin.site.register(ActivityCollection, ActivityCollectionAdmin)
 admin.site.register(Lesson)
 admin.site.register(Post)
 admin.site.register(Document)
 admin.site.register(DiscussionActivity, DiscussionActivityAdmin)
-admin.site.register(OverdubActivity)
+admin.site.register(OverdubActivity, OverdubActivityAdmin)
 admin.site.register(EssayActivity)

@@ -4,7 +4,7 @@ var socket = io.connect("192.168.1.8:8001/discussionsPosts");
 socket.on('connect', function () {
 
     // SPECIFY THREAD ID TO SPECIFY ROOM
-    socket.emit( 'join',  $('#activityID').val() );
+    socket.emit( 'join',  'discussion' ,$('#activityID').val() );
 
     socket.emit('nickname', $('#activityUSER').val(), function (set) {
             if (set) {
@@ -52,26 +52,32 @@ var testtt=0;
     $(function () {
         // Prepend post to the top of posts
         $("#sendPost").click(function() {
-            //Post textarea is not empty 
-            if ($('#postTextarea').html().trim()){
-                console.log($("#postTextarea").html())
-                // get the attached files
-                var tempATT=[]
-                $("#inputAttachments").find('.fileLink').each(function(index){ tempATT.push($(this).attr('href'))})
-                var tempATT_name=[]
-                $("#inputAttachments").find('.fileName').each(function(index){ tempATT_name.push($(this).text())})
-                // get the attached audio
-                var tempATT_audio=''
-                tempATT_audio+=$("#inputAttachments").find('.audioName').first().text();
-                // send Post to server and get a reply of post id
-                console.log("tempATT")
-                console.log(tempATT)
-                console.log("tempATT_name")
-                console.log(tempATT_name)
-                socket.emit('user message', {msg : $("#postTextarea").html() ,attaches: tempATT, attachesName:tempATT_name, audioURL:tempATT_audio});
-                clear();
-                return false;
+            if(recordingFlag==false){  //check if there is un-uploaded recording
+                //Post textarea is not empty 
+                if ($('#postTextarea').html().trim()){
+                    console.log($("#postTextarea").html())
+                    // get the attached files
+                    var tempATT=[]
+                    $("#inputAttachments").find('.fileLink').each(function(index){ tempATT.push($(this).attr('href'))})
+                    var tempATT_name=[]
+                    $("#inputAttachments").find('.fileName').each(function(index){ tempATT_name.push($(this).text())})
+                    // get the attached audio
+                    var tempATT_audio=''
+                    tempATT_audio+=$("#inputAttachments").find('.audioName').first().text();
+                    // send Post to server and get a reply of post id
+                    console.log("tempATT")
+                    console.log(tempATT)
+                    console.log("tempATT_name")
+                    console.log(tempATT_name)
+                    socket.emit('user message', {msg : $("#postTextarea").html() ,attaches: tempATT, attachesName:tempATT_name, audioURL:tempATT_audio});
+                    clear();
+                    return false;
+                }
+            }else{
+                 console.log("Please save recording before sending post or click cancel")
+                 $('.notificationButton').trigger("click");
             }
+
         });
         // Prepend comments for posts 
         $( "#posts" ).on( "keydown", "textarea", function(event) {

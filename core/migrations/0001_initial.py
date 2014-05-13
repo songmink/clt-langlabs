@@ -51,7 +51,8 @@ class Migration(SchemaMigration):
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('file_upload', self.gf('django.db.models.fields.files.FileField')(max_length=100, null=True, blank=True)),
             ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, null=True, blank=True)),
-            ('post', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.Post'])),
+            ('post', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.Post'], null=True, blank=True)),
+            ('accessURL', self.gf('django.db.models.fields.URLField')(max_length=200, null=True, blank=True)),
         ))
         db.send_create_signal(u'core', ['Document'])
 
@@ -119,10 +120,11 @@ class Migration(SchemaMigration):
         },
         u'core.document': {
             'Meta': {'object_name': 'Document'},
+            'accessURL': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'null': 'True', 'blank': 'True'}),
             'file_upload': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'post': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['core.Post']"})
+            'post': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['core.Post']", 'null': 'True', 'blank': 'True'})
         },
         u'core.lesson': {
             'Meta': {'object_name': 'Lesson'},

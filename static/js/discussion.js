@@ -1,6 +1,10 @@
+
+// Record Flag: check if user has unuploaded recording before sending
+var recordingFlag = false
 $(document).ready(function(){
     // Information of user
     var userinfo = $("#recordTrigger").data('userinfo')
+
     //  Toggle for comments from posts
 	$( "#posts" ).on( "click", ".chatlist", function(e) {
         if($(e.target).is('.fileLink')){
@@ -34,8 +38,12 @@ $(document).ready(function(){
        var toggleFlag = 1
        $("#recordTrigger").click(function() {
            $("#CLTREC_container").toggle("fast")
+           
            if(toggleFlag == 0){
               toggleFlag=1
+              recordingFlag = false
+              console.log('executed')
+              console.log(recordingFlag)
            }else{
               recorderInit()
               toggleFlag=0
@@ -143,13 +151,10 @@ function rteInit()
                 {title: 'Justify', icon: 'alignjustify', format: 'alignjustify'}
             ]}
         ],
-//      visualblocks_default_state: true,
             plugins: [ "link image emoticons textcolor" ],
             toolbar1: "insertfile undo redo | styleselect | forecolor backcolor emoticons | link image",
             image_advtab: true,
             forced_root_block: false,
-        //document_base_url: root_path,
-        //content_css: 'editor.css',
             entity_encoding: 'raw',
             menubar: false
         }); 
@@ -240,11 +245,19 @@ function recorderInit(){
 
         function recorderMessage(x,y){
             switch(x){
+                case 1:
+                    recordingFlag = false; //no recording
+                    break;
+                case 2:
+                    recordingFlag = true;  //there is recording
+                    console.log("case 2")
+                    break;
                 case 15:
                     console.log("upload complete")
                     var attFile='<span class="attachedAudio" style="cursor:pointer;"><a class="audioLink text-muted" href='+ recorderServer+recorderDirectory+"/"+audioName+".mp3"+'  ><i class="icon-file-alt"></i> <span class="audioName">'+audioName+".mp3"+'</span></a> <small> <i class="icon-remove removeIcon" style="color:grey; opacity:0.01;"></i></small></span>'
                     $('#inputAttachments').append(attFile)
                     $( "#recordTrigger" ).trigger( "click" );
+                    recordingFlag = false; //no recording pending
                     break;   
             };
         }

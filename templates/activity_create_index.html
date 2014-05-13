@@ -18,6 +18,13 @@
 		  <a href="{% url 'create_essay' course.id %}"><h3>Create Essay</h3></a>
 		  <span class="text-muted"> </span>
 		</div>
+
+		<div class="col-xs-6 col-sm-3 col-lg-2 placeholder">
+		  <img src="{% static "img/CLTicon2013-300x294.jpg"%}" class="img-responsive" alt="Generic placeholder ">
+		  <a href="{% url 'create_overdub' course.id %}"><h3>Create Overdub</h3></a>
+		  <span class="text-muted"> </span>
+		</div>
 </div>
+<br>
 
 {% endblock contentwrap %}

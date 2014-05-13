@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.generic import GenericForeignKey
+
 import os
 
 ACTIVITY_TYPES = (
@@ -51,7 +54,8 @@ class Post(models.Model):
     
     # used to obtain the attached documents for the post
     def get_documents(self):
-        return Document.objects.filter(post=self)
+        # issue_id=issue.id, issue_ct=ContentType.objects.get_for_model(issue)
+        return Document.objects.filter(object_id=self.id, content_type=ContentType.objects.get_for_model(self))
 
 
 class AbstractActivity(models.Model):
@@ -93,7 +97,11 @@ class Document(models.Model):
     file_upload = models.FileField(
         upload_to='documents', null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, null=True)
-    post = models.ForeignKey(Post, null=True, blank=True)
+    # Foreignkey to any object
+    content_type = models.ForeignKey(ContentType,null=True, blank=True)
+    object_id = models.PositiveIntegerField(null=True, blank=True)
+    content_object = GenericForeignKey('content_type', 'object_id')
+    # post = models.ForeignKey(Post, null=True, blank=True)
     # This is a url field used to filter objects
     accessURL = models.URLField(max_length=200, blank=True, null=True)
 

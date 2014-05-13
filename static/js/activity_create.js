@@ -13,4 +13,6 @@ $( document ).ready(function() {
         $("#id_lesson").parent().load(currentURL +  '  #id_lesson')
 	})
 
+  
+
 });

@@ -41,10 +41,10 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     # Project apps:
-    'discussions',
-    'overdub_discussions',
-    'essays',
-    'core',
+     'discussions',
+     'overdub_discussions',
+     'essays',
+     'core',
 
     # Utils:
     'crispy_forms',

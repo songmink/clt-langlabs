@@ -6,29 +6,26 @@
 	<h1 class="page-header">{{ activity.title }}</h1>
 	<div class="container-fluid" style='height:100%;'>
 		<div class="row " >
-			<div class="col-xs-4" > <!-- style="border-right: 1px solid #ccc;" -->
+			<div class="col-md-4" > <!-- style="border-right: 1px solid #ccc;" -->
 				<h2>Instructions:</h2>
-				{{ activity.instructions }}
-	            <button id='test' type="button" class="btn btn-default btn-lg">
-				  <span class="glyphicon glyphicon-star"></span> Star
-				</button>
+				{{ activity.instructions|safe }}
 
 			</div>
-     		<div id='connectingDIV' class='row col-xs-8 show'>
-	            <div id='sysMessage' class="col-xs-4 col-xs-offset-4"><i class="fa fa-spinner fa-spin fa-5x"></i> Connecting to server ...</div>
+     		<div id='connectingDIV' class='row col-md-8 show'>
+	            <div id='sysMessage' class="col-md-4 col-md-offset-4"><i class="fa fa-spinner fa-spin fa-5x"></i> Connecting to server ...</div>
      		</div>
-			<div id="connectedDIV" class="col-xs-8 hidden">
+			<div id="connectedDIV" class="col-md-8 hidden">
 	            <div>
 					<form role="form">{% csrf_token %}
 					<input id='activityType' type="hidden" name="activityTypes" value='{{ activity.activity_type }}'>
 					<input id='activityID' type="hidden" name="activityIDs" value='{{ activity.id }}'>
 					<input id='activityUSER' type="hidden" name="activityUSERs" value='{{ user }}'>
-					<div id='postTextarea' class="form-control" ></div>
+					<div id='postTextarea' class="form-control" style='border-radius:4px 4px 0px 0px;'></div>
 					<div class="input-group">
-					<button id='sendPost' type="button" class="btn btn-default btn-xs full-width" value='{% url "save_post" %}'><span class="glyphicon glyphicon-send"></span> send</button>
+					<button id='sendPost' type="button" class="btn btn-default btn-xs full-width" value='{% url "save_post" %}' style='border-radius:0px 0px 0px 4px;'><span class="glyphicon glyphicon-send"></span> send</button>
 					<div class="input-group-btn">
 					<button id='uploadTrigger' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-file"></span> upload</button>
-					<button id='recordTrigger' type="button" class="btn btn-default btn-xs" data-swfurl="{% static "swf/barebonesRecorder6-demo.swf" %}" data-recorderserver='{{recorder_myServer}}' data-recorderhandler='{{recorder_myHandler}}' data-recorderdirectory='{{recorder_myDirectory}}' data-userinfo='audio_{{ user.id}}_{{user.username}}' data-playerskin="{% static "jwplayer-skins/five.xml" %}"><span class="glyphicon glyphicon-record"></span> record</button>
+					<button id='recordTrigger' type="button" class="btn btn-default btn-xs" data-swfurl="{% static "swf/barebonesRecorder6-demo.swf" %}" data-recorderserver='{{recorder_myServer}}' data-recorderhandler='{{recorder_myHandler}}' data-recorderdirectory='{{recorder_myDirectory}}' data-userinfo='audio_{{ user.id}}_{{user.username}}' data-playerskin="{% static "jwplayer-skins/five.xml" %}" style='border-radius:0px 0px 4px 0px;'><span class="glyphicon glyphicon-record"></span> record</button>
 					</div>
 					</div>
 					</form>
@@ -131,9 +128,23 @@
 			</div>
 		</div>
 	</div>
-	<div id='test'>
-	</div>
+    <div>
+		<!-- Small modal -->
+		<button class="btn btn-primary hide notificationButton" data-toggle="modal" data-target=".bs-example-modal-sm">Small modal</button>
 
+		<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-sm">
+			    <div class="modal-content">
+			      <div class="modal-header" style='padding:9px;'>
+			        <h5 class="modal-title" id="myModalLabel">Help Text</h5>
+			      </div>
+			      <div class="modal-body">
+			        Please <kbd>save</kbd> recording before sending post or click <kbd>cancel</kbd>
+			      </div>
+			    </div>
+		  </div>
+		</div>
+    </div>
 {% endblock contentwrap %}
 
 {% block stylesheets %} 

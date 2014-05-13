@@ -9,6 +9,7 @@ admin.autodiscover()
 from core.views import IndexView, HomeView, CourseIndexView, CourseCreateView, ActivityCreateIndexView, LessonCreateView, LessonAddView, savePost, fileUpload
 from discussions.views import DiscussionCreateView, DiscussionDetailView
 from essays.views import EssayCreateView, EssayDetailView
+from overdub_discussions.views import OverdubCreateView, OverdubDetailView
 from settings import base
 import socketio.sdjango
 socketio.sdjango.autodiscover()
@@ -25,7 +26,8 @@ urlpatterns = patterns('',
     url(r'^discussion/add/(?P<pk>\d+)$', DiscussionCreateView.as_view(), name='create_discussion'),
     url(r'^essay/(?P<pk>\d+)$', EssayDetailView.as_view(), name='essay'),
     url(r'^essay/add/(?P<pk>\d+)$', EssayCreateView.as_view(), name='create_essay'),
-    url(r'^overdub/(?P<pk>\d+)$', 'overdub_discussions.views.overdub_detail_view', name='overdub'),
+    url(r'^overdub/(?P<pk>\d+)$', OverdubDetailView.as_view(), name='overdub'),
+    url(r'^overdub/add/(?P<pk>\d+)$', OverdubCreateView.as_view(), name='create_overdub'),
     url(r'^post/save/$',savePost, name='save_post'),
     url(r'^upload/$', fileUpload, name='file_upload'),
     
@@ -35,4 +37,5 @@ urlpatterns = patterns('',
     url(r'^accounts/login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
     url(r'^$', HomeView.as_view(), name='home'),
+    url(r'^crossdomain.xml$','flashpolicies.views.simple',{'domains': ['*']}),
 )+ static(base.MEDIA_URL, document_root=base.MEDIA_ROOT)

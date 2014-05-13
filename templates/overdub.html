@@ -3,6 +3,202 @@
 {% load staticfiles %}
 
 {% block contentwrap %}
-	{{ block.super}}
+	<h1 class="page-header">{{ activity.title }}{{activity.upload_video.url}}</h1>
+	<div class="container-fluid" style='height:100%;'>
+		<div class="row " >
+			<div class="col-md-4" > <!-- style="border-right: 1px solid #ccc;" -->
+				<h2>Instructions:</h2>
+				{% if activity.media or activity.upload_video %}
+				    <div id="overdubVideo" class='videoDiv'></div>
+				    <script>
+						jwplayer("overdubVideo").setup({
+						        file: {% if activity.upload_video %}"{{activity.upload_video.url}}"{% else %}"{{activity.media}}"{% endif %},
+						        width: "100%",
+						        skin: "/static/jwplayer-skins/five.xml",
+                                autostart: true,
+						        // controls: false,
+						        mute: true
+						    });
+						// Added auto buffering for overdub Video
+					    initialPause = 1
+					    jwplayer('overdubVideo').onTime(function(time){
+					        if(initialPause==1){
+					            jwplayer('overdubVideo').pause()
+					            jwplayer('overdubVideo').setVolume(100)
+					            initialPause =0
+					        }
+					    })
+					</script> 
+				{% endif %}
+				{{ activity.instructions|safe }}
 
+			</div>
+     		<div id='connectingDIV' class='row col-md-8 show'>
+	            <div id='sysMessage' class="col-md-4 col-md-offset-4"><i class="fa fa-spinner fa-spin fa-5x"></i> Connecting to server ...</div>
+     		</div>
+			<div id="connectedDIV" class="col-md-8 hidden">
+	            <div>
+					<form role="form">{% csrf_token %}
+					<input id='activityType' type="hidden" name="activityTypes" value='{{ activity.activity_type }}'>
+					<input id='activityID' type="hidden" name="activityIDs" value='{{ activity.id }}'>
+					<input id='activityUSER' type="hidden" name="activityUSERs" value='{{ user }}'>
+					<div id='postTextarea' class="form-control" style='border-radius:4px 4px 0px 0px;'></div>
+					<div class="input-group">
+					<button id='sendPost' type="button" class="btn btn-default btn-xs full-width" value='{% url "save_post" %}' style='border-radius:0px 0px 0px 4px;'><span class="glyphicon glyphicon-send"></span> send</button>
+					<div class="input-group-btn">
+					<button id='uploadTrigger' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-file"></span> upload</button>
+					<button id='recordTrigger' type="button" class="btn btn-default btn-xs" data-swfurl="{% static "swf/barebonesRecorder6-demo.swf" %}" data-recorderserver='{{recorder_myServer}}' data-recorderhandler='{{recorder_myHandler}}' data-recorderdirectory='{{recorder_myDirectory}}' data-userinfo='audio_{{ user.id}}_{{user.username}}' data-playerskin="{% static "jwplayer-skins/five.xml" %}" style='border-radius:0px 0px 4px 0px;'><span class="glyphicon glyphicon-record"></span> record</button>
+					</div>
+					</div>
+					</form>
+             	</div>
+             	<!-- *******************file upload****************** -->
+			    <!-- The file input field used as target for the file upload widget -->
+			    <input id="fileupload" type="file" name="file" style="display:none;" multiple>
+				<!-- The global progress bar -->
+				<div id="progress" class="progress" style='height:1px;margin:0px;opacity:0.7;'>
+				    <div class="progress-bar progress-bar-success"></div>
+				</div>
+				<!-- The container for the uploaded files -->
+				<div id='inputAttachments'></div>
+				<!-- *The container for recorder********* -->
+				<div id='CLTREC_container'><div id='CLTREC'></div></div>
+				<!-- ************************************************ -->
+				<br>
+             	<div id='posts'>
+	                 <ul id='posts2' class="chat">
+	                 	{% for post in activity.posts.all reversed%}
+	                        
+	                        {% if not post.parent_post %}
+
+		                        <!-- Other's posts -->
+		                        <li class="left clearfix chatlist" data-postid={{post.id}}>
+		                    	<span class="chat-img pull-left">
+		                            <img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt={{ post.creator }} class="img-circle img-responsive" />
+		                        </span>
+		                            <div class="chat-body clearfix">
+		                                <div class="header">
+		                                    <strong class="primary-font">{{ post.creator|capfirst }}</strong> <small class="pull-right text-muted">
+		                                        <span class="glyphicon glyphicon-time"></span>{{ post.created }}</small>
+		                                </div>
+		                                <p>
+											{{ post.text|safe }}
+		                                </p>
+
+		                                <!-- get attachments from fat Post Model -->
+		                                {% if post.get_documents %}
+		                                <p class="attachDIV well " style="padding:8px;margin-bottom:0px;border-radius:0px;border:0px;background-color:#F8F8F8;">
+
+		                                	{% for document in post.get_documents %}
+		                                	<span><a class="fileLink text-muted" href="{{ document.accessURL }}"  ><i class="icon-file-alt"></i> {{ document }} </a></span>
+		                                	{% endfor %}
+
+		                                </p>
+										{% endif %}	
+                                        <!-- audio files -->
+											{% if post.audio_URL %}
+										    <div id="{{post.audio_URL|cut:"."}}" class='audioDiv'></div>
+										    <script>
+												jwplayer("{{post.audio_URL|cut:"."}}").setup({
+												        file: "{{recorder_myServer}}{{recorder_myDirectory}}/{{post.audio_URL}}",
+												        width: "100%",
+												        skin: "{% static "jwplayer-skins/five.xml" %}",
+												        height: 30
+												    })
+											    jwplayer("{{post.audio_URL|cut:"."}}").onPlay(function(){
+										                jwplayer("overdubVideo").play(true)
+										            })
+										            .onPause(function(){
+										                jwplayer("overdubVideo").pause(true)
+										            })
+										            .onComplete(function(){
+										            	jwplayer("overdubVideo").stop(true)
+										                initialPause = 1
+										                jwplayer("overdubVideo").play(true)
+										            })
+											</script> 
+											{% endif %}
+		                            </div>
+		                        </li>
+		                        <!-- Comment Section for posts -->
+		                        <div>
+		                            <ul class="comment">
+				                 	{% for post2 in activity.posts.all reversed%}
+				                 	    {% if post2.parent_post == post %}
+				                        <li class="left clearfix commentlist" data-postid={{post2.id}}>
+				                        	<span class="chat-img pull-left">
+					                            <img src="http://placehold.it/50/55C1E7/fff&amp;ltext=U" alt={{ post2.creator }} class="img-circle  img-responsive" />
+					                        </span>
+				                            <div class="chat-body clearfix">
+				                                <div class="header">
+				                                    <strong class="primary-font">{{ post2.creator|capfirst }}</strong> <small class="pull-right text-muted">
+				                                        <span class="glyphicon glyphicon-time"></span>{{ post2.created }}</small>
+				                                </div>
+				                                <p>
+													{{ post2.text|safe }}
+				                                </p>
+				                            </div>
+				                        </li>
+				                        {% endif %}
+			                        {% endfor %}
+				                        <li class="left clearfix commentlist">
+				                        	<span class="chat-img pull-left">
+					                            <img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt={{ user.username }} class="img-circle  img-responsive" />
+					                        </span>
+				                            <div class="chat-body clearfix">
+												<textarea class="form-control" rows="2"></textarea>
+				                            </div>
+				                        </li>
+				                    </ul>
+
+				                </div>
+		                        <!--End of Comment Section-->
+
+	                        {% endif %}
+	                    {% endfor %}
+	                </ul>
+            </div>
+			</div>
+		</div>
+	</div>
+    <div>
+		<!-- Small modal -->
+		<button class="btn btn-primary hide notificationButton" data-toggle="modal" data-target=".bs-example-modal-sm">Small modal</button>
+
+		<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-sm">
+			    <div class="modal-content">
+			      <div class="modal-header" style='padding:9px;'>
+			        <h5 class="modal-title" id="myModalLabel">Help Text</h5>
+			      </div>
+			      <div class="modal-body">
+			        Please <kbd>save</kbd> recording before sending post or click <kbd>cancel</kbd>
+			      </div>
+			    </div>
+		  </div>
+		</div>
+    </div>
 {% endblock contentwrap %}
+
+{% block stylesheets %} 
+<link href="{% static "css/overdub.css" %}" rel="stylesheet">
+<link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
+<!-- *****************video player(need to be put in head to load audio)******************* -->
+<script src="http://jwpsrv.com/library/RJueXGxbEeOB1SIACi0I_Q.js"></script>
+{% endblock stylesheets%}
+{% block more_javascript %} 
+<!-- *****************upload libs******************** -->
+<script src="{% static "jqueryUpload/jquery.ui.widget.js" %}"></script>
+<script src="{% static "jqueryUpload/jquery.iframe-transport.js" %}"></script>
+<script src="{% static "jqueryUpload/jquery.fileupload.js" %}"></script>
+<script src="{% static "jqueryUpload/jquery.cookie.js" %}"></script>
+<!-- *****************Chat libs******************** -->
+<script src="{% static "js/socket.io.js" %}"></script>
+<script src="{% static "js/tinymce/tinymce.min.js" %}"></script>
+<script>WEB_SOCKET_SWF_LOCATION="{{ STATIC_URL }}flashsocket/WebSocketMain.swf"; window.room = "{{ room.id }}";</script>
+<script src="{% static "js/overdub.js" %}"></script>
+<script src="{% static "js/overdubs_socket.js" %}"></script>
+<!-- ******************Recorder libs****************** -->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+<!-- ************************************* -->
+{% endblock more_javascript %}

@@ -6,10 +6,12 @@ from socketio.namespace import BaseNamespace
 from socketio.mixins import RoomsMixin, BroadcastMixin
 from socketio.sdjango import namespace
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 
 from datetime import datetime
 import pdb
 from core.models import Post, Document
+from overdub_discussions.models import OverdubActivity
 from .models import DiscussionActivity
 
 
@@ -25,14 +27,21 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         self.logger.info("[{0}] {1}".format(self.socket.sessid, message))
         print self.socket.sessid
     
-    def on_join(self, room):
-        self.room = room
-        self.join(room)
+    def on_join(self, roomType, roomNumber):
+        print self
+        print "roomType is: "+roomType+" roomNumber is: "+roomNumber
+        self.room = roomType+'_'+roomNumber
+        self.join(roomType+'_'+roomNumber)
         try: 
-            self.socket.session['DjangoRoom'] = DiscussionActivity.objects.get(pk=room)
+            if roomType=='discussion':
+                self.socket.session['DjangoRoom'] = DiscussionActivity.objects.get(pk=roomNumber)
+            elif roomType =='overdub':
+                self.socket.session['DjangoRoom'] = OverdubActivity.objects.get(pk=roomNumber)
         except:
             self.broadcast_event('error', '%s is not valid activity and has disconnected' % room)
             self.disconnect(silent=True)
+        self.socket.session['roomType'] = roomType
+        self.socket.session['roomNumber'] = roomNumber
         self.log("Joining room.")
         return True
         
@@ -89,8 +98,8 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         postuser = self.socket.session['DjangoUser']
         textcontent = msg
         # activity to assign post to
-        activityType = 'discussion'
-        activityID = self.room
+        activityType = self.socket.session['roomType']
+        activityID = self.socket.session['roomNumber']
         #  validation and save
         if len(textcontent) > 0:
             mess = Post(text=textcontent)
@@ -107,7 +116,7 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
                 for attachment in attachments:
                     # accessURL is "media/documents/filename"
                     targetDoc = Document.objects.filter(accessURL = attachment)[0]
-                    targetDoc.post = mess
+                    targetDoc.content_object = mess
                     targetDoc.save()
             #  save mess with that activity
             activity = self.socket.session['DjangoRoom']
