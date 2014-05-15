@@ -50,6 +50,8 @@
    var courseID = "{{course.id}}";
 </script>
 <script src="{% static "js/activity_create.js" %}"></script>
-
+{% if activity_type == 'overdub' %}
+<script src="{% static "js/overdub_create.js" %}"></script>
+{% endif %}
 {% endblock more_javascript %}
 
