@@ -4,7 +4,11 @@
 
 {% block contentwrap %}
 	<!-- {{ block.super }} -->
-	<h1 class="page-header">{{ activity.title }}</h1>
+	<h1 class="page-header">{{ activity.title }}
+	{% if user in activity.lesson.collection.membership.all %}
+	<small><small><a href="{% url 'edit_essay' activity.id %}" class="text-muted" style='text-decoration:none;'><i class="fa fa-pencil-square-o"></i></a></small></small>
+	{% endif %}
+	</h1>
 	<p class="sub-header"><span class="text-muted">{{ activity.instructions }}</span></p>
 	<div>
 		{% for post in activity.posts.all %}
@@ -17,3 +21,7 @@
 	</div>	
 
 {% endblock contentwrap %}
+
+{% block stylesheets %} 
+<link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
+{% endblock stylesheets%}

@@ -16,7 +16,7 @@
 			<div class="col-xs-6 col-sm-3 col-lg-2 placeholder">
 			<img src="{% static "img/CLTicon2013-300x294.jpg"%}" class="img-responsive" alt="Generic placeholder ">
 			<a href="{{ activity.get_absolute_url }}"><h3>{{ activity.display_order }} {{ activity.title }}</h3></a>
-			<span class="text-muted">{{ activity.instructions }} </span>
+			<span class="text-muted">{{ activity.instructions|slice:":60" }}.. </span>
 			</div>
         {% empty %}
     	<p>There are no activities that are current.</p>

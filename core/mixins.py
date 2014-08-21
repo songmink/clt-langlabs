@@ -76,6 +76,15 @@ class CreateActivityMixin(object):
         # context['lessonForm'] = LessonForm()
         return context
 
+class CreateActivity4UpdateMixin(object):
+
+    def get_context_data(self, **kwargs):
+        context = super(CreateActivity4UpdateMixin, self).get_context_data(**kwargs)
+        context['activity_type'] = self.activity_type
+        context['course'] = get_object_or_404(
+            ActivityCollection, pk=self.object.lesson.collection.id)
+        return context
+
 class RecorderMixin(object):
 
     def get_context_data(self, **kwargs):

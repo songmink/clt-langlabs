@@ -3,7 +3,11 @@
 {% load staticfiles %}
 
 {% block contentwrap %}
-	<h1 class="page-header">{{ activity.title }}</h1>
+
+	<h1 class="page-header">{{ activity.title }}	{% if user in activity.lesson.collection.membership.all %}
+	<small><small><a href="{% url 'edit_discussion' activity.id %}" class="text-muted" style='text-decoration:none;'><i class="fa fa-pencil-square-o"></i></a></small></small>
+	{% endif %}
+	</h1>
 	<div class="container-fluid" style='height:100%;'>
 		<div class="row " >
 			<div class="col-md-4" > <!-- style="border-right: 1px solid #ccc;" -->
@@ -145,6 +149,7 @@
 		  </div>
 		</div>
     </div>
+<br>
 {% endblock contentwrap %}
 
 {% block stylesheets %} 

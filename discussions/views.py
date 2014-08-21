@@ -2,10 +2,11 @@
 
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import DetailView, CreateView
+from django.views.generic.edit import FormView, UpdateView, DeleteView
 from django.forms import ModelChoiceField
 
 from core.models import ActivityCollection, AbstractActivity, Post, Lesson
-from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, RecorderMixin
+from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, RecorderMixin, CreateActivity4UpdateMixin
 
 from .models import DiscussionActivity
 
@@ -36,3 +37,19 @@ class DiscussionCreateView(CourseListMixin, CreateActivityMixin, CreateView):
             ActivityCollection, pk=self.kwargs['pk'])
         form.instance.activity_type = self.activity_type
         return super(DiscussionCreateView, self).form_valid(form)
+
+class DiscussionUpdateView(CourseListMixin, CreateActivity4UpdateMixin, UpdateView):
+    model=DiscussionActivity
+    context_object_name = 'activity' 
+    template_name = 'activity_edit.html'
+    fields = ['title', 'instructions',
+              'lesson', 'is_active', 'read_after_post']
+    activity_type = 'discussion'
+
+    def get_form(self, form_class):
+        form = super(DiscussionUpdateView, self).get_form(
+            form_class)  # instantiate using parent
+        form.fields['lesson'].queryset = Lesson.objects.filter(
+            collection=get_object_or_404(ActivityCollection, pk=self.object.lesson.collection.id))
+        return form
+
