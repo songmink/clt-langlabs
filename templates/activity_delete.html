@@ -1,0 +1,15 @@
+<!-- discussion_confirm_delete.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block contentwrap %}
+<br>
+<br>
+<form action="" method="post">{% csrf_token %}
+	<p class="text-center lead">Are you sure you want to delete <strong>"{{ object }}"? </strong></p>
+    
+    <!-- <input type="submit" value="Confirm" /> -->
+    <div class="text-center"><button type="submit" class="btn btn-primary">Confirm</button></div>
+</form>
+
+{% endblock contentwrap %}

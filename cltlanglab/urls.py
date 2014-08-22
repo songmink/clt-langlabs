@@ -7,9 +7,9 @@ from django.conf.urls.static import static
 admin.autodiscover()
 
 from core.views import IndexView, HomeView, CourseIndexView, CourseCreateView, ActivityCreateIndexView, LessonCreateView, LessonAddView, savePost, fileUpload
-from discussions.views import DiscussionCreateView, DiscussionDetailView, DiscussionUpdateView
-from essays.views import EssayCreateView, EssayDetailView, EssayUpdateView
-from overdub_discussions.views import OverdubCreateView, OverdubDetailView, OverdubUpdateView
+from discussions.views import DiscussionCreateView, DiscussionDetailView, DiscussionUpdateView, DiscussionDeleteView
+from essays.views import EssayCreateView, EssayDetailView, EssayUpdateView, EssayDeleteView
+from overdub_discussions.views import OverdubCreateView, OverdubDetailView, OverdubUpdateView, OverdubDeleteView
 from settings import base
 import socketio.sdjango
 socketio.sdjango.autodiscover()
@@ -25,12 +25,15 @@ urlpatterns = patterns('',
     url(r'^discussion/(?P<pk>\d+)$', DiscussionDetailView.as_view(), name='discussion'),
     url(r'^discussion/add/(?P<pk>\d+)$', DiscussionCreateView.as_view(), name='create_discussion'),
     url(r'^discussion/edit/(?P<pk>\d+)$', DiscussionUpdateView.as_view(), name='edit_discussion'),
+    url(r'^discussion/delete/(?P<pk>\d+)$', DiscussionDeleteView.as_view(), name='delete_discussion'),
     url(r'^essay/(?P<pk>\d+)$', EssayDetailView.as_view(), name='essay'),
     url(r'^essay/add/(?P<pk>\d+)$', EssayCreateView.as_view(), name='create_essay'),
     url(r'^essay/edit/(?P<pk>\d+)$', EssayUpdateView.as_view(), name='edit_essay'),
+    url(r'^essay/delete/(?P<pk>\d+)$', EssayDeleteView.as_view(), name='delete_essay'),
     url(r'^overdub/(?P<pk>\d+)$', OverdubDetailView.as_view(), name='overdub'),
     url(r'^overdub/add/(?P<pk>\d+)$', OverdubCreateView.as_view(), name='create_overdub'),
     url(r'^overdub/edit/(?P<pk>\d+)$', OverdubUpdateView.as_view(), name='edit_overdub'),
+    url(r'^overdub/delete/(?P<pk>\d+)$', OverdubDeleteView.as_view(), name='delete_overdub'),
     url(r'^post/save/$',savePost, name='save_post'),
     url(r'^upload/$', fileUpload, name='file_upload'),
     

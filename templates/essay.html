@@ -7,6 +7,7 @@
 	<h1 class="page-header">{{ activity.title }}
 	{% if user in activity.lesson.collection.membership.all %}
 	<small><small><a href="{% url 'edit_essay' activity.id %}" class="text-muted" style='text-decoration:none;'><i class="fa fa-pencil-square-o"></i></a></small></small>
+	<small><small><a href="{% url 'delete_essay' activity.id %}" class="text-muted" style='text-decoration:none;'><i class="fa fa-trash-o"></i></a></small></small>
 	{% endif %}
 	</h1>
 	<p class="sub-header"><span class="text-muted">{{ activity.instructions }}</span></p>

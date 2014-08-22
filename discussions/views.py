@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic import DetailView, CreateView
 from django.views.generic.edit import FormView, UpdateView, DeleteView
 from django.forms import ModelChoiceField
+from django.core.urlresolvers import reverse_lazy
 
 from core.models import ActivityCollection, AbstractActivity, Post, Lesson
 from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, RecorderMixin, CreateActivity4UpdateMixin
@@ -52,4 +53,16 @@ class DiscussionUpdateView(CourseListMixin, CreateActivity4UpdateMixin, UpdateVi
         form.fields['lesson'].queryset = Lesson.objects.filter(
             collection=get_object_or_404(ActivityCollection, pk=self.object.lesson.collection.id))
         return form
+
+class DiscussionDeleteView(CourseListMixin, DeleteView):
+    model = DiscussionActivity
+    success_url = reverse_lazy('home')
+    template_name = 'activity_delete.html'
+
+
+
+
+
+
+
 

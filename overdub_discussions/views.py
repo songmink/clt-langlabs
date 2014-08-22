@@ -4,6 +4,7 @@ from django.views.generic import DetailView, CreateView
 from django.views.generic.edit import FormView, UpdateView, DeleteView
 from django.forms import ModelChoiceField
 from django import forms
+from django.core.urlresolvers import reverse_lazy
 
 from core.models import ActivityCollection, AbstractActivity, Post, Lesson, Document
 from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, RecorderMixin, CreateActivity4UpdateMixin
@@ -96,3 +97,7 @@ class OverdubUpdateView(CourseListMixin, CreateActivity4UpdateMixin, UpdateView)
 
         return super(OverdubUpdateView, self).form_valid(form)
 
+class OverdubDeleteView(CourseListMixin, DeleteView):
+    model = OverdubActivity
+    success_url = reverse_lazy('home')
+    template_name = 'activity_delete.html'

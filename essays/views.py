@@ -2,6 +2,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import DetailView, CreateView
 from django.views.generic.edit import FormView, UpdateView, DeleteView
+from django.core.urlresolvers import reverse_lazy
 
 from core.models import ActivityCollection, AbstractActivity, Post, Lesson
 from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, CreateActivity4UpdateMixin
@@ -49,3 +50,9 @@ class EssayCreateView(CourseListMixin, CreateActivityMixin, CreateView):
             ActivityCollection, pk=self.kwargs['pk'])
         form.instance.activity_type = self.activity_type
         return super(EssayCreateView, self).form_valid(form)
+
+class EssayDeleteView(CourseListMixin, DeleteView):
+    model = EssayActivity
+    success_url = reverse_lazy('home')
+    template_name = 'activity_delete.html'
+
