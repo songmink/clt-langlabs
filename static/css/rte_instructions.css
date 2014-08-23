@@ -1,0 +1,6 @@
+#InstructionTextArea{
+  /*width:98%;*/
+  height:240px;
+  padding: 5px;
+  overflow:auto;
+}

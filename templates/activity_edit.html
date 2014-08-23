@@ -42,12 +42,17 @@
 </div>
 
 <!-- Modal Experiment -->
-
 {% endblock contentwrap %}
+
+{% block stylesheets %} 
+<link href="{% static "css/rte_instructions.css" %}" rel="stylesheet">
+{% endblock stylesheets%}
+
 {% block more_javascript %} 
 <script type="text/javascript"> 
    var courseID = "{{course.id}}";
 </script>
+<script src="{% static "js/tinymce/tinymce.min.js" %}"></script>
 <script src="{% static "js/activity_create.js" %}"></script>
 {% if activity_type == 'overdub' %}
 <script src="{% static "js/overdub_create.js" %}"></script>
