@@ -12,8 +12,8 @@ $( document ).ready(function() {
   	    var currentURL = window.location.href
         $("#id_lesson").parent().load(currentURL +  '  #id_lesson')
 	})
- 
-  // $("#id_instructions").addClass("hidden"); 
+  // fake the rich text editor using another div
+  $("#id_instructions").addClass("hidden"); 
   $( "#id_instructions" ).after( '<div id="InstructionTextArea" class="form-control" style="border-radius:4px 4px 4px 4px;"></div>' );
   
   rteInit()
