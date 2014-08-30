@@ -3,7 +3,10 @@
 {% load staticfiles %}
 
 {% block contentwrap %}
-	<h1 class="page-header">{{ activity.title }}{% if user in activity.lesson.collection.membership.all %}
+    {% load guardian_tags %}
+    {% get_obj_perms user for course as "course_perms" %}
+	<h1 class="page-header">{{ activity.title }}
+	{% if "access_course" in course_perms %}
 	<small><small><a href="{% url 'edit_overdub' activity.id %}" class="text-muted" style='text-decoration:none;'><i class="fa fa-pencil-square-o"></i></a></small></small>
 	<small><small><a href="{% url 'delete_overdub' activity.id %}" class="text-muted" style='text-decoration:none;'><i class="fa fa-trash-o"></i></a></small></small>
 	{% endif %}
@@ -18,7 +21,7 @@
 						jwplayer("overdubVideo").setup({
 						        file: {% if activity.upload_video %}"{{activity.upload_video.url}}"{% else %}"{{activity.media}}"{% endif %},
 						        width: "100%",
-						        skin: "/static/jwplayer-skins/five.xml",
+						        skin: "{% static "jwplayer-skins/five.xml" %}",
                                 autostart: true,
 						        // controls: false,
 						        mute: true

@@ -1,0 +1,22 @@
+<!-- collection_edit.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block contentwrap %}
+
+
+<div class="row">
+	<div class="col-md-3"></div>
+	<div class="col-md-6">
+		<form action="" method="post" role="form">{% csrf_token %}
+			{{ form|crispy }}
+			<input type="submit" value="Update" />
+		</form>		
+	</div>
+	<div class="col-md-3"></div>
+</div>
+
+{% endblock contentwrap %}
+
+

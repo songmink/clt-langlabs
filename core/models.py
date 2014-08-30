@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.core.validators import MinLengthValidator
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.generic import GenericForeignKey
 
@@ -16,7 +17,14 @@ ACTIVITY_TYPES = (
 class ActivityCollection(models.Model):
     title = models.CharField(max_length=100, unique=True)
     nickname = models.CharField(max_length=100)
-    membership = models.ManyToManyField(User)
+    accesscode = models.CharField(max_length=255, blank=True, null=True, unique = True, verbose_name='Access Code',validators=[MinLengthValidator(10)])
+    # membership = models.ManyToManyField(User)
+
+    class Meta:
+        permissions = (
+            ('view_course', 'view course'),
+            ('access_course', 'access course'),
+        )
 
     def get_absolute_url(self):
         return reverse('course', args=[str(self.id)])

@@ -31,7 +31,7 @@
     <div class="modal-content">
 
 		<div class="modal-body">
-			<div><iframe src="/lesson/add2/{{course.id}}" width='100%' height='570' frameborder="0"></iframe></div>
+			<div><iframe src="{% url 'add_lesson' course.id %}" width='100%' height='570' frameborder="0"></iframe></div>
 		</div>
 
 		<div class="modal-footer">

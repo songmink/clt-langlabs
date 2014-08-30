@@ -60,7 +60,7 @@ $(document).ready(function(){
 	$(function () {
 	    'use strict';
 	    // Change this to the location of your server-side upload handler:
-	    var url = '/upload/';
+	    var url = $("#uploadTrigger").data('uploadurl');
 	    // var csrftoken = $.cookie('csrftoken');
 	    var csrftoken=$("input[name=csrfmiddlewaretoken]").val()
 	    $('#fileupload').fileupload({

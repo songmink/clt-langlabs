@@ -6,7 +6,7 @@ from core.models import ActivityCollection, AbstractActivity
 class OverdubActivity(AbstractActivity):
 	collection = models.ForeignKey(
 		ActivityCollection, blank=True, null=True, on_delete=models.SET_NULL, related_name='overdubs')
-	media = models.URLField(null=True, blank=True)
+	media = models.CharField(null=True, blank=True, max_length=400)
 	# upload_video = models.FileField(
  #        upload_to='overdub_videos', null=True, blank=True)
 

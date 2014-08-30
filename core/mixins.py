@@ -1,5 +1,6 @@
 # mixins.py
 from django.shortcuts import render, get_object_or_404
+from guardian.shortcuts import get_objects_for_user
 from itertools import chain
 from operator import attrgetter
 
@@ -11,8 +12,7 @@ class CourseListMixin(object):
 
     def get_context_data(self, **kwargs):
         context = super(CourseListMixin, self).get_context_data(**kwargs)
-        context['course_list'] = ActivityCollection.objects.filter(
-            membership=self.request.user)
+        context['course_list'] = get_objects_for_user(self.request.user, ['core.view_course', 'core.access_course'], any_perm=True)
         return context
 
 

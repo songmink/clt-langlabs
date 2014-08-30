@@ -1,16 +1,19 @@
 # core/views.py
 import json
 from datetime import datetime
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect, HttpResponse
+from django.contrib.auth.decorators import login_required
 
 from braces.views import LoginRequiredMixin, CsrfExemptMixin
+from guardian.shortcuts import assign_perm
 
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
 from django.views.generic import DetailView, CreateView
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, UpdateView, DeleteView
 from django.views.decorators.csrf import csrf_exempt
+from django.core.urlresolvers import reverse_lazy
 
 from core.mixins import CourseListMixin, ActivityListMixin
 
@@ -36,15 +39,34 @@ class CourseIndexView(LoginRequiredMixin, CourseListMixin, ActivityListMixin, De
 class CourseCreateView(LoginRequiredMixin, CourseListMixin, CreateView):
     model = ActivityCollection
     template_name = 'collection_create.html'
-    fields = ['title', 'nickname']
+    fields = ['title', 'nickname', 'accesscode']
 
     def form_valid(self, form):
-        newcourse = form.save(commit=False)
-        newcourse.save()
-        currentUser = self.request.user
-        newcourse.membership.add(currentUser)
-        form.save_m2m()
+        form.save()
+        assign_perm('core.access_course', self.request.user, form.instance)
         return super(CourseCreateView, self).form_valid(form)
+  # def form_valid(self, form):
+    #     newcourse = form.save(commit=False)
+    #     newcourse.save()
+    #     currentUser = self.request.user
+    #     newcourse.membership.add(currentUser)
+    #     form.save_m2m()
+    #     return super(CourseCreateView, self).form_valid(form)
+
+class CourseUpdateView(LoginRequiredMixin, CourseListMixin, UpdateView):
+    model = ActivityCollection
+    template_name = 'collection_edit.html'
+    fields = ['title', 'nickname', 'accesscode']
+
+    def form_valid(self, form):
+        form.save()
+        assign_perm('core.access_course', self.request.user, form.instance)
+        return super(CourseCreateView, self).form_valid(form)
+
+class CourseDeleteView(LoginRequiredMixin, CourseListMixin, DeleteView):
+    model = ActivityCollection
+    success_url = reverse_lazy('home')
+    template_name = 'activity_delete.html'
 
 
 class LessonCreateView(LoginRequiredMixin, CourseListMixin, CreateView):
@@ -130,3 +152,28 @@ def fileUpload(request):
         })
 
     return HttpResponse(json.dumps(response), content_type='application/json')
+
+# subscribe to a course:
+@login_required
+def subscribeCourse(request, accesskey):
+    courseToSubscribe = get_object_or_404(ActivityCollection, accesscode=accesskey)
+    assign_perm('core.view_course', request.user , courseToSubscribe)
+
+    return  redirect(courseToSubscribe)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
