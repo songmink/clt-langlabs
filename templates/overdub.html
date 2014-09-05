@@ -6,7 +6,7 @@
     {% load guardian_tags %}
     {% get_obj_perms user for course as "course_perms" %}
 	<h1 class="page-header">{{ activity.title }}
-	{% if "access_course" in course_perms %}
+	{% if "edit_course" in course_perms %}
 	<small><small><a href="{% url 'edit_overdub' activity.id %}" class="text-muted" style='text-decoration:none;'><i class="fa fa-pencil-square-o"></i></a></small></small>
 	<small><small><a href="{% url 'delete_overdub' activity.id %}" class="text-muted" style='text-decoration:none;'><i class="fa fa-trash-o"></i></a></small></small>
 	{% endif %}

@@ -3,6 +3,8 @@
 {% load staticfiles %}
 
 {% block activitynav %} 
+  {% load guardian_tags %}
+  {% get_obj_perms user for course as "course_perms" %}
 	<!-- CONTEXT MENU - Activities --> 
     <li class="dropdown">
               <a data-toggle="dropdown" class="dropdown-toggle" href="#">More Activities <b class="caret"></b></a>
@@ -16,14 +18,21 @@
 
                     <li><a href="{{activity_item.get_absolute_url}}"><small>{{activity_item.title}}</small></a></li>
 
+                {% empty %}
+                <li><a href=""  style='cursor:text;'><span class="text-primary "> No activities available </span></a></li>
+
                 {% endfor %}
 
+          
 			    <li class="divider"></li>
 			    {% if course %}
 			      <li><a href="{% url 'course' course.id %}">course home</a></li>
+            {% if "edit_course" in course_perms %}
 			      <li><a href="{% url 'create_lesson' course.id %}"><small><span class="glyphicon glyphicon-plus-sign"></span> New Lesson</small></a></li>
             <li><a href="{% url 'create_activity' course.id %}"><small><span class="glyphicon glyphicon-plus-sign"></span> New Activity</small></a></li>
-			    {% endif %}
+  			    {% endif %}
+          {% endif %}
+
               </ul>
     </li>
 

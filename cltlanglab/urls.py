@@ -6,7 +6,7 @@ from django.contrib import admin
 from django.conf.urls.static import static
 admin.autodiscover()
 
-from core.views import IndexView, HomeView, CourseIndexView, CourseCreateView, CourseUpdateView, CourseDeleteView, ActivityCreateIndexView, LessonCreateView, LessonAddView, savePost, fileUpload, subscribeCourse
+from core.views import IndexView, HomeView, CourseIndexView, CourseCreateView, CourseUpdateView, CourseDeleteView, ActivityCreateIndexView, LessonCreateView, LessonAddView, savePost, fileUpload, subscribeCourse, changePerm
 from discussions.views import DiscussionCreateView, DiscussionDetailView, DiscussionUpdateView, DiscussionDeleteView
 from essays.views import EssayCreateView, EssayDetailView, EssayUpdateView, EssayDeleteView
 from overdub_discussions.views import OverdubCreateView, OverdubDetailView, OverdubUpdateView, OverdubDeleteView
@@ -39,6 +39,7 @@ urlpatterns = patterns('',
     url(r'^post/save/$',savePost, name='save_post'),
     url(r'^upload/$', fileUpload, name='file_upload'),
     url(r'^subscribe/(\w+)/$', subscribeCourse, name='subscribe_course'),
+    url(r'^perm/change/$', changePerm, name='change_perm'),
     
     url(r'^admin/', include(admin.site.urls)),
     url(r'^socket\.io', include(socketio.sdjango.urls)),

@@ -1,6 +1,6 @@
 # mixins.py
 from django.shortcuts import render, get_object_or_404
-from guardian.shortcuts import get_objects_for_user
+from guardian.shortcuts import get_objects_for_user, get_users_with_perms
 from itertools import chain
 from operator import attrgetter
 
@@ -12,7 +12,18 @@ class CourseListMixin(object):
 
     def get_context_data(self, **kwargs):
         context = super(CourseListMixin, self).get_context_data(**kwargs)
-        context['course_list'] = get_objects_for_user(self.request.user, ['core.view_course', 'core.access_course'], any_perm=True)
+        try:
+            context['course_list'] = get_objects_for_user(self.request.user, ['core.view_course', 'core.edit_course'], any_perm=True)
+        except:
+            pass
+        return context
+
+class UsersWithPermsMixin(object):
+
+    def get_context_data(self, **kwargs):
+
+        context = super(UsersWithPermsMixin, self).get_context_data(**kwargs)
+        context['object_users'] = get_users_with_perms( self.get_object(),  attach_perms=True, with_superusers=True)
         return context
 
 

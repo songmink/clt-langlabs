@@ -4,9 +4,11 @@ from datetime import datetime
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 from braces.views import LoginRequiredMixin, CsrfExemptMixin
-from guardian.shortcuts import assign_perm
+from guardian.shortcuts import assign_perm, remove_perm
+from guardian.mixins import PermissionRequiredMixin
 
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
@@ -15,7 +17,7 @@ from django.views.generic.edit import FormView, UpdateView, DeleteView
 from django.views.decorators.csrf import csrf_exempt
 from django.core.urlresolvers import reverse_lazy
 
-from core.mixins import CourseListMixin, ActivityListMixin
+from core.mixins import CourseListMixin, ActivityListMixin, UsersWithPermsMixin
 
 from .models import AbstractActivity, ActivityCollection, Lesson, Post, Document
 
@@ -30,7 +32,7 @@ class HomeView(LoginRequiredMixin, CourseListMixin, TemplateView):
     template_name = 'home.html'
 
 
-class CourseIndexView(LoginRequiredMixin, CourseListMixin, ActivityListMixin, DetailView):
+class CourseIndexView(LoginRequiredMixin, CourseListMixin, ActivityListMixin, UsersWithPermsMixin, DetailView):
     model = ActivityCollection
     context_object_name = 'course'
     template_name = 'course.html'
@@ -43,7 +45,7 @@ class CourseCreateView(LoginRequiredMixin, CourseListMixin, CreateView):
 
     def form_valid(self, form):
         form.save()
-        assign_perm('core.access_course', self.request.user, form.instance)
+        assign_perm('core.edit_course', self.request.user, form.instance)
         return super(CourseCreateView, self).form_valid(form)
   # def form_valid(self, form):
     #     newcourse = form.save(commit=False)
@@ -53,20 +55,24 @@ class CourseCreateView(LoginRequiredMixin, CourseListMixin, CreateView):
     #     form.save_m2m()
     #     return super(CourseCreateView, self).form_valid(form)
 
-class CourseUpdateView(LoginRequiredMixin, CourseListMixin, UpdateView):
+class CourseUpdateView(LoginRequiredMixin, PermissionRequiredMixin, CourseListMixin, UpdateView):
     model = ActivityCollection
     template_name = 'collection_edit.html'
     fields = ['title', 'nickname', 'accesscode']
+    permission_required = 'core.edit_course'
+    raise_exception = True
 
     def form_valid(self, form):
         form.save()
-        assign_perm('core.access_course', self.request.user, form.instance)
+        assign_perm('core.edit_course', self.request.user, form.instance)
         return super(CourseCreateView, self).form_valid(form)
 
-class CourseDeleteView(LoginRequiredMixin, CourseListMixin, DeleteView):
+class CourseDeleteView(LoginRequiredMixin, PermissionRequiredMixin, CourseListMixin, DeleteView):
     model = ActivityCollection
     success_url = reverse_lazy('home')
     template_name = 'activity_delete.html'
+    permission_required = 'core.edit_course'
+    raise_exception = True
 
 
 class LessonCreateView(LoginRequiredMixin, CourseListMixin, CreateView):
@@ -161,8 +167,39 @@ def subscribeCourse(request, accesskey):
 
     return  redirect(courseToSubscribe)
 
+# change user object permission
+@login_required
+def changePerm(request):
 
-
+    if request.method == 'POST':
+        request_user = request.user
+        user_name = request.POST.get("object_username", '')
+        perm_user = User.objects.get(username=user_name)
+        perm_codename = request.POST.get("codename", '')
+        perm_object_type = request.POST.get("object_type", '')
+        perm_object_id = request.POST.get("object_id", '')
+        perm_operation_type = request.POST.get("operation_type", '')
+        #  validation and change perm
+        if perm_object_type == 'course':
+            try:
+                target_object = ActivityCollection.objects.filter(id=perm_object_id)[0]
+            except:
+                return HttpResponse('no such object')
+            if request_user.has_perm('core.edit_course', target_object):
+                if perm_operation_type == 'assign_perm':
+                    assign_perm(perm_codename, perm_user, target_object)
+                    return HttpResponse('successful change')
+                elif perm_operation_type == 'remove_perm':
+                    remove_perm(perm_codename, perm_user, target_object) 
+                    return HttpResponse('successful change')
+                else:
+                    return HttpResponse('no change')
+            else:
+                return HttpResponse('Denied, superuser permission required')
+        else:
+            return HttpResponse('not correct object type')
+    else:
+        return HttpResponse('post ajax required') 
 
 
 

@@ -23,7 +23,7 @@ class ActivityCollection(models.Model):
     class Meta:
         permissions = (
             ('view_course', 'view course'),
-            ('access_course', 'access course'),
+            ('edit_course', 'edit course'),
         )
 
     def get_absolute_url(self):
