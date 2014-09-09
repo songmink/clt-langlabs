@@ -12,7 +12,7 @@
 	<small><small><a href="{% url 'delete_essay' activity.id %}" class="text-muted" style='text-decoration:none;'><i class="fa fa-trash-o"></i></a></small></small>
 	{% endif %}
 	</h1>
-	<p class="sub-header"><span class="text-muted">{{ activity.instructions }}</span></p>
+	<p class="sub-header"><span class="text-muted">{{ activity.instructions|safe }}</span></p>
 	<div>
 		{% for post in activity.posts.all %}
 			<p>{{ post.creator }}</p>

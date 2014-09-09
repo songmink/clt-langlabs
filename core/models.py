@@ -88,6 +88,13 @@ class AbstractActivity(models.Model):
         max_length=100, choices=ACTIVITY_TYPES, default=DISCUSSION)
     posts = models.ManyToManyField(Post, null=True, blank=True)
 
+    class Meta:
+        abstract = True
+        permissions = (
+            ('view_activity', 'view activity'),
+            ('edit_activity', 'edit activity'),
+        )
+
     def get_siblings(self):
         return self.objects.filter(collection=self.collection).order_by("display_order")
 
@@ -96,9 +103,6 @@ class AbstractActivity(models.Model):
 
     def __unicode__(self):
         return self.title
-
-    class Meta:
-        abstract = True
 
 
 class Document(models.Model):

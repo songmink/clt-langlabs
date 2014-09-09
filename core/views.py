@@ -22,6 +22,8 @@ from core.mixins import CourseListMixin, ActivityListMixin, UsersWithPermsMixin
 from .models import AbstractActivity, ActivityCollection, Lesson, Post, Document
 
 from discussions.models import DiscussionActivity
+from essays.models import EssayActivity
+from overdub_discussions.models import OverdubActivity
 
 
 class IndexView(TemplateView):
@@ -180,24 +182,27 @@ def changePerm(request):
         perm_object_id = request.POST.get("object_id", '')
         perm_operation_type = request.POST.get("operation_type", '')
         #  validation and change perm
-        if perm_object_type == 'course':
-            try:
+
+        try:
+            if perm_object_type == 'course':
                 target_object = ActivityCollection.objects.filter(id=perm_object_id)[0]
-            except:
-                return HttpResponse('no such object')
-            if request_user.has_perm('core.edit_course', target_object):
-                if perm_operation_type == 'assign_perm':
-                    assign_perm(perm_codename, perm_user, target_object)
-                    return HttpResponse('successful change')
-                elif perm_operation_type == 'remove_perm':
-                    remove_perm(perm_codename, perm_user, target_object) 
-                    return HttpResponse('successful change')
-                else:
-                    return HttpResponse('no change')
+            elif perm_object_type == 'discussion':
+                target_object = DiscussionActivity.objects.filter(id=perm_object_id)[0]
             else:
-                return HttpResponse('Denied, superuser permission required')
+                return HttpResponse('wrong object type')
+        except:
+            return HttpResponse('no such object')
+        if request_user.has_perm('core.edit_course', target_object):
+            if perm_operation_type == 'assign_perm':
+                assign_perm(perm_codename, perm_user, target_object)
+                return HttpResponse('successful change')
+            elif perm_operation_type == 'remove_perm':
+                remove_perm(perm_codename, perm_user, target_object) 
+                return HttpResponse('successful change')
+            else:
+                return HttpResponse('no change')
         else:
-            return HttpResponse('not correct object type')
+            return HttpResponse('Denied, superuser permission required')
     else:
         return HttpResponse('post ajax required') 
 

@@ -23,7 +23,13 @@ class UsersWithPermsMixin(object):
     def get_context_data(self, **kwargs):
 
         context = super(UsersWithPermsMixin, self).get_context_data(**kwargs)
-        context['object_users'] = get_users_with_perms( self.get_object(),  attach_perms=True, with_superusers=True)
+        try:
+            # for activity detail view
+            context['object_course_users'] = get_users_with_perms( self.get_object().collection,  attach_perms=True, with_superusers=False)
+            context['object_users'] = get_users_with_perms( self.get_object(),  attach_perms=True, with_superusers=False)
+        except:
+            # for course detail view
+            context['object_users'] = get_users_with_perms( self.get_object(),  attach_perms=True, with_superusers=False)
         return context
 
 

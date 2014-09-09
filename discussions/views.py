@@ -7,12 +7,12 @@ from django.forms import ModelChoiceField
 from django.core.urlresolvers import reverse_lazy
 
 from core.models import ActivityCollection, AbstractActivity, Post, Lesson
-from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, RecorderMixin, CreateActivity4UpdateMixin
+from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, RecorderMixin, CreateActivity4UpdateMixin, UsersWithPermsMixin
 
 from .models import DiscussionActivity
 
 
-class DiscussionDetailView(CourseListMixin, ActivityListMixin, RecorderMixin,DetailView):
+class DiscussionDetailView(CourseListMixin, ActivityListMixin, RecorderMixin, UsersWithPermsMixin, DetailView):
     model = DiscussionActivity
     context_object_name = 'activity'
     template_name = 'discussion.html'
