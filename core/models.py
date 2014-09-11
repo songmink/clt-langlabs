@@ -87,12 +87,12 @@ class AbstractActivity(models.Model):
     activity_type = models.CharField(
         max_length=100, choices=ACTIVITY_TYPES, default=DISCUSSION)
     posts = models.ManyToManyField(Post, null=True, blank=True)
+    permission_control = models.BooleanField(default=False)
 
     class Meta:
         abstract = True
         permissions = (
             ('view_activity', 'view activity'),
-            ('edit_activity', 'edit activity'),
         )
 
     def get_siblings(self):

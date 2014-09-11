@@ -176,7 +176,10 @@ def changePerm(request):
     if request.method == 'POST':
         request_user = request.user
         user_name = request.POST.get("object_username", '')
-        perm_user = User.objects.get(username=user_name)
+        try:
+            perm_user = User.objects.get(username=user_name)
+        except:
+            pass
         perm_codename = request.POST.get("codename", '')
         perm_object_type = request.POST.get("object_type", '')
         perm_object_id = request.POST.get("object_id", '')
@@ -188,21 +191,30 @@ def changePerm(request):
                 target_object = ActivityCollection.objects.filter(id=perm_object_id)[0]
             elif perm_object_type == 'discussion':
                 target_object = DiscussionActivity.objects.filter(id=perm_object_id)[0]
+            elif perm_object_type == 'essay':
+                target_object = EssayActivity.objects.filter(id=perm_object_id)[0]
+            elif perm_object_type == 'overdub':
+                target_object = OverdubActivity.objects.filter(id=perm_object_id)[0]
             else:
                 return HttpResponse('wrong object type')
         except:
             return HttpResponse('no such object')
-        if request_user.has_perm('core.edit_course', target_object):
-            if perm_operation_type == 'assign_perm':
-                assign_perm(perm_codename, perm_user, target_object)
-                return HttpResponse('successful change')
-            elif perm_operation_type == 'remove_perm':
-                remove_perm(perm_codename, perm_user, target_object) 
-                return HttpResponse('successful change')
-            else:
-                return HttpResponse('no change')
+        if perm_operation_type == 'assign_perm':
+            assign_perm(perm_codename, perm_user, target_object)
+            return HttpResponse('successful change')
+        elif perm_operation_type == 'remove_perm':
+            remove_perm(perm_codename, perm_user, target_object) 
+            return HttpResponse('successful change')
+        elif perm_operation_type == 'enable_control':
+            target_object.permission_control = True
+            target_object.save()
+            return HttpResponse('successful change')
+        elif perm_operation_type == 'disable_control':
+            target_object.permission_control = False
+            target_object.save()
+            return HttpResponse('successful change')
         else:
-            return HttpResponse('Denied, superuser permission required')
+            return HttpResponse('no change')
     else:
         return HttpResponse('post ajax required') 
 

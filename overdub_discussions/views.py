@@ -7,7 +7,7 @@ from django import forms
 from django.core.urlresolvers import reverse_lazy
 
 from core.models import ActivityCollection, AbstractActivity, Post, Lesson, Document
-from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, RecorderMixin, CreateActivity4UpdateMixin
+from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, RecorderMixin, CreateActivity4UpdateMixin, UsersWithPermsMixin
 from .models import OverdubActivity
 
 
@@ -28,7 +28,7 @@ from .models import OverdubActivity
 
 
 
-class OverdubDetailView(CourseListMixin, ActivityListMixin, RecorderMixin,DetailView):
+class OverdubDetailView(CourseListMixin, ActivityListMixin, RecorderMixin, UsersWithPermsMixin, DetailView):
     model = OverdubActivity
     context_object_name = 'activity'
     template_name = 'overdub.html'

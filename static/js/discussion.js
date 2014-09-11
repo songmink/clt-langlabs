@@ -127,6 +127,48 @@ $(document).ready(function(){
           }
       }
     })
+    $(".control_togg").click(function(){
+      if ($(this).hasClass('fa-toggle-on')){
+          var permission = 'no_permission'
+          var username = 'no user'
+          var changeFlag = ajaxChangePermission(ajax_URL, username, permission, 'discussion', activity_id, 'disable_control', csrftoken)
+          console.log("changeSuccess is : "+ changeFlag)
+          // make ajax call to change permission
+          if(changeFlag){
+              $(this).removeClass('fa-toggle-on text-primary')
+              $(this).addClass('fa-toggle-off text-muted')
+          }
+      }else{
+          var permission = "no_permission"
+          var username = "no user"
+          console.log(permission)
+          var changeFlag = ajaxChangePermission(ajax_URL, username, permission, 'discussion', activity_id, 'enable_control', csrftoken)
+          console.log("changeSuccess is : "+changeFlag)
+          // make ajax call to change permission 
+          if(changeFlag){
+            $(this).removeClass('fa-toggle-off text-muted')
+            $(this).addClass('fa-toggle-on text-primary')
+          }
+      }
+    })
+    $('.column_togg').click(function(){
+      var column_togg_class = $(this).data('columnclass')
+      if(column_togg_class=='view_activity'){
+        var toggObjects = $('.view_activity')
+      }
+      if( toggObjects.hasClass('text-primary') && toggObjects.hasClass('text-muted')){
+          toggObjects.each(function(i){
+            if($(this).hasClass('text-primary')){
+              $(this).trigger( "click" )
+            }
+          })
+      }else{
+          toggObjects.each(function(i){
+                $(this).trigger( "click" )
+            })
+      }
+
+    })
 
 });
 
