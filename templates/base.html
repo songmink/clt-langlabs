@@ -30,7 +30,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{% url 'home' %}">CLT Lang Labs: <span class="text-muted">{{ course.title }}</span></a>
+          <a class="navbar-brand" href="{% url 'home' %}">CLT Lang Labs:</a>   
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
@@ -49,8 +49,12 @@
               <a href="." class="dropdown-toggle" data-toggle="dropdown"> {% block course_button_label %} Courses <b class="caret"></b>{% endblock course_button_label %}</a>
               <ul class="dropdown-menu">
               {% block course_item_list %} 
+              {% load guardian_tags %}
                 {% for course_item in course_list %}
+                  {% get_obj_perms user for course_item as "course_temp_perms" %}
+                  {% if course_item.is_active or "edit_course" in course_temp_perms %}
                   <li {% if course_item == course %} class="bg-primary" {% endif %}><a href="{{ course_item.get_absolute_url }}">{{ course_item.nickname }}</a></li>
+                  {% endif %}
                 {% endfor %}
               {% endblock course_item_list %}
               <li class="divider"></li>

@@ -7,7 +7,7 @@ from django import forms
 from django.core.urlresolvers import reverse_lazy
 
 from core.models import ActivityCollection, AbstractActivity, Post, Lesson, Document
-from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, RecorderMixin, CreateActivity4UpdateMixin, UsersWithPermsMixin
+from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, RecorderMixin, CreateActivity4UpdateMixin, UsersWithPermsMixin, ActivityPermsMixin, UserPostNumMixin
 from .models import OverdubActivity
 
 
@@ -28,7 +28,7 @@ from .models import OverdubActivity
 
 
 
-class OverdubDetailView(CourseListMixin, ActivityListMixin, RecorderMixin, UsersWithPermsMixin, DetailView):
+class OverdubDetailView(CourseListMixin, ActivityListMixin, RecorderMixin, UsersWithPermsMixin, ActivityPermsMixin, UserPostNumMixin, DetailView):
     model = OverdubActivity
     context_object_name = 'activity'
     template_name = 'overdub.html'
@@ -38,7 +38,7 @@ class OverdubCreateView(CourseListMixin, CreateActivityMixin, CreateView):
     model = OverdubActivity
     template_name = 'activity_create.html'
     fields = ['title', 'instructions', 'media',
-              'lesson', 'is_active', 'read_after_post']
+              'lesson', 'is_active', 'read_after_post', 'private_mode']
     activity_type = 'overdub'
 
     def get_form(self, form_class):
@@ -68,12 +68,12 @@ class OverdubCreateView(CourseListMixin, CreateActivityMixin, CreateView):
 
         return super(OverdubCreateView, self).form_valid(form)
 
-class OverdubUpdateView(CourseListMixin, CreateActivity4UpdateMixin, UpdateView):
+class OverdubUpdateView(CourseListMixin, CreateActivity4UpdateMixin, ActivityPermsMixin, UpdateView):
     model= OverdubActivity
     context_object_name = 'activity' 
     template_name = 'activity_edit.html'
     fields = ['title', 'instructions', 'media',
-              'lesson', 'is_active', 'read_after_post']
+              'lesson', 'is_active', 'read_after_post', 'private_mode']
     activity_type = 'overdub'
 
     def get_form(self, form_class):

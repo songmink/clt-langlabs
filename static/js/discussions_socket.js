@@ -1,5 +1,19 @@
 // socket.io specific code
 var socket = io.connect("192.168.1.8:8001/discussionsPosts");
+if( ($('#activity_title').data('userpostnum')==0  &&  $('#activity_title').data('readafterpost')=='True') && $('#activity_title').data('userisinstructor')==false){
+    var read_after_post_lock = true
+    $("#posts").append(' <div id="readafterpost_div" class="col-xs-12  well " style="background-color:rgba(255, 227, 187, 0.21);">\
+                        <div class=" text-left col-xs-1" style="color:#7A8F24;">\
+                        <span class="fa-stack fa-2x">\
+                              <i class="fa fa-file-o fa-stack-2x"></i>\
+                              <i class="fa fa-lock fa-stack-1x"></i>\
+                        </span>\
+                        </div>\
+                         <div class="col-xs-10" style="color:#7A8F24; font-size:1.2em;margin-left:10px;"">Check out what everyone is saying after sending your first post. You can send :<br><i class="fa fa-pencil"></i> Rich Text Messages &nbsp;&nbsp;<i class="fa fa-volume-up"></i>  Voice Recordings &nbsp;&nbsp;<i class="fa fa-files-o"></i>  Files</div>\
+                        </div>')
+}else{
+    var read_after_post_lock = false
+}
 
 socket.on('connect', function () {
 
@@ -71,6 +85,19 @@ var testtt=0;
                     console.log(tempATT_name)
                     socket.emit('user message', {msg : $("#postTextarea").html() ,attaches: tempATT, attachesName:tempATT_name, audioURL:tempATT_audio});
                     clear();
+                    if(read_after_post_lock == true){
+                        read_after_post_lock = false
+                        $("#readafterpost_div").remove()
+                    }
+                    if($('#posts2').size()==0 && $('#activity_title').data('readafterpost')=='True'){
+                        console.log('executed_read_after_post')
+                        $( "#posts" ).load( window.location.pathname+" #posts2", function( response, status, xhr ) {
+                          if ( status == "error" ) {
+                            var msg = "Sorry but there was an error: ";
+                            console.log(msg)
+                          }
+                        });
+                    }
                     return false;
                 }
             }else{
@@ -99,48 +126,62 @@ var testtt=0;
     
 
     function message (message) {
-        var mess=eval ("(" + message + ")");
-        from = mess.fromMessage
-        msg = mess.message
-        created = mess.createTime
-        msgID = mess.msgID
-        console.log(mess.message)
-        console.log(from+" says: "+msg.msg);
-        if(msg.attaches.length>0){
-            var tempAttachments ='<p class="attachDIV well " style="padding:8px;margin-bottom:0px;border-radius:0px;border:0px;background-color:#F8F8F8;">'
-            for(var i=0; i<msg.attaches.length;i++){
-                   tempAttachments+='<span><a class="fileLink text-muted" href="'+msg.attaches[i]+'"  > <i class="icon-file-alt"></i> '+msg.attachesName[i]+'</a></span>'
+        if( read_after_post_lock == false){
+            var mess=eval ("(" + message + ")");
+            from = mess.fromMessage
+            msg = mess.message
+            created = mess.createTime
+            msgID = mess.msgID
+            console.log(mess.message)
+            console.log(from+" says: "+msg.msg);
+            if(msg.attaches.length>0){
+                var tempAttachments ='<p class="attachDIV well " style="padding:8px;margin-bottom:0px;border-radius:0px;border:0px;background-color:#F8F8F8;">'
+                for(var i=0; i<msg.attaches.length;i++){
+                       tempAttachments+='<span><a class="fileLink text-muted" href="'+msg.attaches[i]+'"  > <i class="icon-file-alt"></i> '+msg.attachesName[i]+'</a></span>'
+                }
+                tempAttachments+='</p>'
+            }else{
+                tempAttachments=''
             }
-            tempAttachments+='</p>'
-        }else{
-            tempAttachments=''
-        }
-        // temporarily add audio to links below the message
-        if(msg.audioURL) tempAttachments+='<div id="'+msg.audioURL.slice(0,-4)+'" class="audioDiv"></div>'
-        // if(msg.audioURL) tempAttachments+='<p class="attachDIV well " style="padding:8px;">'+'<span><a class="fileLink text-muted" href="'+recorderServer+recorderDirectory+"/"+msg.audioURL+'"  > <i class="icon-file-alt"></i> '+msg.audioURL+'</a></span>'+'</p>'
-        var temp = '<li class="left clearfix chatlist" data-postid='+msgID+'><span class="chat-img pull-left"><img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt='+from+' class="img-circle img-responsive" /></span><div class="chat-body clearfix"><div class="header"><strong class="primary-font">'+from.substr(0,1).toUpperCase()+from.substr(1)+'</strong> <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span>'+created+'</small></div><p>'+msg.msg+'</p>'+tempAttachments+'</div></li><div><ul class="comment"> <li class="left clearfix commentlist"><span class="chat-img pull-left"><img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt={{ user.username }} class="img-circle  img-responsive" /></span><div class="chat-body clearfix"><textarea class="form-control" rows="2"></textarea></div></li></ul></div> ' ;
-        $( "#posts2" ).prepend(temp);
-        if(msg.audioURL){
-            jwplayer(msg.audioURL.slice(0,-4)).setup({
-                file: recorderServer+recorderDirectory+"/"+msg.audioURL,
-                width: "100%",
-                skin: $("#recordTrigger").data('playerskin'),
-                height: 30
-            });
-        }
+            // temporarily add audio to links below the message
+            if(msg.audioURL) tempAttachments+='<div id="'+msg.audioURL.slice(0,-4)+'" class="audioDiv"></div>'
+            // if(msg.audioURL) tempAttachments+='<p class="attachDIV well " style="padding:8px;">'+'<span><a class="fileLink text-muted" href="'+recorderServer+recorderDirectory+"/"+msg.audioURL+'"  > <i class="icon-file-alt"></i> '+msg.audioURL+'</a></span>'+'</p>'
+            if(private_users.search('<User: '+from+'>') != -1){
+                    var thumbNail = '<span><i class="fa fa-graduation-cap fa-2x pull-left fa-fw text-muted" style="font-size:2.1em;"></i></span>'
+                }else{
+                    var thumbNail = '<span><i class="fa fa-user fa-2x pull-left fa-fw text-muted" style="font-size:2.1em;"></i></span>'
+                }
+            var temp = '<li class="left clearfix chatlist" data-postid='+msgID+'>'+thumbNail+'<div class="chat-body clearfix"><div class="header"><strong class="primary-font">'+from.substr(0,1).toUpperCase()+from.substr(1)+'</strong> <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span>'+created+'</small></div><p>'+msg.msg+'</p>'+tempAttachments+'</div></li><div><ul class="comment">'+thumbNail_comment+'</ul></div> ' ;
+            $( "#posts2" ).prepend(temp);
+            if(msg.audioURL){
+                jwplayer(msg.audioURL.slice(0,-4)).setup({
+                    file: recorderServer+recorderDirectory+"/"+msg.audioURL,
+                    width: "100%",
+                    skin: $("#recordTrigger").data('playerskin'),
+                    height: 30
+                });
+            }
 
+        }
     }
     function comment (message) {
-        var mess=eval ("(" + message + ")");
-        from = mess.fromMessage
-        msg = mess.message
-        created = mess.createTime
-        msgID = mess.msgID
-        parentPost = mess.parentPost
-        var pp =$("li[data-postid="+parentPost+"]").next().find('.comment')
-        console.log(from+" says(comment): "+msg.cmt);
-        console.log(parentPost)
-        testtt=pp
-        var temp =  '<li class="left clearfix commentlist" data-postid='+msgID+'><span class="chat-img pull-left"><img src="http://placehold.it/50/55C1E7/fff&amp;ltext=U" alt='+from+' class="img-circle  img-responsive" /></span><div class="chat-body clearfix"><div class="header"><strong class="primary-font">'+from.substr(0,1).toUpperCase()+from.substr(1)+'</strong> <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span>'+created+'</small></div><p>'+msg.cmt+'</p></div></li>';
-        pp.prepend(temp);
+        if( read_after_post_lock == false){
+            var mess=eval ("(" + message + ")");
+            from = mess.fromMessage
+            msg = mess.message
+            created = mess.createTime
+            msgID = mess.msgID
+            parentPost = mess.parentPost
+            var pp =$("li[data-postid="+parentPost+"]").next().find('.comment')
+            console.log(from+" says(comment): "+msg.cmt);
+            console.log(parentPost)
+            testtt=pp
+            if(private_users.search('<User: '+from+'>') != -1){
+                    var thumbNail = '<span><i class="fa fa-graduation-cap fa-2x pull-left fa-fw text-muted" style="font-size:2.1em;"></i></span>'
+                }else{
+                    var thumbNail = '<span><i class="fa fa-user fa-2x pull-left fa-fw text-muted" style="font-size:2.1em;"></i></span>'
+                }
+            var temp =  '<li class="left clearfix commentlist" data-postid='+msgID+'>'+thumbNail+'<div class="chat-body clearfix"><div class="header"><strong class="primary-font">'+from.substr(0,1).toUpperCase()+from.substr(1)+'</strong> <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span>'+created+'</small></div><p>'+msg.cmt+'</p></div></li>';
+            pp.prepend(temp);
+        }
     }

@@ -22,9 +22,29 @@ $( document ).ready(function() {
       $( "#id_instructions" ).val($("#InstructionTextArea").html())
     });
 
-});
+  if($('#div_id_private_mode').size()==1){
+    $('#div_id_private_mode').append(' <small><i class="fa questionMark fa-question" style="cursor:pointer;" data-toggle="tooltip" data-placement="right" title="Students can have interactions with instructors only. Uncheck to allow every member interact with each other."></i></small>')
+    
+  }
+  if($('#div_id_read_after_post').size()==1){
+    $('#div_id_read_after_post').append(' <small><i class="fa questionMark fa-question " style="cursor:pointer;" data-toggle="tooltip" data-placement="right" title="Users can not see others\' posts unless they have publish any post."></i></small>')
+  }
+  // console.log($('.questionMark').size())
+  $('.questionMark').mouseenter(function(e) {
+  // console.log('mouseenter')
+     $(this).tooltip('show')
+     $(this).addClass('fa-question-circle')
+     $(this).removeClass('fa-question')
+  })
+  .mouseleave(function(e) {
+    // console.log('mouseleave')
+     $(this).tooltip('hide')
+     $(this).removeClass('fa-question-circle')
+     $(this).addClass('fa-question')
+  });
 
 
+})
 
 
 function rteInit()

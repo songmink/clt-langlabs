@@ -18,6 +18,7 @@ class ActivityCollection(models.Model):
     title = models.CharField(max_length=100, unique=True)
     nickname = models.CharField(max_length=100)
     accesscode = models.CharField(max_length=255, blank=True, null=True, unique = True, verbose_name='Access Code',validators=[MinLengthValidator(10)])
+    is_active = models.BooleanField(default=True)
     # membership = models.ManyToManyField(User)
 
     class Meta:
@@ -97,6 +98,9 @@ class AbstractActivity(models.Model):
 
     def get_siblings(self):
         return self.objects.filter(collection=self.collection).order_by("display_order")
+
+    def get_user_post_num(self, request):
+        return self.posts_set.filter(creator = request.user).all()
 
     def get_absolute_url(self):
         return reverse(self.activity_type, args=[str(self.id)])

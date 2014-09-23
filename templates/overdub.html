@@ -13,17 +13,49 @@
 
 {% else %}
 
-	<h1 class="page-header">{{ activity.title }}
+	<h1 id='activity_title' class="page-header" data-userpostnum='{{user_post_num}}' data-readafterpost='{{activity.read_after_post}}' data-userisinstructor='{% if user in private_users or user.is_superuser %}true{% else %}false{% endif %}'>{{ activity.title }}
 
+
+
+		
 	{% if "edit_course" in course_perms %}
 
 	<small><small><a href="{% url 'edit_overdub' activity.id %}" class="text-muted" style='text-decoration:none;'><i class="fa fa-pencil-square-o"></i></a></small></small>
 	<small><small><a href="{% url 'delete_overdub' activity.id %}" class="text-muted" style='text-decoration:none;'><i class="fa fa-trash-o"></i></a></small></small>
 	<small><small><a class="text-muted activity_admin_togg" style='text-decoration:none; cursor: pointer;'><i class="fa fa-user"></i></a></small></small>
-	
+	{% else %}
+        {% if activity.permission_control %}
+        	<small><small><a class="text-muted activity_members_togg" style='text-decoration:none; cursor: pointer;'><i class="fa fa-users"></i></a></small></small>
+        {% endif %}
 	{% endif %}
 
+		{% if activity.read_after_post and user in private_users or activity.read_after_post and user.is_superuser %}
+		<small class='text-muted pull-right'>
+		<span class="label label-default private_public_label" style="cursor:pointer;vertical-align: text-bottom;" data-toggle="tooltip" data-placement="left" title="Students can only read everyone's post after his/her initial post.">Read After Post</span>
+		</small>&nbsp;
+		{% endif %}
+
+		{% if activity.private_mode %}
+		<small class='text-muted pull-right'>
+		<span class="label label-default private_public_label" style="cursor:pointer;vertical-align: text-bottom;" data-toggle="tooltip" data-placement="right" title="Student can only interact with course instructors.">Private Mode </span>
+		</small>&nbsp;
+		{% else %}
+		<small class='text-muted pull-right'>
+		<span class="label label-primary private_public_label" style="cursor:pointer;vertical-align: text-bottom;" data-toggle="tooltip" data-placement="right" title="Student can interact with any member in the course.">Public Mode </span>
+		</small>&nbsp;
+		{% endif %}
+
 	</h1>
+
+    <script>
+    var private_users="{{private_users|safe}}"
+    var current_user ="{{user}}"
+    if(private_users.search('<User: '+current_user+'>') != -1){
+    	var thumbNail_comment='<li class="left clearfix commentlist"><span><i class="fa fa-graduation-cap fa-2x pull-left fa-fw text-muted text-center" style="font-size:2.1em; margin-right:0.2em;"></i></span><div class="chat-body clearfix" style="margin-left: 46px;"><textarea class="form-control" rows="2"></textarea></div></li>'
+    }else{
+    	var thumbNail_comment='<li class="left clearfix commentlist"><span><i class="fa fa-user fa-2x pull-left fa-fw text-muted text-center" style="font-size:2.1em; margin-right:0.2em;"></i></span><div class="chat-body clearfix" style="margin-left: 46px;"><textarea class="form-control" rows="2"></textarea></div></li>'
+    }
+    </script>
 
 	{% if "edit_course" in course_perms%}
 
@@ -69,7 +101,20 @@
 		{% endfor %}
 	</div>
 	</div>
-
+	{% else %}
+	    {% if activity.permission_control %}
+	    <div id='activity_members_div' class='well' style='display:none;'>
+		<span id='activity_members'>GROUP MEMBERS: </span>
+			{% for SingleUser, Permissions in object_course_users.items %}
+			   {% if  not SingleUser.is_superuser %}
+					{% get_obj_perms SingleUser for activity as "activity_temp_perms" %}
+   		            	{% if "view_activity" in activity_temp_perms %}
+		            	&nbsp;<span class="label label-info">{{SingleUser}}</span>
+		            	{% endif %} 
+			   {% endif %}
+			{% endfor %}
+        </div>
+	    {% endif %}
 	{% endif %}
 
 	<div class="container-fluid" style='height:100%;'>
@@ -134,16 +179,20 @@
 				<!-- ************************************************ -->
 				<br>
              	<div id='posts'>
+             		{% if user_post_num != 0 or not activity.read_after_post %}
 	                 <ul id='posts2' class="chat">
 	                 	{% for post in activity.posts.all reversed%}
-	                        
+
+	                        {% if not activity.private_mode or user in private_users or post.creator in private_users or post.creator == user %}
 	                        {% if not post.parent_post %}
 
 		                        <!-- Other's posts -->
 		                        <li class="left clearfix chatlist" data-postid={{post.id}}>
-		                    	<span class="chat-img pull-left">
-		                            <img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt={{ post.creator }} class="img-circle img-responsive" />
-		                        </span>
+								{% if post.creator in private_users or post.creator.is_superuser %}
+								<span><i class="fa fa-graduation-cap fa-2x pull-left fa-border text-muted" style='font-size:2.5em;'></i></span>
+								{% else %}
+								<span><i class="fa fa-user fa-2x pull-left fa-border text-muted" style='font-size:2.5em;'></i></span>
+								{% endif %}
 		                            <div class="chat-body clearfix">
 		                                <div class="header">
 		                                    <strong class="primary-font">{{ post.creator|capfirst }}</strong> <small class="pull-right text-muted">
@@ -192,11 +241,14 @@
 		                        <div>
 		                            <ul class="comment">
 				                 	{% for post2 in activity.posts.all reversed%}
+				                 	    {% if user in private_users or post2.creator in private_users or post2.creator == user %}
 				                 	    {% if post2.parent_post == post %}
 				                        <li class="left clearfix commentlist" data-postid={{post2.id}}>
-				                        	<span class="chat-img pull-left">
-					                            <img src="http://placehold.it/50/55C1E7/fff&amp;ltext=U" alt={{ post2.creator }} class="img-circle  img-responsive" />
-					                        </span>
+				                        	{% if post2.creator in private_users or post2.creator.is_superuser %}
+											<span><i class="fa fa-graduation-cap fa-2x pull-left fa-fw text-muted" style='font-size:2.5em;'></i></span>
+											{% else %}
+											<span><i class="fa fa-user fa-2x pull-left fa-fw text-muted" style='font-size:2.5em;'></i></span>
+											{% endif %}
 				                            <div class="chat-body clearfix">
 				                                <div class="header">
 				                                    <strong class="primary-font">{{ post2.creator|capfirst }}</strong> <small class="pull-right text-muted">
@@ -208,23 +260,33 @@
 				                            </div>
 				                        </li>
 				                        {% endif %}
+				                        {% endif %}
 			                        {% endfor %}
-				                        <li class="left clearfix commentlist">
-				                        	<span class="chat-img pull-left">
-					                            <img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt={{ user.username }} class="img-circle  img-responsive" />
-					                        </span>
-				                            <div class="chat-body clearfix">
-												<textarea class="form-control" rows="2"></textarea>
-				                            </div>
-				                        </li>
+										{% if user in private_users or post.creator.is_superuser %}
+										<li class="left clearfix commentlist">
+										<span><i class="fa fa-graduation-cap fa-2x pull-left fa-fw text-muted text-center" style='font-size:2.2em; margin-right:0.2em;'></i></span>
+			                            <div class="chat-body clearfix" style='margin-left: 46px;'>
+											<textarea class="form-control" rows="2"></textarea>
+			                            </div>
+			                            </li>
+										{% else %}
+										<li class="left clearfix commentlist">
+										<span><i class="fa fa-user fa-2x pull-left fa-fw text-muted text-center" style='font-size:2.3em; margin-right:0.2em;'></i></span>
+			                            <div class="chat-body clearfix" style='margin-left: 46px;'>
+											<textarea class="form-control" rows="2"></textarea>
+			                            </div>
+			                            </li>
+										{% endif %}
 				                    </ul>
 
 				                </div>
 		                        <!--End of Comment Section-->
 
 	                        {% endif %}
+	                        {% endif %}
 	                    {% endfor %}
 	                </ul>
+	                {% endif %}
             </div>
 			</div>
 		</div>

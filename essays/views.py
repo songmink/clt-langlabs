@@ -5,16 +5,16 @@ from django.views.generic.edit import FormView, UpdateView, DeleteView
 from django.core.urlresolvers import reverse_lazy
 
 from core.models import ActivityCollection, AbstractActivity, Post, Lesson
-from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, CreateActivity4UpdateMixin, UsersWithPermsMixin
+from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, CreateActivity4UpdateMixin, UsersWithPermsMixin, ActivityPermsMixin
 from .models import EssayActivity
 
 
-class EssayDetailView(CourseListMixin, ActivityListMixin, UsersWithPermsMixin, DetailView):
+class EssayDetailView(CourseListMixin, ActivityListMixin, UsersWithPermsMixin, ActivityPermsMixin, DetailView):
     model = EssayActivity
     context_object_name = 'activity'
     template_name = 'essay.html'
 
-class EssayUpdateView(CourseListMixin, CreateActivity4UpdateMixin, UpdateView):
+class EssayUpdateView(CourseListMixin, CreateActivity4UpdateMixin, ActivityPermsMixin, UpdateView):
     model=EssayActivity
     context_object_name = 'activity' 
     template_name = 'activity_edit.html'

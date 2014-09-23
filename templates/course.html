@@ -4,7 +4,7 @@
 {% block contentwrap %}
 {% load guardian_tags %}
 {% get_obj_perms user for course as "course_perms" %}
-<h1 class="page-header">{{ course.nickname }}<span class="text-muted">{{ course.title }}</span> 
+<h1 class="page-header" style='margin-top: 18px;'>{{ course.nickname }}<span class="text-muted"><small> {{ course.title }}</small></span> 
 	{% if "edit_course" in course_perms %}
 		<small><small><a href="{% url 'edit_collection' course.id %}" class="text-muted" style='text-decoration:none;'><i class="fa fa-pencil-square-o"></i></a></small></small>
 		<small><small><a href="{% url 'delete_collection' course.id %}" class="text-muted" style='text-decoration:none;'><i class="fa fa-trash-o"></i></a></small></small>
@@ -20,10 +20,10 @@
             <u><strong> User Name </strong></u>
 		</div>
 		<div class='col-xs-4 text-center lead bold'>
-            <u><strong> Full Access </strong></u>
+            <u><strong> Instructor </strong></u>
 		</div>
 		<div class='col-xs-4 text-center lead'>
-            <u><strong> View Only </strong></u>
+            <u><strong> Student </strong></u>
 		</div>
 		{% for SingleUser, Permissions in object_users.items %}
 		   {% if SingleUser != user and not SingleUser.is_superuser %}
@@ -61,16 +61,24 @@
 
 	{% for activities in lesson_list %}
 
-		<h2 class=" text-primary ">{{ activities.grouper.title }}</h2>
-        <div class="row placeholders">
+		<h3 class="text-primary " style='margin-top:3px; margin-bottom:20px;'>{{ activities.grouper.title }}</h3>
+        <div class="row placeholders " >
 	    {% for activity in activities.list %}
-			<div class="col-xs-6 col-sm-3 col-lg-2 placeholder">
-
-				<img src="{% static "img/CLTicon2013-300x294.jpg"%}" class="img-responsive" alt="Generic placeholder ">
-				<a href="{{ activity.get_absolute_url }}"><h3>{{ activity.title }}</h3></a>
-				<div class="text-muted" style="height:61px;overflow: auto;"> {{ activity.instructions|safe }}</div>
-
-			</div>
+	         {% if activity.is_active or "edit_course" in course_perms %}
+	            {% if activity.is_active %}
+				<div class="col-xs-6 col-sm-3 col-lg-2  placeholder">
+					<img src="{% static "img/CLTicon2013-300x294.jpg"%}" class="img-responsive" alt="Generic placeholder ">
+					<a href="{{ activity.get_absolute_url }}"><h4>{{ activity.title }}</h4></a>
+					<div class="text-muted" style="height:61px;overflow: auto;"> {{ activity.instructions|safe }}</div>
+				</div>
+				{% else %}
+				<div class="col-xs-6 col-sm-3 col-lg-2 placeholder" >
+					<img src="{% static "img/CLTicon2013-300x294D.jpg"%}" class="img-responsive" alt="Generic placeholder ">
+					<a href="{{ activity.get_absolute_url }}"><h4 class='text-danger'>{{ activity.title }}</h4></a>
+					<div class="text-muted" style="height:61px;overflow: auto;"> {{ activity.instructions|safe }}</div>
+				</div>
+				{% endif %}
+			 {% endif %}
 	    {% endfor %}
 	    </div>
 

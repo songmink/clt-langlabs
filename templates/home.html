@@ -3,16 +3,27 @@
 
 
 {% block contentwrap %}
-
+{% load guardian_tags %}
 <h2 class="sub-header">Current Courses</h2>
 
-<div class="row placeholders">
+<div class="row placeholders" >
 	{% for course in course_list %}
-		<div class="col-xs-6 col-sm-3 col-lg-2 placeholder">
-		  <img src="{% static "img/CLTicon2013-300x294.jpg"%}" class="img-responsive" alt="Generic placeholder ">
-		  <a href="{{ course.get_absolute_url }}"><h3>{{ course.nickname }}</h3></a>
-		  <span class="text-muted">{{ course.title }}</span>
-		</div>
+	    {% get_obj_perms user for course as "course_temp_perms" %}
+	    {% if course.is_active or "edit_course" in course_temp_perms %}
+		    {% if course.is_active %}
+			<div class="col-xs-6 col-sm-3 col-lg-2 placeholder activated" >
+				 <img src="{% static 'img/CLTicon2013-300x294.jpg'%}" class="img-responsive" alt="Generic placeholder ">
+				  <a href="{{ course.get_absolute_url }}"><h3>{{ course.nickname }}</h3></a>
+				  <span class="text-muted">{{ course.title }}</span>
+			</div>
+		    {% else %}
+			<div class="col-xs-6 col-sm-3 col-lg-2 placeholder deactivated" >
+				 <img src="{% static 'img/CLTicon2013-300x294D.jpg'%}" class="img-responsive" alt="Generic placeholder ">
+				  <a href="{{ course.get_absolute_url }}"><h3 class='text-danger'>{{ course.nickname }}</h3></a>
+				  <span class="text-muted">{{ course.title }}</span>
+			</div>
+		    {% endif %}
+		{% endif %}
 	{% empty %}
     	<p>There are no courses that are current.</p>
 	{% endfor %}

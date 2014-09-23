@@ -29,6 +29,19 @@ $(document).ready(function(){
 
 	});
 
+  $('.private_public_label').mouseenter(function(e) {
+  // console.log('mouseenter')
+     $(this).tooltip('show')
+  })
+  .mouseleave(function(e) {
+    // console.log('mouseleave')
+     $(this).tooltip('hide')
+  });
+
+  $(".activity_members_togg").click(function(){
+      $("#activity_members_div").toggle(20)
+    })
+
 
     //***initialize the rich text editor********************************************************
        rteInit()

@@ -96,3 +96,22 @@ body {
 .placeholder img {
   border-radius: 50%;
 }
+
+.activated{
+  
+}
+.deactivated{
+  opacity: 0.5;
+
+}
+
+a.disabled:active {
+   pointer-events: none;
+   cursor: default;
+}
+
+
+
+
+
+

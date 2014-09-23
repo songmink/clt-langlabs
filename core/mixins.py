@@ -1,5 +1,7 @@
 # mixins.py
 from django.shortcuts import render, get_object_or_404
+from django.core.exceptions import PermissionDenied
+from django.contrib.auth.models import User
 from guardian.shortcuts import get_objects_for_user, get_users_with_perms
 from itertools import chain
 from operator import attrgetter
@@ -26,12 +28,62 @@ class UsersWithPermsMixin(object):
         try:
             # for activity detail view
             context['object_course_users'] = get_users_with_perms( self.get_object().collection,  attach_perms=True, with_superusers=False)
-            context['object_users'] = get_users_with_perms( self.get_object(),  attach_perms=True, with_superusers=False)
+            context['object_users'] = get_users_with_perms( self.get_object(),  attach_perms=False, with_superusers=False)  
+            # get private message users for activity detail view
+            anyperm = get_users_with_perms(self.get_object().collection , attach_perms=True, with_superusers=False)
+            result = User.objects.filter(is_superuser=True).all()
+            for user, perms in anyperm.iteritems():
+                if 'edit_course' in perms: 
+                    result=chain(result, User.objects.filter(username=user))
+            result = list(result)
+            context['private_users'] = result     
         except:
             # for course detail view
             context['object_users'] = get_users_with_perms( self.get_object(),  attach_perms=True, with_superusers=False)
         return context
 
+    def get_users_with_perm(self, permission):
+        '''
+        Returns list of users(worn:not QuerySet) with specific permission for this object
+        :param permission: permission string
+        '''
+        anyperm = get_users_with_perms(self.get_object().collection , attach_perms=True, with_superusers=False)
+        result = User.objects.filter(is_superuser=True).all()
+        print 'super users are:'
+        print result
+        for user, perms in anyperm.iteritems():
+            print permission
+            print perms
+            print result
+            if permission in perms: 
+                print 'old result is:'
+                print result
+                result=chain(result, User.objects.filter(username=user))
+                print User.objects.filter(username=user)
+                print 'yes and new result is'
+                print list(result)
+            else:
+                print 'no'
+
+        result = list(result)
+        
+        return result
+
+class UserPostNumMixin(object):
+
+    def get_context_data(self, **kwargs):
+        context = super(UserPostNumMixin, self).get_context_data(**kwargs)
+        context['user_post_num'] = self.get_object().posts.filter(creator=self.request.user).count()
+
+        return context
+
+class ActivityPermsMixin(object):
+
+    def get_object(self, queryset=None):
+        obj = super(ActivityPermsMixin, self).get_object(queryset)
+        if (not self.request.user.has_perm("core.edit_course", obj.lesson.collection)) & (not obj.lesson.collection.is_active):
+            raise PermissionDenied()
+        return obj
 
 class ActivityListMixin(object):
 

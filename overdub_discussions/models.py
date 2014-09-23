@@ -10,4 +10,5 @@ class OverdubActivity(AbstractActivity):
 	# upload_video = models.FileField(
  #        upload_to='overdub_videos', null=True, blank=True)
 
-	read_after_post = models.BooleanField()
+	read_after_post = models.BooleanField(default=False)
+	private_mode = models.BooleanField(default=False)

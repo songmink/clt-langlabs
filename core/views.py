@@ -16,6 +16,7 @@ from django.views.generic import DetailView, CreateView
 from django.views.generic.edit import FormView, UpdateView, DeleteView
 from django.views.decorators.csrf import csrf_exempt
 from django.core.urlresolvers import reverse_lazy
+from django.core.exceptions import PermissionDenied
 
 from core.mixins import CourseListMixin, ActivityListMixin, UsersWithPermsMixin
 
@@ -39,11 +40,17 @@ class CourseIndexView(LoginRequiredMixin, CourseListMixin, ActivityListMixin, Us
     context_object_name = 'course'
     template_name = 'course.html'
 
+    def get_object(self, queryset=None):
+        obj = super(CourseIndexView, self).get_object(queryset)
+        if (not self.request.user.has_perm("core.edit_course", obj)) & (not obj.is_active):
+            raise PermissionDenied()
+        return obj
+
 
 class CourseCreateView(LoginRequiredMixin, CourseListMixin, CreateView):
     model = ActivityCollection
     template_name = 'collection_create.html'
-    fields = ['title', 'nickname', 'accesscode']
+    fields = ['title', 'nickname', 'accesscode', 'is_active']
 
     def form_valid(self, form):
         form.save()
@@ -60,14 +67,14 @@ class CourseCreateView(LoginRequiredMixin, CourseListMixin, CreateView):
 class CourseUpdateView(LoginRequiredMixin, PermissionRequiredMixin, CourseListMixin, UpdateView):
     model = ActivityCollection
     template_name = 'collection_edit.html'
-    fields = ['title', 'nickname', 'accesscode']
+    fields = ['title', 'nickname', 'accesscode', 'is_active']
     permission_required = 'core.edit_course'
     raise_exception = True
 
     def form_valid(self, form):
         form.save()
         assign_perm('core.edit_course', self.request.user, form.instance)
-        return super(CourseCreateView, self).form_valid(form)
+        return super(CourseUpdateView, self).form_valid(form)
 
 class CourseDeleteView(LoginRequiredMixin, PermissionRequiredMixin, CourseListMixin, DeleteView):
     model = ActivityCollection
