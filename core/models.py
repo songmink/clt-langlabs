@@ -4,6 +4,8 @@ from django.core.urlresolvers import reverse
 from django.core.validators import MinLengthValidator
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.generic import GenericForeignKey
+from guardian.shortcuts import get_objects_for_user, get_users_with_perms
+from itertools import chain
 
 import os
 
@@ -19,6 +21,8 @@ class ActivityCollection(models.Model):
     nickname = models.CharField(max_length=100)
     accesscode = models.CharField(max_length=255, blank=True, null=True, unique = True, verbose_name='Access Code',validators=[MinLengthValidator(10)])
     is_active = models.BooleanField(default=True)
+    is_public = models.BooleanField(default=False, blank=True)
+
     # membership = models.ManyToManyField(User)
 
     class Meta:
@@ -26,6 +30,15 @@ class ActivityCollection(models.Model):
             ('view_course', 'view course'),
             ('edit_course', 'edit course'),
         )
+
+    def get_private_users(self):
+        anyperm = get_users_with_perms(self, attach_perms=True, with_superusers=False)
+        result = ''
+        for user, perms in anyperm.iteritems():
+            if 'edit_course' in perms: 
+                result=chain(result, User.objects.filter(username=user))
+        result = list(result)
+        return result     
 
     def get_absolute_url(self):
         return reverse('course', args=[str(self.id)])

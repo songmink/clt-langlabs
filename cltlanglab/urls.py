@@ -6,7 +6,7 @@ from django.contrib import admin
 from django.conf.urls.static import static
 admin.autodiscover()
 
-from core.views import IndexView, HomeView, CourseIndexView, CourseCreateView, CourseUpdateView, CourseDeleteView, ActivityCreateIndexView, LessonCreateView, LessonAddView, savePost, fileUpload, subscribeCourse, changePerm
+from core.views import IndexView, HomeView, CourseListView, CourseIndexView, CourseCreateView, CourseUpdateView, CourseDeleteView, ActivityCreateIndexView, LessonCreateView, LessonAddView, savePost, fileUpload, subscribeCourse, changePerm
 from discussions.views import DiscussionCreateView, DiscussionDetailView, DiscussionUpdateView, DiscussionDeleteView
 from essays.views import EssayCreateView, EssayDetailView, EssayUpdateView, EssayDeleteView
 from overdub_discussions.views import OverdubCreateView, OverdubDetailView, OverdubUpdateView, OverdubDeleteView
@@ -36,6 +36,7 @@ urlpatterns = patterns('',
     url(r'^overdub/add/(?P<pk>\d+)$', OverdubCreateView.as_view(), name='create_overdub'),
     url(r'^overdub/edit/(?P<pk>\d+)$', OverdubUpdateView.as_view(), name='edit_overdub'),
     url(r'^overdub/delete/(?P<pk>\d+)$', OverdubDeleteView.as_view(), name='delete_overdub'),
+    url(r'^searchcourse/$', CourseListView.as_view(), name='course_list'),
     url(r'^post/save/$',savePost, name='save_post'),
     url(r'^upload/$', fileUpload, name='file_upload'),
     url(r'^subscribe/(\w+)/$', subscribeCourse, name='subscribe_course'),

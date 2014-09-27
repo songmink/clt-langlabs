@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+
+{% block contentwrap %}
+{% load guardian_tags %}
+<h2 class="sub-header">Find Your Course</h2>
+<script>
+var courses_example=[{name:"New York",state:"WA"},{name:"Las Vegas",state:"NV"},{name:"Boston",state:"MA"}];
+var courses_json = {{courses_json|safe}};
+var courses = TAFFY(courses_json)
+var keywords = TAFFY()
+var previousSearchInput=''
+var cursorInSearchBox = false
+var currentMouseOver = false
+var currentMouseOverObject
+</script>
+<div class='row placeholders'>
+	<br>
+	<br>
+	<div class="input-group col-xs-6 col-xs-offset-3">
+		  <input id='searchInput' class="form-control" type="text" placeholder="input keywords for courses and instructors">
+		  <span class="input-group-addon courseSearchButton" style='cursor:pointer;'><i class="fa fa-search fa-fw" ></i></span>
+	</div>
+    <div id='autoComplete' class="list-group col-xs-6 col-xs-offset-3" style='padding-right:0px; text-align:left; cursor:pointer;z-index: 1; position:absolute;max-height:300px;overflow:auto;'></div>
+	<div id="searchResult" class='col-xs-6 col-xs-offset-3'>
+
+	</div>
+</div>
+
+
+<div class="row placeholders course_result_div" >
+
+    <div class='col-xs-3 col-xs-offset-1 text-left lead Bold'>
+        <u><strong> Course </strong></u>
+	</div>
+	<div class='col-xs-4 text-left lead bold'>
+        <u><strong> Instructor </strong></u>
+	</div>
+	<div class='col-xs-4 text-left lead'>
+        <u><strong> Join </strong></u>
+	</div>
+
+	{% for course in courses %}
+     <div class='course_row' data-coursename="{{course.title}}">
+	    <div class='col-xs-3 col-xs-offset-1 text-left lead Bold'>
+	        <p> {{course.title}} </p>
+		</div>
+		<div class='col-xs-4 text-left lead bold'>
+			<!-- <select class="form-control"> -->
+                <span><i class="fa fa-graduation-cap"></i>
+				{% for private_user in course.get_private_users %}
+			    <!-- <option>{{private_user}}</option> -->
+                {{private_user}}&nbsp;
+				{% endfor %}
+                </span>
+			<!-- </select> -->
+		</div>
+		<div class='col-xs-4 text-left lead'>
+	        <p> 
+	        	{% get_obj_perms user for course as "temp_course_perms" %}
+	        	{% if course.is_public %}
+		        	{% if "view_course" in temp_course_perms or "edit_course" in temp_course_perms %}
+		        	    Subscribed
+		        	{% else %}
+			        	<a href="{% url 'subscribe_course' course.accesscode %}" class="btn btn-success btn-sm" role="button"> &nbsp;JOIN NOW <span class="glyphicon glyphicon-chevron-right"></span>&nbsp; </a>
+		        	{% endif %}
+	        	{% else %} 
+	        	Request accesscode from instructor. 
+	        	{% endif %}
+	        </p>
+		</div>
+    </div>
+	{% endfor %}
+</div>
+
+{% endblock contentwrap %}
+
+{% block stylesheets %} 
+<script src="{% static "taffydb/taffy.js" %}"></script>
+<link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
+<link href="{% static "css/course_list.css" %}" rel="stylesheet">
+{% endblock stylesheets%}
+{% block more_javascript %} 
+<script src="{% static "js/course_list.js" %}"></script>
+{% endblock more_javascript %}

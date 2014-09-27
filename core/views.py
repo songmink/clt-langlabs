@@ -34,6 +34,28 @@ class IndexView(TemplateView):
 class HomeView(LoginRequiredMixin, CourseListMixin, TemplateView):
     template_name = 'home.html'
 
+class CourseListView(LoginRequiredMixin, CourseListMixin,ListView):
+    model = ActivityCollection
+    context_object_name = 'courses'
+    template_name = 'course_list.html'
+
+    def get_queryset(self):
+        return ActivityCollection.objects.filter(is_active=True).all()
+
+    def get_context_data(self, **kwargs):
+        context = super(CourseListView, self).get_context_data(**kwargs)
+        # try:
+        data = []
+        courses=self.get_queryset()
+        for course in courses:
+            private_users=[]
+            for private_user in course.get_private_users():
+                private_users.append(private_user.username)
+            data.append({"course_name":course.title, "instructors":private_users})
+        context['courses_json'] = json.dumps(data)
+        # except:
+            # pass
+        return context
 
 class CourseIndexView(LoginRequiredMixin, CourseListMixin, ActivityListMixin, UsersWithPermsMixin, DetailView):
     model = ActivityCollection
@@ -50,7 +72,7 @@ class CourseIndexView(LoginRequiredMixin, CourseListMixin, ActivityListMixin, Us
 class CourseCreateView(LoginRequiredMixin, CourseListMixin, CreateView):
     model = ActivityCollection
     template_name = 'collection_create.html'
-    fields = ['title', 'nickname', 'accesscode', 'is_active']
+    fields = ['title', 'nickname', 'accesscode', 'is_active','is_public']
 
     def form_valid(self, form):
         form.save()
@@ -67,7 +89,7 @@ class CourseCreateView(LoginRequiredMixin, CourseListMixin, CreateView):
 class CourseUpdateView(LoginRequiredMixin, PermissionRequiredMixin, CourseListMixin, UpdateView):
     model = ActivityCollection
     template_name = 'collection_edit.html'
-    fields = ['title', 'nickname', 'accesscode', 'is_active']
+    fields = ['title', 'nickname', 'accesscode', 'is_active','is_public']
     permission_required = 'core.edit_course'
     raise_exception = True
 
