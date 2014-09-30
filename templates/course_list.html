@@ -61,7 +61,7 @@ var currentMouseOverObject
 	        	{% get_obj_perms user for course as "temp_course_perms" %}
 	        	{% if course.is_public %}
 		        	{% if "view_course" in temp_course_perms or "edit_course" in temp_course_perms %}
-		        	    Subscribed
+		        	    <a style='color:black;' href="{{ course.get_absolute_url }}">Subscribed</a>
 		        	{% else %}
 			        	<a href="{% url 'subscribe_course' course.accesscode %}" class="btn btn-success btn-sm" role="button"> &nbsp;JOIN NOW <span class="glyphicon glyphicon-chevron-right"></span>&nbsp; </a>
 		        	{% endif %}

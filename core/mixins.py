@@ -81,7 +81,8 @@ class ActivityPermsMixin(object):
 
     def get_object(self, queryset=None):
         obj = super(ActivityPermsMixin, self).get_object(queryset)
-        if (not self.request.user.has_perm("core.edit_course", obj.lesson.collection)) & (not obj.lesson.collection.is_active):
+        print obj
+        if (not self.request.user.has_perm("core.edit_course", obj.collection)) & (not obj.collection.is_active):
             raise PermissionDenied()
         return obj
 
@@ -111,8 +112,10 @@ class ActivityListMixin(object):
             acts = chain(acts, i.filter(lesson__isnull=False))
 
         # Orphans - Activities NOT associated with lessons
+        orphan_num=0
         for i in nodes:
             act_orphans = chain(act_orphans, i.filter(lesson__isnull=True))
+            orphan_num+=i.filter(lesson__isnull=True).count()
 
         # Sort the activities list by lesson display order then by activity
         # display order
@@ -122,6 +125,7 @@ class ActivityListMixin(object):
         context['course'] = course
         context['activity_list'] = acts
         context['orphan_list'] = act_orphans
+        context['orphan_num'] = orphan_num
 
         # determine if we are generating list from an activity object context (self.object) or from a course object using view arguments (pk)
       # try:# in activity index view
@@ -151,7 +155,7 @@ class CreateActivity4UpdateMixin(object):
         context = super(CreateActivity4UpdateMixin, self).get_context_data(**kwargs)
         context['activity_type'] = self.activity_type
         context['course'] = get_object_or_404(
-            ActivityCollection, pk=self.object.lesson.collection.id)
+            ActivityCollection, pk=self.object.collection.id)
         return context
 
 class RecorderMixin(object):

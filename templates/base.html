@@ -53,7 +53,7 @@
                 {% for course_item in course_list %}
                   {% get_obj_perms user for course_item as "course_temp_perms" %}
                   {% if course_item.is_active or "edit_course" in course_temp_perms %}
-                  <li {% if course_item == course %} class="bg-primary" {% endif %}><a href="{{ course_item.get_absolute_url }}">{{ course_item.nickname }}</a></li>
+                  <li {% if course_item == course %} class="bg-primary" {% endif %}><a href="{{ course_item.get_absolute_url }}">{{ course_item.title }}</a></li>
                   {% endif %}
                 {% endfor %}
               {% endblock course_item_list %}

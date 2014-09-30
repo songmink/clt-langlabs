@@ -51,7 +51,7 @@ class DiscussionUpdateView(CourseListMixin, CreateActivity4UpdateMixin, Activity
         form = super(DiscussionUpdateView, self).get_form(
             form_class)  # instantiate using parent
         form.fields['lesson'].queryset = Lesson.objects.filter(
-            collection=get_object_or_404(ActivityCollection, pk=self.object.lesson.collection.id))
+            collection=get_object_or_404(ActivityCollection, pk=self.object.collection.id))
         return form
 
 class DiscussionDeleteView(CourseListMixin, DeleteView):
