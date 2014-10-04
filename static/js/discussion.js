@@ -41,6 +41,20 @@ $(document).ready(function(){
   $(".activity_members_togg").click(function(){
       $("#activity_members_div").toggle(20)
     })
+  
+  // activity copy related code 
+  $(".activity_copy_togg").click(function(){
+      $("#activity_copy_div").toggle(20)
+    })
+
+  $("#activity_copy_btn").click(function(){
+    var ajax_temp_URL= $(this).data('ajaxurl')
+    var activity_temp_type = $(this).data('activitytype')
+    var activity_temp_id = $(this).data('activityid')
+    var course_temp_name = $("#activity_copy_course").val()
+    var csrftoken=$("input[name=csrfmiddlewaretoken]").val()
+    ajaxCopyActivity(ajax_temp_URL, activity_temp_type, activity_temp_id, course_temp_name, csrftoken)
+  })
 
 
     //***initialize the rich text editor********************************************************
@@ -395,6 +409,31 @@ function ajaxChangePermission(ajax_URL, username, code_name, objecttype, objecti
     return changeSuccess
 }
 
+function ajaxCopyActivity(ajax_URL, activitytype, activityid, coursename, csrftoken){
+
+    $.ajax({
+      type: "POST",
+      url: ajax_URL,
+      async: false,
+      beforeSend: function(xhr) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken);
+      },
+      data: { activity_type: activitytype, activity_id: activityid, course_name: coursename}
+    })
+    .done(function( msg) {
+      // alert( );
+      console.log('/activitytype: '+activitytype+'/activityid: '+ activityid+ '/coursename: '+coursename)
+      console.log("Course Copied: " + msg )
+      if(msg.indexOf("success_redirect")!=-1){
+          window.location.href = msg.slice(16)
+      }
+      
+    })
+    .fail(function( jqXHR, textStatus) {
+      console.log("Request failed: " + textStatus)
+    });
+
+}
 
 
 

@@ -19,6 +19,7 @@ ACTIVITY_TYPES = (
 class ActivityCollection(models.Model):
     title = models.CharField(max_length=100, unique=True)
     nickname = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
     accesscode = models.CharField(max_length=255, blank=True, null=True, unique = True, verbose_name='Access Code',validators=[MinLengthValidator(10)])
     is_active = models.BooleanField(default=True)
     is_public = models.BooleanField(default=False, blank=True)
@@ -38,7 +39,11 @@ class ActivityCollection(models.Model):
             if 'edit_course' in perms: 
                 result=chain(result, User.objects.filter(username=user))
         result = list(result)
-        return result     
+        return result
+
+    def get_user_num(self):
+        anyperm = get_users_with_perms(self, attach_perms=False, with_superusers=False)
+        return len(anyperm)     
 
     def get_absolute_url(self):
         return reverse('course', args=[str(self.id)])

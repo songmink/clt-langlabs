@@ -7,7 +7,7 @@
 {% get_obj_perms user for course as "course_perms" %}
 {% get_obj_perms user for activity as "activity_perms" %}
 
-{% if activity.permission_control and 'view_activity' not in activity_perms %}
+{% if activity.permission_control and 'view_activity' not in activity_perms and 'edit_course' not in couse_perms %}
 
 <h1 class='text-primary text-center'> You're not part of this activity </h1>
 

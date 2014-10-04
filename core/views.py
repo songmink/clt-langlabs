@@ -17,6 +17,7 @@ from django.views.generic.edit import FormView, UpdateView, DeleteView
 from django.views.decorators.csrf import csrf_exempt
 from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import PermissionDenied
+from itertools import chain
 
 from core.mixins import CourseListMixin, ActivityListMixin, UsersWithPermsMixin
 
@@ -72,7 +73,7 @@ class CourseIndexView(LoginRequiredMixin, CourseListMixin, ActivityListMixin, Us
 class CourseCreateView(LoginRequiredMixin, CourseListMixin, CreateView):
     model = ActivityCollection
     template_name = 'collection_create.html'
-    fields = ['title', 'nickname', 'accesscode', 'is_active','is_public']
+    fields = ['title', 'nickname', 'description', 'accesscode', 'is_active','is_public']
 
     def form_valid(self, form):
         form.save()
@@ -89,7 +90,7 @@ class CourseCreateView(LoginRequiredMixin, CourseListMixin, CreateView):
 class CourseUpdateView(LoginRequiredMixin, PermissionRequiredMixin, CourseListMixin, UpdateView):
     model = ActivityCollection
     template_name = 'collection_edit.html'
-    fields = ['title', 'nickname', 'accesscode', 'is_active','is_public']
+    fields = ['title', 'nickname', 'description', 'accesscode', 'is_active','is_public']
     permission_required = 'core.edit_course'
     raise_exception = True
 
@@ -104,7 +105,6 @@ class CourseDeleteView(LoginRequiredMixin, PermissionRequiredMixin, CourseListMi
     template_name = 'activity_delete.html'
     permission_required = 'core.edit_course'
     raise_exception = True
-
 
 class LessonCreateView(LoginRequiredMixin, CourseListMixin, CreateView):
     model = Lesson
@@ -198,6 +198,35 @@ def subscribeCourse(request, accesskey):
 
     return  redirect(courseToSubscribe)
 
+# duplicate a course:
+@login_required
+def CourseCopyView(request, course_id):
+    # copy course
+    courseToCopy = get_object_or_404(ActivityCollection, pk=course_id)
+    lessonsToCopy = courseToCopy.lesson_set.all()
+    activitiesToCopy = list(chain(courseToCopy.discussions.all(),courseToCopy.essays.all(),courseToCopy.overdubs.all()))
+    courseToCopy.pk = None
+    courseToCopy.title = courseToCopy.title+'_copy'
+    courseToCopy.accesscode = courseToCopy.accesscode+'_copy'
+    courseToCopy.is_active = False
+    courseToCopy.save()
+    assign_perm('core.edit_course', request.user, courseToCopy)
+    # copy course lessons
+    for lessonToCopy in lessonsToCopy:
+        lessonToCopy.pk = None
+        lessonToCopy.collection = courseToCopy
+        lessonToCopy.save()
+    # copy course activities
+    for activityToCopy in activitiesToCopy:
+        activityToCopy.pk=None
+        activityToCopy.collection = courseToCopy
+        activityToCopy.save()
+        activityToCopy.posts.clear()
+        if activityToCopy.lesson is not None:
+            activityToCopy.lesson = courseToCopy.lesson_set.filter( title = activityToCopy.lesson.title )[0]
+    
+    return  redirect(courseToCopy)
+
 # change user object permission
 @login_required
 def changePerm(request):
@@ -247,7 +276,41 @@ def changePerm(request):
     else:
         return HttpResponse('post ajax required') 
 
+# copy activity
+@login_required
+def copyActivity(request):
 
+    if request.method == 'POST':
+        request_user = request.user
+        activity_object_type = request.POST.get("activity_type", '')
+        activity_object_id = request.POST.get("activity_id", '')
+        activity_copy_coursename = request.POST.get("course_name", '')
+        #  validation and change perm
+        try:
+            course_to_attach = ActivityCollection.objects.filter(title=activity_copy_coursename)[0]
+        except:
+            return("No such course")
+        try:
+            if activity_object_type == 'discussion':
+                target_object = DiscussionActivity.objects.filter(id=activity_object_id)[0]
+            elif activity_object_type == 'essay':
+                target_object = EssayActivity.objects.filter(id=activity_object_id)[0]
+            elif activity_object_type == 'overdub':
+                target_object = OverdubActivity.objects.filter(id=activity_object_id)[0]
+            else:
+                return HttpResponse('wrong object type')
+        except:
+            return HttpResponse('no such object')
+        target_object.pk=None
+        target_object.title= target_object.title+"_copy"
+        target_object.collection=course_to_attach
+        target_object.lesson = None
+        target_object.is_active = False
+        target_object.save()
+        target_object.posts.clear()
+        return HttpResponse("success_redirect"+course_to_attach.get_absolute_url())
+    else:
+        return HttpResponse('post ajax required') 
 
 
 

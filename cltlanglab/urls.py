@@ -6,7 +6,7 @@ from django.contrib import admin
 from django.conf.urls.static import static
 admin.autodiscover()
 
-from core.views import IndexView, HomeView, CourseListView, CourseIndexView, CourseCreateView, CourseUpdateView, CourseDeleteView, ActivityCreateIndexView, LessonCreateView, LessonAddView, savePost, fileUpload, subscribeCourse, changePerm
+from core.views import IndexView, HomeView, CourseListView, CourseIndexView, CourseCreateView, CourseUpdateView, CourseDeleteView, CourseCopyView, ActivityCreateIndexView, LessonCreateView, LessonAddView, savePost, fileUpload, subscribeCourse, changePerm, copyActivity
 from discussions.views import DiscussionCreateView, DiscussionDetailView, DiscussionUpdateView, DiscussionDeleteView
 from essays.views import EssayCreateView, EssayDetailView, EssayUpdateView, EssayDeleteView
 from overdub_discussions.views import OverdubCreateView, OverdubDetailView, OverdubUpdateView, OverdubDeleteView
@@ -21,6 +21,7 @@ urlpatterns = patterns('',
     url(r'^course/add/$', CourseCreateView.as_view(), name='create_collection'),
     url(r'^course/edit/(?P<pk>\d+)$', CourseUpdateView.as_view(), name='edit_collection'),
     url(r'^course/delete/(?P<pk>\d+)$', CourseDeleteView.as_view(), name='delete_collection'),
+    url(r'^course/copy/(\w+)/$', CourseCopyView, name='copy_collection'),
     url(r'^lesson/add/(?P<addpk>\d+)$', LessonCreateView.as_view(), name='create_lesson'),
     url(r'^lesson/add2/(?P<addpk>\d+)$', LessonAddView.as_view(), name='add_lesson'),
     url(r'^activity/add/(?P<pk>\d+)$', ActivityCreateIndexView.as_view(), name='create_activity'),
@@ -41,6 +42,7 @@ urlpatterns = patterns('',
     url(r'^upload/$', fileUpload, name='file_upload'),
     url(r'^subscribe/(\w+)/$', subscribeCourse, name='subscribe_course'),
     url(r'^perm/change/$', changePerm, name='change_perm'),
+    url(r'^activity/copy/$', copyActivity, name='copy_activity'),
     
     url(r'^admin/', include(admin.site.urls)),
     url(r'^socket\.io', include(socketio.sdjango.urls)),
