@@ -20,7 +20,7 @@
 	<small><small><a href="{% url 'edit_discussion' activity.id %}" class="text-muted" style='text-decoration:none;'><i class="fa fa-pencil-square-o"></i></a></small></small>
 	<small><small><a href="{% url 'delete_discussion' activity.id %}" class="text-muted" style='text-decoration:none;'><i class="fa fa-trash-o"></i></a></small></small>
 	<small><small><a class="text-muted activity_admin_togg" style='text-decoration:none; cursor: pointer;'><i class="fa fa-user"></i></a></small></small>
-	<small><small><a class="text-muted activity_copy_togg" style='text-decoration:none;'><i class="fa fa-files-o"></i></a></small></small>
+	<small><small><a class="text-muted activity_copy_togg" style='text-decoration:none; cursor:pointer;'><i class="fa fa-files-o"></i></a></small></small>
 	{% else %}
         {% if activity.permission_control %}
         	<small><small><a class="text-muted activity_members_togg" style='text-decoration:none; cursor: pointer;'><i class="fa fa-users"></i></a></small></small>
@@ -110,7 +110,7 @@
                 {% for course_item in course_list %}
                   {% get_obj_perms user for course_item as "course_temp_perms" %}
                   {% if course_item.is_active or "edit_course" in course_temp_perms %}
-                  <option {% if course_item == course %} class="bg-primary" {% endif %}>{{ course_item.title }}</option>
+                  <option data-courseid="{{course_item.id}}">{{ course_item.title }}</option>
                   {% endif %}
                 {% endfor %}
         </select>

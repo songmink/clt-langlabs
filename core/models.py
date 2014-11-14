@@ -23,6 +23,7 @@ class ActivityCollection(models.Model):
     accesscode = models.CharField(max_length=255, blank=True, null=True, unique = True, verbose_name='Access Code',validators=[MinLengthValidator(10)])
     is_active = models.BooleanField(default=True)
     is_public = models.BooleanField(default=False, blank=True)
+    is_deleted = models.BooleanField(default=False, blank=True)
 
     # membership = models.ManyToManyField(User)
 
@@ -97,8 +98,8 @@ class AbstractActivity(models.Model):
 
     title = models.CharField(max_length=100)
     instructions = models.TextField()
-    lesson = models.ForeignKey(
-        Lesson, blank=True, null=True, on_delete=models.SET_NULL)
+    lesson = models.ManyToManyField(
+        Lesson, blank=True, null=True)
     display_order = models.IntegerField(default=0)
     created = models.DateTimeField(auto_now_add=True, null=True)
     modified = models.DateTimeField(auto_now=True, null=True)
@@ -107,6 +108,7 @@ class AbstractActivity(models.Model):
         max_length=100, choices=ACTIVITY_TYPES, default=DISCUSSION)
     posts = models.ManyToManyField(Post, null=True, blank=True)
     permission_control = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(default=False, blank=True)
 
     class Meta:
         abstract = True
@@ -116,9 +118,6 @@ class AbstractActivity(models.Model):
 
     def get_siblings(self):
         return self.objects.filter(collection=self.collection).order_by("display_order")
-
-    def get_user_post_num(self, request):
-        return self.posts_set.filter(creator = request.user).all()
 
     def get_absolute_url(self):
         return reverse(self.activity_type, args=[str(self.id)])

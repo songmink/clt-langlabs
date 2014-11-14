@@ -2,11 +2,15 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import User
+from django.http import HttpResponseRedirect
 from guardian.shortcuts import get_objects_for_user, get_users_with_perms
 from itertools import chain
 from operator import attrgetter
+from copy import deepcopy
+from datetime import datetime
 
 from core.models import ActivityCollection, AbstractActivity, Post, Lesson
+from essays.models import EssayResponse
 
 from cltlanglab.settings import base
 
@@ -15,10 +19,23 @@ class CourseListMixin(object):
     def get_context_data(self, **kwargs):
         context = super(CourseListMixin, self).get_context_data(**kwargs)
         try:
-            context['course_list'] = get_objects_for_user(self.request.user, ['core.view_course', 'core.edit_course'], any_perm=True)
+            context['course_list'] = get_objects_for_user(self.request.user, ['core.view_course', 'core.edit_course'], any_perm=True).filter(is_deleted=False)
         except:
             pass
         return context
+
+class FakeDeleteMixin(object):
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if not self.success_url:
+            self.success_url = self.object.collection.get_absolute_url()
+        time = datetime.now()
+        timeStamp = str(time.month)+"/"+str(time.day)+"/"+str(time.year)+" "+str(time.hour)+":"+str(time.minute)+":"+str(time.second)
+        self.object.is_deleted = True
+        self.object.title = "(deleted - "+timeStamp+")"+self.object.title
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
 
 class UsersWithPermsMixin(object):
 
@@ -82,7 +99,7 @@ class ActivityPermsMixin(object):
     def get_object(self, queryset=None):
         obj = super(ActivityPermsMixin, self).get_object(queryset)
         print obj
-        if (not self.request.user.has_perm("core.edit_course", obj.collection)) & (not obj.collection.is_active):
+        if ( (not self.request.user.has_perm("core.edit_course", obj.collection)) and (not obj.collection.is_active) ) or (obj.is_deleted):
             raise PermissionDenied()
         return obj
 
@@ -98,18 +115,28 @@ class ActivityListMixin(object):
             course = self.get_object()
 
         nodes = [
-            course.discussions.all(),
-            course.essays.all(),
-            course.overdubs.all(),
+            course.discussions.filter(is_deleted=False).all(),
+            course.essays.filter(is_deleted=False).all(),
+            course.overdubs.filter(is_deleted=False).all(),
             # Add new types here...
         ]
 
-        acts = ''
+        acts = []
+        acts_navi = []
         act_orphans = ''
 
         # Activities associated with lessons...
         for i in nodes:
-            acts = chain(acts, i.filter(lesson__isnull=False))
+            for eachActivity in i:
+                print eachActivity.lesson.count()
+                if eachActivity.lesson.count() != 0:
+                    acts_navi.append(eachActivity)
+                    for j in eachActivity.lesson.all():
+                        tempActivity = deepcopy(eachActivity)
+                        tempActivity.activity_to_lesson = j
+                        acts.append(tempActivity)
+                        print tempActivity
+                        print tempActivity.activity_to_lesson
 
         # Orphans - Activities NOT associated with lessons
         orphan_num=0
@@ -118,12 +145,19 @@ class ActivityListMixin(object):
             orphan_num+=i.filter(lesson__isnull=True).count()
 
         # Sort the activities list by lesson display order then by activity
-        # display order
-        acts = sorted(acts, key=attrgetter(
-            'lesson.display_order', 'display_order'))
+        # display order 
+        # we may do the sorting as an array
+        acts.sort(key=lambda x: x.activity_to_lesson.title, reverse=False)
+        acts.sort(key=lambda x: x.activity_to_lesson.display_order, reverse=False)
+        # acts_navi.sort(key=lambda x: x.lesson.display_order, reverse=False)
+        for i in acts:
+            print i.title +' || '+i.activity_to_lesson.title+'||'+str(i.activity_to_lesson.id)
+        # acts = sorted(acts, key=attrgetter(
+        #     'activity_to_lesson.display_order', 'display_order'))
         
         context['course'] = course
-        context['activity_list'] = acts
+        context['activity_list_course'] = acts
+        context['activity_list'] = acts_navi
         context['orphan_list'] = act_orphans
         context['orphan_num'] = orphan_num
 
@@ -167,3 +201,18 @@ class RecorderMixin(object):
         context['recorder_myDirectory'] = base.recorder_myDirectory
         print 'my server is : '+context['recorder_myServer']
         return context
+
+class EssayResponseListMixin(object):
+
+    def get_context_data(self, **kwargs):
+        context = super(EssayResponseListMixin, self).get_context_data(**kwargs)
+        context['submitted_essay_responses'] = EssayResponse.objects.filter(user=self.request.user, essay_activity=self.get_object()).exclude(status='in progress').order_by('-draft_number')
+        context['progressing_essay_response'] = EssayResponse.objects.filter(user=self.request.user, essay_activity=self.get_object(), status='in progress').order_by('modified','-draft_number').first()
+        context['graded_essay_responses'] = EssayResponse.objects.filter(user=self.request.user, essay_activity=self.get_object(), status='graded').order_by('-draft_number')
+        context['all_essay_responses'] = EssayResponse.objects.filter(essay_activity=self.get_object()).exclude(status='in progress').order_by('user','-draft_number')
+
+        return context
+
+
+
+

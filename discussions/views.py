@@ -7,7 +7,7 @@ from django.forms import ModelChoiceField
 from django.core.urlresolvers import reverse_lazy
 
 from core.models import ActivityCollection, AbstractActivity, Post, Lesson
-from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, RecorderMixin, CreateActivity4UpdateMixin, UsersWithPermsMixin, ActivityPermsMixin, UserPostNumMixin
+from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, RecorderMixin, CreateActivity4UpdateMixin, UsersWithPermsMixin, ActivityPermsMixin, UserPostNumMixin, FakeDeleteMixin 
 
 from .models import DiscussionActivity
 
@@ -54,10 +54,17 @@ class DiscussionUpdateView(CourseListMixin, CreateActivity4UpdateMixin, Activity
             collection=get_object_or_404(ActivityCollection, pk=self.object.collection.id))
         return form
 
-class DiscussionDeleteView(CourseListMixin, DeleteView):
+class DiscussionDeleteView(CourseListMixin, FakeDeleteMixin, DeleteView):
     model = DiscussionActivity
-    success_url = reverse_lazy('home')
+    # success_url = 'ToBeReplaced'
     template_name = 'activity_delete.html'
+
+    def get_success_url(self):
+        if self.success_url:
+            return self.success_url % self.object.__dict__
+        else:
+            raise ImproperlyConfigured(
+                "No URL to redirect to. Provide a success_url.")
 
 
 

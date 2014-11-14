@@ -1,0 +1,128 @@
+.chat
+{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.comment
+{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: none;
+}
+
+.commentlist
+{   
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    padding: 5px;
+    border: 1px solid #EFEFEF;
+    border-left:3px solid #EFEFEF;
+    box-shadow: 0px 0px 0px #888888;
+}
+
+.chatlist
+{   
+    margin-top: 14px;
+    margin-bottom: 3px;
+    padding: 5px;
+    border: 1px solid #EFEFEF;
+    box-shadow: 1px 2px 0px #888888;
+}
+
+li.left .chat-body
+{
+    margin-left: 30px;
+}
+
+li.right .chat-body
+{
+    margin-right: 60px;
+}
+
+*/
+.panel .slidedown .glyphicon, .chat .glyphicon
+{
+    margin-right: 5px;
+}
+
+
+
+.progress_drafts:after {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 1px;
+  background: #c00;
+  content: "";
+  width: 100%;
+  display: block;
+}
+
+/*bootstrap styles for callout*/
+
+.bs-callout {
+    padding: 20px;
+    margin: 20px 0;
+    border: 1px solid #eee;
+    border-left-width: 5px;
+    border-radius: 3px;
+}
+.bs-callout h4 {
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+.bs-callout p:last-child {
+    margin-bottom: 0;
+}
+.bs-callout code {
+    border-radius: 3px;
+}
+.bs-callout+.bs-callout {
+    margin-top: -5px;
+}
+.bs-callout-default {
+    border-left-color: #777;
+}
+.bs-callout-default h4 {
+    color: #777;
+}
+.bs-callout-primary {
+    border-left-color: #428bca;
+}
+.bs-callout-primary h4 {
+    color: #428bca;
+}
+.bs-callout-success {
+    border-left-color: #5cb85c;
+}
+.bs-callout-success h4 {
+    color: #5cb85c;
+}
+.bs-callout-danger {
+    border-left-color: #d9534f;
+}
+.bs-callout-danger h4 {
+    color: #d9534f;
+}
+.bs-callout-warning {
+    border-left-color: #f0ad4e;
+}
+.bs-callout-warning h4 {
+    color: #f0ad4e;
+}
+.bs-callout-info {
+    border-left-color: #5bc0de;
+}
+.bs-callout-info h4 {
+    color: #5bc0de;
+}
+
+
+
+
+
+

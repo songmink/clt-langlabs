@@ -6,9 +6,9 @@ from django.contrib import admin
 from django.conf.urls.static import static
 admin.autodiscover()
 
-from core.views import IndexView, HomeView, CourseListView, CourseIndexView, CourseCreateView, CourseUpdateView, CourseDeleteView, CourseCopyView, ActivityCreateIndexView, LessonCreateView, LessonAddView, savePost, fileUpload, subscribeCourse, changePerm, copyActivity
+from core.views import IndexView, HomeView, CourseListView, CourseIndexView, CourseCreateView, CourseUpdateView, CourseDeleteView, CourseCopyView, ActivityCreateIndexView, LessonCreateView, LessonAddView, savePost, fileUpload, subscribeCourse, changePerm, copyActivity, editLessonTitle, editEssayDraft
 from discussions.views import DiscussionCreateView, DiscussionDetailView, DiscussionUpdateView, DiscussionDeleteView
-from essays.views import EssayCreateView, EssayDetailView, EssayUpdateView, EssayDeleteView
+from essays.views import EssayCreateView, EssayDetailView, EssayUpdateView, EssayDeleteView, EssayResponseUpdateView
 from overdub_discussions.views import OverdubCreateView, OverdubDetailView, OverdubUpdateView, OverdubDeleteView
 from settings import base
 import socketio.sdjango
@@ -33,6 +33,7 @@ urlpatterns = patterns('',
     url(r'^essay/add/(?P<pk>\d+)$', EssayCreateView.as_view(), name='create_essay'),
     url(r'^essay/edit/(?P<pk>\d+)$', EssayUpdateView.as_view(), name='edit_essay'),
     url(r'^essay/delete/(?P<pk>\d+)$', EssayDeleteView.as_view(), name='delete_essay'),
+    url(r'^essay/grade/(?P<pk>\d+)$', EssayResponseUpdateView.as_view(), name='grade_essay'),
     url(r'^overdub/(?P<pk>\d+)$', OverdubDetailView.as_view(), name='overdub'),
     url(r'^overdub/add/(?P<pk>\d+)$', OverdubCreateView.as_view(), name='create_overdub'),
     url(r'^overdub/edit/(?P<pk>\d+)$', OverdubUpdateView.as_view(), name='edit_overdub'),
@@ -43,6 +44,8 @@ urlpatterns = patterns('',
     url(r'^subscribe/(\w+)/$', subscribeCourse, name='subscribe_course'),
     url(r'^perm/change/$', changePerm, name='change_perm'),
     url(r'^activity/copy/$', copyActivity, name='copy_activity'),
+    url(r'^lesson/title/edit/$', editLessonTitle, name='edit_lesson_title'),
+    url(r'^essaydraft/edit/$', editEssayDraft, name='edit_essay_draft'),
     
     url(r'^admin/', include(admin.site.urls)),
     url(r'^socket\.io', include(socketio.sdjango.urls)),

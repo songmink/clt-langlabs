@@ -2,7 +2,7 @@
 import json
 from datetime import datetime
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
@@ -18,13 +18,14 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import PermissionDenied
 from itertools import chain
+from datetime import datetime
 
-from core.mixins import CourseListMixin, ActivityListMixin, UsersWithPermsMixin
+from core.mixins import CourseListMixin, ActivityListMixin, UsersWithPermsMixin, FakeDeleteMixin
 
 from .models import AbstractActivity, ActivityCollection, Lesson, Post, Document
 
 from discussions.models import DiscussionActivity
-from essays.models import EssayActivity
+from essays.models import EssayActivity, EssayResponse
 from overdub_discussions.models import OverdubActivity
 
 
@@ -99,7 +100,7 @@ class CourseUpdateView(LoginRequiredMixin, PermissionRequiredMixin, CourseListMi
         assign_perm('core.edit_course', self.request.user, form.instance)
         return super(CourseUpdateView, self).form_valid(form)
 
-class CourseDeleteView(LoginRequiredMixin, PermissionRequiredMixin, CourseListMixin, DeleteView):
+class CourseDeleteView(LoginRequiredMixin, PermissionRequiredMixin, CourseListMixin, FakeDeleteMixin, DeleteView):  #FakeDeleteMixin, 
     model = ActivityCollection
     success_url = reverse_lazy('home')
     template_name = 'activity_delete.html'
@@ -166,6 +167,9 @@ def savePost(request):
         if activityType == 'discussion':
             activity = DiscussionActivity.objects.filter(id=activityID)[0]
             activity.posts.add(mess)
+        if activityType == 'essay':
+            essayResponse = EssayResponse.objects.filter(id= activityID)[0]
+            essayResponse.posts.add(mess)
 
     return HttpResponse("Post Success")
 
@@ -206,9 +210,20 @@ def CourseCopyView(request, course_id):
     lessonsToCopy = courseToCopy.lesson_set.all()
     activitiesToCopy = list(chain(courseToCopy.discussions.all(),courseToCopy.essays.all(),courseToCopy.overdubs.all()))
     courseToCopy.pk = None
-    courseToCopy.title = courseToCopy.title+'_copy'
-    courseToCopy.accesscode = courseToCopy.accesscode+'_copy'
+    # courseToCopy.accesscode = courseToCopy.accesscode
     courseToCopy.is_active = False
+    # deal with unique title
+    time = datetime.now()
+    timeStamp = str(time.month)+"/"+str(time.day)+"/"+str(time.year)+" "+str(time.hour)+":"+str(time.minute)+":"+str(time.second)
+    try:
+        courseToCopy.title = courseToCopy.title+"("+timeStamp+")"
+    except:
+        return HttpResponse('copy failed when saving course title') 
+    # deal with unique accesscode
+    try:
+        courseToCopy.accesscode = courseToCopy.accesscode+"("+timeStamp+")"
+    except:
+        return HttpResponse('copy failed when saving course accesscode')
     courseToCopy.save()
     assign_perm('core.edit_course', request.user, courseToCopy)
     # copy course lessons
@@ -218,12 +233,16 @@ def CourseCopyView(request, course_id):
         lessonToCopy.save()
     # copy course activities
     for activityToCopy in activitiesToCopy:
+        lessonsToAdd = activityToCopy.lesson
         activityToCopy.pk=None
         activityToCopy.collection = courseToCopy
         activityToCopy.save()
         activityToCopy.posts.clear()
-        if activityToCopy.lesson is not None:
-            activityToCopy.lesson = courseToCopy.lesson_set.filter( title = activityToCopy.lesson.title )[0]
+        print "activity_to_copy_lesson_num_is: "+str(lessonsToAdd.count())
+        print lessonsToAdd.all()
+        if lessonsToAdd.count() != 0:
+            for l in lessonsToAdd.all():
+                activityToCopy.lesson.add(courseToCopy.lesson_set.filter( title = l.title )[0])
     
     return  redirect(courseToCopy)
 
@@ -285,9 +304,10 @@ def copyActivity(request):
         activity_object_type = request.POST.get("activity_type", '')
         activity_object_id = request.POST.get("activity_id", '')
         activity_copy_coursename = request.POST.get("course_name", '')
+        activity_copy_courseid = request.POST.get("course_id", '')
         #  validation and change perm
         try:
-            course_to_attach = ActivityCollection.objects.filter(title=activity_copy_coursename)[0]
+            course_to_attach = ActivityCollection.objects.filter(id=activity_copy_courseid)[0]
         except:
             return("No such course")
         try:
@@ -302,23 +322,75 @@ def copyActivity(request):
         except:
             return HttpResponse('no such object')
         target_object.pk=None
-        target_object.title= target_object.title+"_copy"
+        time = datetime.now()
+        timeStamp = str(time.month)+"/"+str(time.day)+"/"+str(time.year)+" "+str(time.hour)+":"+str(time.minute)+":"+str(time.second)
+        target_object.title= target_object.title+"("+timeStamp+")"
         target_object.collection=course_to_attach
-        target_object.lesson = None
         target_object.is_active = False
         target_object.save()
         target_object.posts.clear()
+        target_object.lesson.clear()
         return HttpResponse("success_redirect"+course_to_attach.get_absolute_url())
     else:
         return HttpResponse('post ajax required') 
 
+# change lesson title
+@login_required
+def editLessonTitle(request):
 
+    if request.method == 'POST':
+        lesson_id = request.POST.get("pk", '')
+        new_title = request.POST.get("value", '')
+        print lesson_id
+        print new_title
+        try:
+            target_lesson = Lesson.objects.filter(id=lesson_id)[0]
+            target_lesson.title = new_title
+            target_lesson.save()
+            return HttpResponse('Success') 
+        except:
+            return HttpResponseBadRequest()
 
+# process essay draft
+@login_required
+def editEssayDraft(request):
 
-
-
-
-
+    if request.method == 'POST':
+        operation = request.POST.get("operation", '')
+        essay_id = request.POST.get("essay_id", '')
+        draft_title = request.POST.get("draft_title", '')
+        current_user = request.user
+        # draft_number = request.POST.get("draft_number", '')
+        # draft_status = request.POST.get("draft_status", '')
+        draft_content = request.POST.get("draft_content", '')
+        # print lesson_id
+        progressing_response = EssayResponse.objects.filter(user=request.user, essay_activity__id=essay_id, status='in progress').order_by('modified','-draft_number')
+        # There is an exiting essay response
+        print progressing_response.count()
+        if progressing_response.count() == 1: 
+            target_object = progressing_response[0]
+            target_object.draft_title = draft_title
+            target_object.draft = draft_content
+            if operation == 'save':
+                pass
+            elif operation == 'submit':
+                target_object.status = 'submitted'
+            target_object.save()
+            return HttpResponse('Success')
+        # There is not an exiting essay response
+        elif progressing_response.count() == 0 : 
+            new_draft_number = EssayResponse.objects.filter(user=request.user, essay_activity__id=essay_id).count()+1
+            target_object = EssayResponse(essay_activity=get_object_or_404(EssayActivity, pk=essay_id), draft_title=draft_title, user= request.user,draft_number=new_draft_number,draft=draft_content)
+            if operation == 'save':
+                target_object.status='in progress'
+            elif operation == 'submit':
+                target_object.status='submitted'
+            else:
+                pass
+            target_object.save()
+            return HttpResponse('Success')
+        else:
+            return HttpResponseBadRequest()
 
 
 

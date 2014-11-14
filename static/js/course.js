@@ -29,6 +29,25 @@ $(document).ready(function(){
           }
       }
     })
+    
+    //turn to inline mode
+    $.fn.editable.defaults.mode = 'inline';
+    if($(".editable_lesson_title").size()!=0){
+    
+      $(".editable_lesson_title").each(function(){
+        $(this).editable({
+          ajaxOptions: {
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                },
+          },
+          success: function(response, newValue) {
+          if(response.status == 'error') return response.msg; //msg will be shown in editable form
+          },
+        });
+      })
+
+    }
 
 	});
 

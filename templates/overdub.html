@@ -14,15 +14,13 @@
 {% else %}
 
 	<h1 id='activity_title' class="page-header" data-userpostnum='{{user_post_num}}' data-readafterpost='{{activity.read_after_post}}' data-userisinstructor='{% if user in private_users or user.is_superuser %}true{% else %}false{% endif %}'>{{ activity.title }}
-
-
-
 		
 	{% if "edit_course" in course_perms %}
 
 	<small><small><a href="{% url 'edit_overdub' activity.id %}" class="text-muted" style='text-decoration:none;'><i class="fa fa-pencil-square-o"></i></a></small></small>
 	<small><small><a href="{% url 'delete_overdub' activity.id %}" class="text-muted" style='text-decoration:none;'><i class="fa fa-trash-o"></i></a></small></small>
 	<small><small><a class="text-muted activity_admin_togg" style='text-decoration:none; cursor: pointer;'><i class="fa fa-user"></i></a></small></small>
+	<small><small><a class="text-muted activity_copy_togg" style='text-decoration:none;cursor:pointer;' ><i class="fa fa-files-o"></i></a></small></small>
 	{% else %}
         {% if activity.permission_control %}
         	<small><small><a class="text-muted activity_members_togg" style='text-decoration:none; cursor: pointer;'><i class="fa fa-users"></i></a></small></small>
@@ -99,6 +97,27 @@
 		    </div> 
 		   {% endif %}
 		{% endfor %}
+	</div>
+	</div>
+
+	<!-- activity copy div -->
+	<div id='activity_copy_div' class='well' style='display:none'>
+	<h2 id='activity_copy' > Activity Duplicate </h2>
+
+	<div class='row'>
+		<div class='col-xs-5' style='font-size:20px;'> Copy <u>{{activity.title}}</u> to</div>
+		<div class='col-xs-4'>
+        <select class="form-control" id='activity_copy_course'>
+				{% load guardian_tags %}
+                {% for course_item in course_list %}
+                  {% get_obj_perms user for course_item as "course_temp_perms" %}
+                  {% if course_item.is_active or "edit_course" in course_temp_perms %}
+                  <option data-courseid="{{course_item.id}}">{{ course_item.title }}</option>
+                  {% endif %}
+                {% endfor %}
+        </select>
+	    </div>
+	    <div class='col-xs-3'><button id='activity_copy_btn' type="button" class="btn btn-success" data-ajaxurl="{% url 'copy_activity' %}" data-activitytype='{{activity.activity_type}}' data-activityid='{{activity.id}}'>Go Copy</button></div>
 	</div>
 	</div>
 	{% else %}

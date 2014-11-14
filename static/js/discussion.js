@@ -52,8 +52,11 @@ $(document).ready(function(){
     var activity_temp_type = $(this).data('activitytype')
     var activity_temp_id = $(this).data('activityid')
     var course_temp_name = $("#activity_copy_course").val()
+    var course_temp_id = $("option").filter(function(i,e){
+    return $(this).text()==course_temp_name ;
+    }).data('courseid')
     var csrftoken=$("input[name=csrfmiddlewaretoken]").val()
-    ajaxCopyActivity(ajax_temp_URL, activity_temp_type, activity_temp_id, course_temp_name, csrftoken)
+    ajaxCopyActivity(ajax_temp_URL, activity_temp_type, activity_temp_id, course_temp_name, course_temp_id, csrftoken)
   })
 
 
@@ -409,7 +412,7 @@ function ajaxChangePermission(ajax_URL, username, code_name, objecttype, objecti
     return changeSuccess
 }
 
-function ajaxCopyActivity(ajax_URL, activitytype, activityid, coursename, csrftoken){
+function ajaxCopyActivity(ajax_URL, activitytype, activityid, coursename, courseid, csrftoken){
 
     $.ajax({
       type: "POST",
@@ -418,11 +421,11 @@ function ajaxCopyActivity(ajax_URL, activitytype, activityid, coursename, csrfto
       beforeSend: function(xhr) {
               xhr.setRequestHeader("X-CSRFToken", csrftoken);
       },
-      data: { activity_type: activitytype, activity_id: activityid, course_name: coursename}
+      data: { activity_type: activitytype, activity_id: activityid, course_name: coursename, course_id: courseid}
     })
     .done(function( msg) {
       // alert( );
-      console.log('/activitytype: '+activitytype+'/activityid: '+ activityid+ '/coursename: '+coursename)
+      console.log('/activitytype: '+activitytype+'/activityid: '+ activityid+ '/coursename: '+coursename+'/courseid: '+courseid)
       console.log("Course Copied: " + msg )
       if(msg.indexOf("success_redirect")!=-1){
           window.location.href = msg.slice(16)

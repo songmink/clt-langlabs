@@ -5,11 +5,11 @@ from django.views.generic.edit import FormView, UpdateView, DeleteView
 from django.core.urlresolvers import reverse_lazy
 
 from core.models import ActivityCollection, AbstractActivity, Post, Lesson
-from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, CreateActivity4UpdateMixin, UsersWithPermsMixin, ActivityPermsMixin
-from .models import EssayActivity
+from core.mixins import CourseListMixin, ActivityListMixin, EssayResponseListMixin, CreateActivityMixin, CreateActivity4UpdateMixin, UsersWithPermsMixin, ActivityPermsMixin, FakeDeleteMixin
+from .models import EssayActivity, EssayResponse
 
 
-class EssayDetailView(CourseListMixin, ActivityListMixin, UsersWithPermsMixin, ActivityPermsMixin, DetailView):
+class EssayDetailView(CourseListMixin, ActivityListMixin, EssayResponseListMixin, UsersWithPermsMixin, ActivityPermsMixin, DetailView):
     model = EssayActivity
     context_object_name = 'activity'
     template_name = 'essay.html'
@@ -26,7 +26,7 @@ class EssayUpdateView(CourseListMixin, CreateActivity4UpdateMixin, ActivityPerms
         form = super(EssayUpdateView, self).get_form(
             form_class)  # instantiate using parent
         form.fields['lesson'].queryset = Lesson.objects.filter(
-            collection=get_object_or_404(ActivityCollection, pk=self.object.lesson.collection.id))
+            collection=get_object_or_404(ActivityCollection, pk=self.object.collection.id))
         return form
 
 
@@ -51,8 +51,24 @@ class EssayCreateView(CourseListMixin, CreateActivityMixin, CreateView):
         form.instance.activity_type = self.activity_type
         return super(EssayCreateView, self).form_valid(form)
 
-class EssayDeleteView(CourseListMixin, DeleteView):
+class EssayDeleteView(CourseListMixin, FakeDeleteMixin, DeleteView):
     model = EssayActivity
-    success_url = reverse_lazy('home')
+    # success_url = 'ToBeReplaced'
     template_name = 'activity_delete.html'
+
+class EssayResponseUpdateView(CourseListMixin, UpdateView):
+    model = EssayResponse
+    context_object_name = 'response'
+    template_name = 'essay_grade.html'
+    fields = ['draft','review','flagged']
+
+    def form_valid(self, form):
+        # Auto set the following fields:
+        form.instance.status = 'graded'
+        form.instance.reviewed_by = self.request.user
+        return super(EssayResponseUpdateView, self).form_valid(form)
+    def get_success_url(self):
+        return self.object.essay_activity.get_absolute_url()
+
+
 

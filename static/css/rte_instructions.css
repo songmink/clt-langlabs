@@ -1,6 +1,20 @@
 #InstructionTextArea{
   /*width:98%;*/
   height:240px;
-  padding: 5px;
+  padding: 6px 12px;
+  overflow:auto;
+}
+
+#DraftTextArea{
+  /*width:98%;*/
+  height:240px;
+  padding: 6px 12px;
+  overflow:auto;
+}
+
+#ReviewTextArea{
+  /*width:98%;*/
+  height:240px;
+  padding: 6px 12px;
   overflow:auto;
 }

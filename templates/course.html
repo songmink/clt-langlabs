@@ -57,12 +57,19 @@
 </div>
 {% endif %}
 
-{% regroup activity_list by lesson as lesson_list %}
+{% regroup activity_list_course by activity_to_lesson as lesson_list %}
 
 
 	{% for activities in lesson_list %}
 
-		<div class="col-xs-8 col-xs-offset-2 text-left " style='font-size:1.3em;background-color:#f3f3f3;border: 1px solid #d4d4d4;box-shadow:inset 0 1px 1px -1px #bbb;height:2.4em; padding-top:0.5em;'>{{ activities.grouper.title }}</div>
+		<div class="col-xs-8 col-xs-offset-2 text-left " style='font-size:1.3em;background-color:#f3f3f3;border: 1px solid #d4d4d4;box-shadow:inset 0 1px 1px -1px #bbb;height:2.4em; padding-top:0.5em;'>
+			{% if "edit_course" in course_perms %}
+			<a href="#" id="lesson_{{activities.grouper.id}}" class='editable_lesson_title' data-type="text" data-pk="{{activities.grouper.id}}" data-url="{% url 'edit_lesson_title' %}" style='border-bottom:initial;color:black;'>{{ activities.grouper.title }}</a>
+
+			{% else %}
+			{{ activities.grouper.title }}
+			{% endif %}
+		</div>
         <div class="col-xs-8 col-xs-offset-2 text-left placeholders " >
 	    {% for activity in activities.list %}
 	         {% if activity.is_active or "edit_course" in course_perms %}
@@ -77,11 +84,14 @@
 				{% else %}
 				<div class="row " style="border:1px solid #d4d4d4; border-top:0px; box-shadow:inset 0 1px 1px -1px #bbb;margin-bottom:0px;padding-bottom:8px;">
 					<div class='col-xs-2' style='padding:18px 15px 18px ; width:12%;opacity: 0.6;'><img src="{% if activity.activity_type == 'discussion' %}{% static 'img/discussion.png' %}{% elif activity.activity_type == 'essay' %}{% static 'img/essay.png' %}{% else %}{% static 'img/overdub.png' %}{% endif %}" class="img-responsive" alt="Generic placeholder "></div>
-					<div class='col-xs-10'style='width:88%;' >
-					<div class='text-left' style='padding:5px 0px 5px;opacity: 0.7;'><a href="{{ activity.get_absolute_url }}"><h4  class='text-muted' style="">{{ activity.title }}</h4></a></div>
-					<div class="text-muted text-left" style="height:61px;overflow: auto;"> {{ activity.instructions|safe }}</div>
+					<div class='col-xs-10'style='width:88%;padding-right:0px;' >
+				        <div style='width:100%;'>
+							<div class='text-left col-xs-8' style='padding:5px 0px 5px;'><a href="{{ activity.get_absolute_url }}"><h4  class="text-muted" style="opacity: 0.7;">{{ activity.title }}</h4></a></div>
+							 <div class='col-xs-4' style="color:white;font-size:1.5em;bottom:0px;background-color:#d9534f;left:0px;opacity: 1.0;"> DEACTIVATED</div>
+	                    </div>
+					<div class="text-muted text-left" style="height:61px;overflow: auto;width:100%;"> {{ activity.instructions|safe }}</div>
 					</div>
-					<div class='col-xs-12 text-center' style="z-index:1;position: absolute;color:white;font-size:1.5em;bottom:0px;background-color:#d9534f;left:0px;opacity: 1.0;"> DEACTIVATED</div>
+					<!-- <div class='col-xs-12 text-center' style="z-index:1;position: absolute;color:white;font-size:1.5em;bottom:0px;background-color:#d9534f;left:0px;opacity: 1.0;"> DEACTIVATED</div> -->
 				</div>
 				{% endif %}
 			 {% endif %}
@@ -108,14 +118,17 @@
 				</div>
 			</div>
 			{% else %}
-			<div class="row " style="border:1px solid #d4d4d4; border-top:0px; box-shadow:inset 0 1px 1px -1px #bbb;margin-bottom:0px;padding-bottom:8px;">
+			<div class="row " style="border:1px solid #d4d4d4; border-top:0px; box-shadow:inset 0 1px 1px -1px #bbb;margin-bottom:0px;padding-bottom:0px;">
 				<!-- <div class='col-xs-12 text-danger' style="z-index:-1;position: absolute;font-size:2.0em;"> DEACTIVATED</div> -->
 				<div class='col-xs-2' style='padding:18px 15px 18px ; width:12%;opacity: 0.6;'><img src="{% if activity.activity_type == 'discussion' %}{% static 'img/discussion.png' %}{% elif activity.activity_type == 'essay' %}{% static 'img/essay.png' %}{% else %}{% static 'img/overdub.png' %}{% endif %}" class="img-responsive" alt="Generic placeholder "></div>
-				<div class='col-xs-10'style='width:88%;' >
-				<div class='text-left' style='padding:5px 0px 5px;'><a href="{{ activity.get_absolute_url }}"><h4  class="text-muted" style="opacity: 0.7;">{{ activity.title }}</h4></a></div>
-				<div class="text-muted text-left" style="height:61px;overflow: auto;"> {{ activity.instructions|safe }}</div>
+				<div class='col-xs-10'style='width:88%;padding-right:0px;' >
+			        <div style='width:100%;'>
+					<div class='text-left col-xs-8' style='padding:5px 0px 5px;'><a href="{{ activity.get_absolute_url }}"><h4  class="text-muted" style="opacity: 0.7;">{{ activity.title }}</h4></a></div>
+					 <div class='col-xs-4' style="color:white;font-size:1.5em;bottom:0px;background-color:#d9534f;left:0px;opacity: 1.0;"> DEACTIVATED</div>
+                    </div>
+				<div class="text-muted text-left" style="height:61px;overflow: auto; width:100%;"> {{ activity.instructions|safe }}</div>
 				</div>
-				<div class='col-xs-12 text-center' style="z-index:1;position: absolute;color:white;font-size:1.5em;bottom:0px;background-color:#d9534f;left:0px;opacity: 1.0;"> DEACTIVATED</div>
+				<!-- <div class='col-xs-12 text-center' style="z-index:1;color:white;font-size:1.5em;bottom:0px;background-color:#d9534f;left:0px;opacity: 1.0;"> DEACTIVATED</div> -->
 			</div>
 			{% endif %}
 		 {% endif %}
@@ -125,8 +138,10 @@
 
 {% block stylesheets %} 
 <link href="{% static "font-awesome/css/font-awesome.css" %}" rel="stylesheet">
+<link href="{% static "bootstrap3-editable/css/bootstrap-editable.css" %}" rel="stylesheet">
 {% endblock stylesheets%}
 
 {% block more_javascript %} 
 <script src="{% static "js/course.js" %}"></script>
+<script src="{% static "bootstrap3-editable/js/bootstrap-editable.js" %}"></script>
 {% endblock more_javascript %}

@@ -7,7 +7,7 @@ from django import forms
 from django.core.urlresolvers import reverse_lazy
 
 from core.models import ActivityCollection, AbstractActivity, Post, Lesson, Document
-from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, RecorderMixin, CreateActivity4UpdateMixin, UsersWithPermsMixin, ActivityPermsMixin, UserPostNumMixin
+from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, RecorderMixin, CreateActivity4UpdateMixin, UsersWithPermsMixin, ActivityPermsMixin, UserPostNumMixin, FakeDeleteMixin
 from .models import OverdubActivity
 
 
@@ -80,7 +80,7 @@ class OverdubUpdateView(CourseListMixin, CreateActivity4UpdateMixin, ActivityPer
         form = super(OverdubUpdateView, self).get_form(
             form_class)  # instantiate using parent
         form.fields['lesson'].queryset = Lesson.objects.filter(
-            collection=get_object_or_404(ActivityCollection, pk=self.object.lesson.collection.id))
+            collection=get_object_or_404(ActivityCollection, pk=self.object.collection.id))
         form.fields['media'].label = "Video URL (e.g. http://youtu.be/DJ9zIuFoQ5o)"
         form.fields.insert(3,'upload_video',forms.FileField(required = False,label='or Upload a Video'))
 
@@ -97,7 +97,7 @@ class OverdubUpdateView(CourseListMixin, CreateActivity4UpdateMixin, ActivityPer
 
         return super(OverdubUpdateView, self).form_valid(form)
 
-class OverdubDeleteView(CourseListMixin, DeleteView):
+class OverdubDeleteView(CourseListMixin, FakeDeleteMixin, DeleteView):
     model = OverdubActivity
-    success_url = reverse_lazy('home')
+    # success_url = reverse_lazy('home')
     template_name = 'activity_delete.html'
