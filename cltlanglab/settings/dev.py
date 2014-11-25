@@ -17,7 +17,7 @@ ALLOWED_HOSTS = []
 
 # Append apps used in development not production.
 INSTALLED_APPS += (
-    'debug_toolbar',
+    # 'debug_toolbar',
 )
 
 DATABASES = {

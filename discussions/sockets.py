@@ -25,11 +25,10 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         
     def log(self, message):
         self.logger.info("[{0}] {1}".format(self.socket.sessid, message))
-        print self.socket.sessid
     
     def on_join(self, roomType, roomNumber):
-        print self
-        print "roomType is: "+roomType+" roomNumber is: "+roomNumber
+        # print self
+        # print "roomType is: "+roomType+" roomNumber is: "+roomNumber
         self.room = roomType+'_'+roomNumber
         self.join(roomType+'_'+roomNumber)
         try: 
@@ -71,7 +70,7 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
 
     def on_user_message(self, msg):
         # save to Post model: 
-        self.log('User message: {0}'.format(msg["msg"]))
+        # self.log('User message: {0}'.format(msg["msg"]))
         savedMessage=self.postSave(msg["msg"], attachments = msg["attaches"], attachmentsName = msg["attachesName"], audio_URL=msg["audioURL"])
         thisID = savedMessage.id
         if savedMessage:
@@ -110,7 +109,7 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
             mess.audio_URL = audio_URL
         if mess:
             mess.save()
-            print "message successfully saved to database"
+            # print "message successfully saved to database"
             #  bind message to the document
             if attachments:
                 for attachment in attachments:

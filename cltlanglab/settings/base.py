@@ -5,10 +5,9 @@ import os
 from unipath import Path
 
 # Secret key stored in environment variable not here.
-# SECRET_KEY = os.environ['SECRET_KEY']
-SECRET_KEY = '3(+8i=y5k!)%+emsb8i4n8s)!)(z@++=27rca$hbsg+b#+1y)*'
+SECRET_KEY = os.environ['SECRET_KEY']
 
-PROJECT_DIR = Path(__file__).ancestor(3)  # Points to <project root>
+PROJECT_DIR = Path(__file__).ancestor(3)  # Points to <project root> (e.g. clt-langlabs-dev-py)
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = PROJECT_DIR.child('media')
@@ -23,7 +22,7 @@ STATICFILES_DIRS = (
 
 STATIC_URL = '/static/'
 
-TEMPLATE_DIRS = PROJECT_DIR.child('templates')
+TEMPLATE_DIRS = (PROJECT_DIR.child('templates'),)
 
 # Server side setup for recorder
 recorder_myServer="http://192.168.1.8/";
@@ -49,7 +48,6 @@ INSTALLED_APPS = (
     # Utils:
     'crispy_forms',
     'guardian',
-    'south',
 )
 
 MIDDLEWARE_CLASSES = (

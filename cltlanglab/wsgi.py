@@ -20,8 +20,3 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cltlanglab.settings.testServer"
 from django.core.wsgi import get_wsgi_application
 
 application = get_wsgi_application()
-
-# HEROKU SETUP?
-# Comment application variable above and uncomment the two below.
-# from dj_static import Cling
-# application = Cling(get_wsgi_application())
