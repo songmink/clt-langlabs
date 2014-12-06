@@ -10,11 +10,15 @@ from .models import EssayActivity, EssayResponse
 
 
 class EssayDetailView(CourseListMixin, ActivityListMixin, EssayResponseListMixin, UsersWithPermsMixin, ActivityPermsMixin, DetailView):
+    ''' -- Essay Detail Page '''
+
     model = EssayActivity
     context_object_name = 'activity'
     template_name = 'essay.html'
 
 class EssayUpdateView(CourseListMixin, CreateActivity4UpdateMixin, ActivityPermsMixin, UpdateView):
+    ''' -- Essay Edit Page '''
+
     model=EssayActivity
     context_object_name = 'activity' 
     template_name = 'activity_edit.html'
@@ -23,14 +27,17 @@ class EssayUpdateView(CourseListMixin, CreateActivity4UpdateMixin, ActivityPerms
     activity_type = 'essay'
 
     def get_form(self, form_class):
+        ''' :returns: A list of lessons the course has into *"form"*. '''
+
         form = super(EssayUpdateView, self).get_form(
             form_class)  # instantiate using parent
         form.fields['lesson'].queryset = Lesson.objects.filter(
             collection=get_object_or_404(ActivityCollection, pk=self.object.collection.id))
         return form
 
-
 class EssayCreateView(CourseListMixin, CreateActivityMixin, CreateView):
+    " -- Essay Create Page "
+
     model = EssayActivity
     template_name = 'activity_create.html'
     fields = ['title', 'instructions', 'lesson',
@@ -52,11 +59,15 @@ class EssayCreateView(CourseListMixin, CreateActivityMixin, CreateView):
         return super(EssayCreateView, self).form_valid(form)
 
 class EssayDeleteView(CourseListMixin, FakeDeleteMixin, DeleteView):
+    ''' -- Essay Delete Confirmation Page '''
+
     model = EssayActivity
     # success_url = 'ToBeReplaced'
     template_name = 'activity_delete.html'
 
 class EssayResponseUpdateView(CourseListMixin, UpdateView):
+    ''' -- Essay Review Page '''
+
     model = EssayResponse
     context_object_name = 'response'
     template_name = 'essay_grade.html'

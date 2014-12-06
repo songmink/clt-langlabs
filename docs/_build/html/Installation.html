@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Installation &mdash; clt-langlabs-dev-py  documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="clt-langlabs-dev-py  documentation" href="index.html" />
+    <link rel="next" title="Architecture" href="Architecture.html" />
+    <link rel="prev" title="About Clt-Langlabs" href="About Clt-Langlabs.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Architecture.html" title="Architecture"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="About Clt-Langlabs.html" title="About Clt-Langlabs"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">clt-langlabs-dev-py  documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="creating-virtual-environment">
+<h2>Creating Virtual Environment<a class="headerlink" href="#creating-virtual-environment" title="Permalink to this headline">¶</a></h2>
+<p>Let&#8217;s setup our seperate python environment first by installing <em>virtualenv</em> and <em>virtualenv wrapper</em>:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo pip install virtualenv
+</pre></div>
+</div>
+<p>Then follow the instructions from <a class="reference external" href="http://virtualenvwrapper.readthedocs.org/en/latest/">http://virtualenvwrapper.readthedocs.org/en/latest/</a>:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ pip install virtualenvwrapper
+</pre></div>
+</div>
+<p>After creating your virtual environment, then activate the virtual environment by:</p>
+<div class="highlight-python"><div class="highlight"><pre>$workon (YourEnv)
+</pre></div>
+</div>
+<p>From now on, we assume all the following actions are performed in that virtual environment.</p>
+</div>
+<div class="section" id="installing-dependencies">
+<h2>Installing Dependencies<a class="headerlink" href="#installing-dependencies" title="Permalink to this headline">¶</a></h2>
+<p>Before installing anything, change current working directory to the root <em>&#8220;clt-langlabs-dev-py/&#8221;</em>, then:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ pip install -r requirements/base.txt
+</pre></div>
+</div>
+<p>If you want to edit the documentation later, you can add extra dependencies like <em>Sphinx</em>, they are included in <em>dev.txt</em>, so instead type:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ pip install -r requirements/dev.txt
+</pre></div>
+</div>
+</div>
+<div class="section" id="configure-settings">
+<h2>Configure Settings<a class="headerlink" href="#configure-settings" title="Permalink to this headline">¶</a></h2>
+<p>Inside the directory <em>~/cltlanglab/settings/</em> is the settings file for our project, in <em>base.py</em> we need to configure settings for <strong>recorder</strong> used in our project, you can get a license from <a class="reference external" href="http://recorder.denniehoopingarner.com/">http://recorder.denniehoopingarner.com/</a></p>
+<p>The file <em>save.php</em> and related directories also have to be created in your server first. These configuration info need to be put into <em>cltlanglab/settings/base.py</em></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Server side setup for recorder</span>
+<span class="n">recorder_myServer</span><span class="o">=</span><span class="s">&quot;http://192.168.1.8/&quot;</span><span class="p">;</span>  <span class="c"># Address of server for video recording files</span>
+<span class="n">recorder_myHandler</span><span class="o">=</span><span class="s">&quot;phpinc/save.php&quot;</span><span class="p">;</span>     <span class="c"># save.php handles the file saving of recorded files</span>
+<span class="n">recorder_myDirectory</span><span class="o">=</span><span class="s">&quot;uploads&quot;</span><span class="p">;</span>           <span class="c"># &quot;phpinc/uploads/&quot; is directory for all recording files</span>
+</pre></div>
+</div>
+<p><strong>Database</strong> configuration need to be put into <em>cltlanglab/settings/dev.py</em></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">DATABASES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;default&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&#39;ENGINE&#39;</span><span class="p">:</span> <span class="s">&#39;django.db.backends.postgresql_psycopg2&#39;</span><span class="p">,</span>
+        <span class="s">&#39;NAME&#39;</span><span class="p">:</span> <span class="s">&#39;cltlangdb&#39;</span><span class="p">,</span>
+        <span class="s">&#39;USER&#39;</span><span class="p">:</span> <span class="s">&#39;djangodbuser&#39;</span><span class="p">,</span>
+        <span class="s">&#39;PASSWORD&#39;</span><span class="p">:</span> <span class="s">&#39;1&#39;</span><span class="p">,</span>
+        <span class="s">&#39;HOST&#39;</span><span class="p">:</span> <span class="s">&#39;localhost&#39;</span><span class="p">,</span>
+        <span class="s">&#39;PORT&#39;</span><span class="p">:</span> <span class="s">&#39;5432&#39;</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="run-development-server">
+<h2>Run Development Server<a class="headerlink" href="#run-development-server" title="Permalink to this headline">¶</a></h2>
+<p>Two server need to be run:</p>
+<div class="highlight-python"><div class="highlight"><pre># This is the chat server that run on localhost:8001
+    $ python cltlanglab/run.py
+</pre></div>
+</div>
+<p>And the django development server:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ python manage.py runserver localhost:8000 --settings=cltlanglab.settings.dev
+</pre></div>
+</div>
+<p>The web app can be visited through <a class="reference external" href="http://localhost:8000">http://localhost:8000</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Installation</a><ul>
+<li><a class="reference internal" href="#creating-virtual-environment">Creating Virtual Environment</a></li>
+<li><a class="reference internal" href="#installing-dependencies">Installing Dependencies</a></li>
+<li><a class="reference internal" href="#configure-settings">Configure Settings</a></li>
+<li><a class="reference internal" href="#run-development-server">Run Development Server</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="About Clt-Langlabs.html"
+                        title="previous chapter">About Clt-Langlabs</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Architecture.html"
+                        title="next chapter">Architecture</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/Installation.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Architecture.html" title="Architecture"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="About Clt-Langlabs.html" title="About Clt-Langlabs"
+             >previous</a> |</li>
+        <li><a href="index.html">clt-langlabs-dev-py  documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

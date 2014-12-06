@@ -10,7 +10,7 @@ $(document).ready(function(){
         if($(e.target).is('.fileLink')){
             return;}
         if($(e.target).is('.attachDIV')){
-            console.log($(e.target))
+            // console.log($(e.target))
             return;}
 		$(this).next().find('.comment').slideToggle( "fast" );
 	});
@@ -71,8 +71,8 @@ $(document).ready(function(){
            if(toggleFlag == 0){
               toggleFlag=1
               recordingFlag = false
-              console.log('executed')
-              console.log(recordingFlag)
+              // console.log('executed')
+              // console.log(recordingFlag)
            }else{
               recorderInit()
               toggleFlag=0
@@ -104,7 +104,7 @@ $(document).ready(function(){
 	        done: function (e, data) {
 	            $.each(data.result.files, function (index, file) {
 	                // $('<p/>').text(file.name).appendTo('#files');
-	                console.log(file)
+	                // console.log(file)
 	                var attFile='<span class="attachedFile" style="cursor:pointer;"><a class="fileLink text-muted" href='+ file.url +'  ><i class="icon-file-alt"></i> <span class="fileName">'+file.name+'</span></a> <small> <i class="icon-remove removeIcon" style="color:grey; opacity:0.01;"></i></small></span>'
 	                $('#inputAttachments').append(attFile)
 	            });
@@ -137,7 +137,7 @@ $(document).ready(function(){
           var permission = $(this).closest('div').data('codename')
           var username = $(this).closest('div.admin_row').data('username')
           var changeFlag = ajaxChangePermission(ajax_URL, username, permission, 'overdub', activity_id, 'remove_perm', csrftoken)
-          console.log("changeSuccess is : "+ changeFlag)
+          // console.log("changeSuccess is : "+ changeFlag)
           // make ajax call to change permission
           if(changeFlag){
               $(this).removeClass('fa-toggle-on text-primary')
@@ -146,9 +146,9 @@ $(document).ready(function(){
       }else{
           var permission = $(this).closest('div').data('codename')
           var username = $(this).closest('div.admin_row').data('username')
-          console.log(permission)
+          // console.log(permission)
           var changeFlag = ajaxChangePermission(ajax_URL, username, permission, 'overdub', activity_id, 'assign_perm', csrftoken)
-          console.log("changeSuccess is : "+changeFlag)
+          // console.log("changeSuccess is : "+changeFlag)
           // make ajax call to change permission 
           if(changeFlag){
             $(this).removeClass('fa-toggle-off text-muted')
@@ -156,12 +156,14 @@ $(document).ready(function(){
           }
       }
     })
+
+    // permission change toggle
     $(".control_togg").click(function(){
       if ($(this).hasClass('fa-toggle-on')){
           var permission = 'no_permission'
           var username = 'no user'
           var changeFlag = ajaxChangePermission(ajax_URL, username, permission, 'overdub', activity_id, 'disable_control', csrftoken)
-          console.log("changeSuccess is : "+ changeFlag)
+          // console.log("changeSuccess is : "+ changeFlag)
           // make ajax call to change permission
           if(changeFlag){
               $(this).removeClass('fa-toggle-on text-primary')
@@ -170,9 +172,9 @@ $(document).ready(function(){
       }else{
           var permission = "no_permission"
           var username = "no user"
-          console.log(permission)
+          // console.log(permission)
           var changeFlag = ajaxChangePermission(ajax_URL, username, permission, 'overdub', activity_id, 'enable_control', csrftoken)
-          console.log("changeSuccess is : "+changeFlag)
+          // console.log("changeSuccess is : "+changeFlag)
           // make ajax call to change permission 
           if(changeFlag){
             $(this).removeClass('fa-toggle-off text-muted')
@@ -180,6 +182,8 @@ $(document).ready(function(){
           }
       }
     })
+
+    // change multiple permission 
     $('.column_togg').click(function(){
       var column_togg_class = $(this).data('columnclass')
       if(column_togg_class=='view_activity'){
@@ -347,7 +351,7 @@ function recorderInit(){
 }
 
         function recorderMessage(x,y){
-            console.log(x)
+            // console.log(x)
             switch(x){
                 case 1:
                     recordingFlag = false; //no recording
@@ -357,7 +361,7 @@ function recorderInit(){
                 case 2:
                     jwplayer("overdubVideo").play(true)
                     recordingFlag = true;  //there is recording
-                    console.log("case 2")
+                    // console.log("case 2")
                     break;
                 case 5:
                     jwplayer("overdubVideo").stop(true)
@@ -368,7 +372,7 @@ function recorderInit(){
                     jwplayer("overdubVideo").play(true)
                     break;
                 case 15:
-                    console.log("upload complete")
+                    // console.log("upload complete")
                     var attFile='<span class="attachedAudio" style="cursor:pointer;"><a class="audioLink text-muted" href='+ recorderServer+recorderDirectory+"/"+audioName+".mp3"+'  ><i class="icon-file-alt"></i> <span class="audioName">'+audioName+".mp3"+'</span></a> <small> <i class="icon-remove removeIcon" style="color:grey; opacity:0.01;"></i></small></span>'
                     $('#inputAttachments').append(attFile)
                     $( "#recordTrigger" ).trigger( "click" );
@@ -411,8 +415,8 @@ function ajaxChangePermission(ajax_URL, username, code_name, objecttype, objecti
     })
     .done(function( msg) {
       // alert( );
-      console.log(' codename: '+ code_name+'/object_type: '+objecttype+'/object_id: '+ objectid+ '/operation_type: '+operationType)
-      console.log("Permission Changed: " + msg )
+      // console.log(' codename: '+ code_name+'/object_type: '+objecttype+'/object_id: '+ objectid+ '/operation_type: '+operationType)
+      // console.log("Permission Changed: " + msg )
       if(msg=="successful change"){
         changeSuccess = true
       }else{
@@ -422,7 +426,7 @@ function ajaxChangePermission(ajax_URL, username, code_name, objecttype, objecti
     })
     .fail(function( jqXHR, textStatus) {
       // alert( "Request failed: " + textStatus );
-      console.log("Request failed: " + textStatus)
+      // console.log("Request failed: " + textStatus)
       changeSuccess = false
     });
     // console.log(changeSuccess)
@@ -442,15 +446,15 @@ function ajaxCopyActivity(ajax_URL, activitytype, activityid, coursename, course
     })
     .done(function( msg) {
       // alert( );
-      console.log('/activitytype: '+activitytype+'/activityid: '+ activityid+ '/coursename: '+coursename+'/courseid: '+courseid)
-      console.log("Course Copied: " + msg )
+      // console.log('/activitytype: '+activitytype+'/activityid: '+ activityid+ '/coursename: '+coursename+'/courseid: '+courseid)
+      // console.log("Course Copied: " + msg )
       if(msg.indexOf("success_redirect")!=-1){
           window.location.href = msg.slice(16)
       }
       
     })
     .fail(function( jqXHR, textStatus) {
-      console.log("Request failed: " + textStatus)
+      // console.log("Request failed: " + textStatus)
     });
 
 }

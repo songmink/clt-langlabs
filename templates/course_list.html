@@ -47,14 +47,11 @@ var currentMouseOverObject
 	        <p> {{course.title}} </p>
 		</div>
 		<div class='col-xs-4 text-left lead bold'>
-			<!-- <select class="form-control"> -->
                 <span><i class="fa fa-graduation-cap"></i>
 				{% for private_user in course.get_private_users %}
-			    <!-- <option>{{private_user}}</option> -->
                 {{private_user}}&nbsp;
 				{% endfor %}
                 </span>
-			<!-- </select> -->
 		</div>
 		<div class='col-xs-4 text-left lead'>
 	        <p> 

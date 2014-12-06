@@ -1,7 +1,10 @@
+"""
+Django production settings for cltlanglab project.
+"""
 # settings/prod.py
 
 from .base import *
-import dj_database_url
+# import dj_database_url
 
 DEBUG = False
 

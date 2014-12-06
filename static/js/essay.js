@@ -1,5 +1,5 @@
 $(document).ready(function(){
-        // below is permission change operations
+    // below is permission change operations
     var ajax_URL = $('#activity_admin').data("ajaxurl")
     var activity_id = $('#activity_admin').data("activityid")
     // initialize the rich text editor
@@ -14,7 +14,7 @@ $(document).ready(function(){
           var permission = $(this).closest('div').data('codename')
           var username = $(this).closest('div.admin_row').data('username')
           var changeFlag = ajaxChangePermission(ajax_URL, username, permission, 'essay', activity_id, 'remove_perm', csrftoken)
-          console.log("changeSuccess is : "+ changeFlag)
+          // console.log("changeSuccess is : "+ changeFlag)
           // make ajax call to change permission
           if(changeFlag){
               $(this).removeClass('fa-toggle-on text-primary')
@@ -23,9 +23,9 @@ $(document).ready(function(){
       }else{
           var permission = $(this).closest('div').data('codename')
           var username = $(this).closest('div.admin_row').data('username')
-          console.log(permission)
+          // console.log(permission)
           var changeFlag = ajaxChangePermission(ajax_URL, username, permission, 'essay', activity_id, 'assign_perm', csrftoken)
-          console.log("changeSuccess is : "+changeFlag)
+          // console.log("changeSuccess is : "+changeFlag)
           // make ajax call to change permission 
           if(changeFlag){
             $(this).removeClass('fa-toggle-off text-muted')
@@ -38,7 +38,7 @@ $(document).ready(function(){
           var permission = 'no_permission'
           var username = 'no user'
           var changeFlag = ajaxChangePermission(ajax_URL, username, permission, 'essay', activity_id, 'disable_control', csrftoken)
-          console.log("changeSuccess is : "+ changeFlag)
+          // console.log("changeSuccess is : "+ changeFlag)
           // make ajax call to change permission
           if(changeFlag){
               $(this).removeClass('fa-toggle-on text-primary')
@@ -47,9 +47,9 @@ $(document).ready(function(){
       }else{
           var permission = "no_permission"
           var username = "no user"
-          console.log(permission)
+          // console.log(permission)
           var changeFlag = ajaxChangePermission(ajax_URL, username, permission, 'essay', activity_id, 'enable_control', csrftoken)
-          console.log("changeSuccess is : "+changeFlag)
+          // console.log("changeSuccess is : "+changeFlag)
           // make ajax call to change permission 
           if(changeFlag){
             $(this).removeClass('fa-toggle-off text-muted')
@@ -97,6 +97,7 @@ $(document).ready(function(){
     ajaxCopyActivity(ajax_temp_URL, activity_temp_type, activity_temp_id, course_temp_name, course_temp_id, csrftoken)
   })
 
+  // save or submit a draft
   $(".draftEditBtn").click(function(){
     var ajax_temp_URL = $(this).data('ajaxurl')
     var temp_operation = $(this).data('operation')
@@ -125,13 +126,13 @@ $(document).ready(function(){
     event.preventDefault();
     $(this).closest("div").find(".draftToggle").removeClass('active')
     $(this).addClass('active')
-    console.log($(this).closest("div").find(".draftToggle.active").find('input').first().val())
+    // console.log($(this).closest("div").find(".draftToggle.active").find('input').first().val())
     var tempShow = $(this).closest("div").find(".draftToggle.active").find('input').first().val()
     $("#"+tempShow).show()
     $(this).closest("div").find(".draftToggle").not(".active").find('input').each(function(){
       var temp_noShow = $(this).val()
       $("#"+temp_noShow).hide()
-      console.log("bad"+$(this).val())
+      // console.log("bad"+$(this).val())
     })
     
   });
@@ -182,6 +183,7 @@ function csrfSafeMethod(method) {
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 
+// change permission
 function ajaxChangePermission(ajax_URL, username, code_name, objecttype, objectid, operationType, csrftoken) {
     var changeSuccess=false
     $.ajax({
@@ -195,8 +197,8 @@ function ajaxChangePermission(ajax_URL, username, code_name, objecttype, objecti
     })
     .done(function( msg) {
       // alert( );
-      console.log(' codename: '+ code_name+'/object_type: '+objecttype+'/object_id: '+ objectid+ '/operation_type: '+operationType)
-      console.log("Permission Changed: " + msg )
+      // console.log(' codename: '+ code_name+'/object_type: '+objecttype+'/object_id: '+ objectid+ '/operation_type: '+operationType)
+      // console.log("Permission Changed: " + msg )
       if(msg=="successful change"){
         changeSuccess = true
       }else{
@@ -206,13 +208,14 @@ function ajaxChangePermission(ajax_URL, username, code_name, objecttype, objecti
     })
     .fail(function( jqXHR, textStatus) {
       // alert( "Request failed: " + textStatus );
-      console.log("Request failed: " + textStatus)
+      // console.log("Request failed: " + textStatus)
       changeSuccess = false
     });
     // console.log(changeSuccess)
     return changeSuccess
 }
 
+// copy activity
 function ajaxCopyActivity(ajax_URL, activitytype, activityid, coursename, courseid, csrftoken){
 
     $.ajax({
@@ -226,19 +229,20 @@ function ajaxCopyActivity(ajax_URL, activitytype, activityid, coursename, course
     })
     .done(function( msg) {
       // alert( );
-      console.log('/activitytype: '+activitytype+'/activityid: '+ activityid+ '/coursename: '+coursename+'/courseid: '+courseid)
-      console.log("Course Copied: " + msg )
+      // console.log('/activitytype: '+activitytype+'/activityid: '+ activityid+ '/coursename: '+coursename+'/courseid: '+courseid)
+      // console.log("Course Copied: " + msg )
       if(msg.indexOf("success_redirect")!=-1){
           window.location.href = msg.slice(16)
       }
       
     })
     .fail(function( jqXHR, textStatus) {
-      console.log("Request failed: " + textStatus)
+      // console.log("Request failed: " + textStatus)
     });
 
 }
 
+// initializa rich text editor
 function rteInit()
     {
         tinymce.init({
@@ -258,10 +262,10 @@ function rteInit()
         }); 
 }
 
-
+// Save or Submit essay draft
 function ajaxEditEssayDraft(ajax_URL, operation, essay_id, draft_title, draft_content, csrftoken){
 
-    console.log(ajax_URL)
+    // console.log(ajax_URL)
     $.ajax({
       type: "POST",
       url: ajax_URL,
@@ -273,8 +277,8 @@ function ajaxEditEssayDraft(ajax_URL, operation, essay_id, draft_title, draft_co
     })
     .done(function( msg) {
       // alert( );
-      console.log('/operation: '+operation+'/essay_id: '+ essay_id+ '/draft_title: '+draft_title+'/draft_content: '+draft_content)
-      console.log("New Essay Response Edited: " + msg )
+      // console.log('/operation: '+operation+'/essay_id: '+ essay_id+ '/draft_title: '+draft_title+'/draft_content: '+draft_content)
+      // console.log("New Essay Response Edited: " + msg )
       if(msg=='Success' && operation=='submit'){
         // clean up existing contents
         $("#draft_title").val('')
@@ -285,13 +289,13 @@ function ajaxEditEssayDraft(ajax_URL, operation, essay_id, draft_title, draft_co
       
     })
     .fail(function( jqXHR, textStatus) {
-      console.log('/operation: '+operation+'/essay_id: '+ essay_id+ '/draft_title: '+draft_title+'/draft_content: '+draft_content)
-      console.log("Request failed: " + textStatus)
+      // console.log('/operation: '+operation+'/essay_id: '+ essay_id+ '/draft_title: '+draft_title+'/draft_content: '+draft_content)
+      // console.log("Request failed: " + textStatus)
     });
 
 }
 
-
+// Traditional way of posting comments
 function sendComment(ajax_URL, activitytype, activityid, commentContent, csrftoken){
 
     $.ajax({
@@ -305,18 +309,18 @@ function sendComment(ajax_URL, activitytype, activityid, commentContent, csrftok
     })
     .done(function( msg) {
       // alert( );
-      console.log('/activitytype: '+activitytype+'/activityid: '+ activityid+ '/text: '+commentContent)
-      console.log("Essay Comment: " + msg )
+      // console.log('/activitytype: '+activitytype+'/activityid: '+ activityid+ '/text: '+commentContent)
+      // console.log("Essay Comment: " + msg )
       if(msg == 'Post Success'){
           // window.location.href = msg.slice(16)
-          console.log("Post Success and need to manually reload page")
+          // console.log("Post Success and need to manually reload page")
 
           $( "#essay_discussion" ).load( window.location.href+" #essay_discussion2");
       }
       
     })
     .fail(function( jqXHR, textStatus) {
-      console.log("Request failed: " + textStatus)
+      // console.log("Request failed: " + textStatus)
     });
 
 }

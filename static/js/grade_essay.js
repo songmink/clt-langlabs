@@ -15,6 +15,8 @@ $( document ).ready(function() {
       $( "#id_draft" ).val($("#DraftTextArea").html())
       $( "#id_review" ).val($("#ReviewTextArea").html())
     });
+
+  // add tool tip for "flagged" option
   if($('#div_id_flagged').size()==1){
     $('#div_id_flagged').append(' <small><i class="fa questionMark fa-question" style="cursor:pointer;" data-toggle="tooltip" data-placement="right" title="Flag the content of this post to be in appropriate and other students will not be able to view its content."></i></small>')  
   }

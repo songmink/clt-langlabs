@@ -1,0 +1,346 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>core.mixins &mdash; clt-langlabs-dev-py  documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="clt-langlabs-dev-py  documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">clt-langlabs-dev-py  documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for core.mixins</h1><div class="highlight"><pre>
+<span class="c"># mixins.py</span>
+<span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span><span class="p">,</span> <span class="n">get_object_or_404</span>
+<span class="kn">from</span> <span class="nn">django.core.exceptions</span> <span class="kn">import</span> <span class="n">PermissionDenied</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">User</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponseRedirect</span>
+<span class="kn">from</span> <span class="nn">guardian.shortcuts</span> <span class="kn">import</span> <span class="n">get_objects_for_user</span><span class="p">,</span> <span class="n">get_users_with_perms</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">attrgetter</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="kn">from</span> <span class="nn">core.models</span> <span class="kn">import</span> <span class="n">ActivityCollection</span><span class="p">,</span> <span class="n">AbstractActivity</span><span class="p">,</span> <span class="n">Post</span><span class="p">,</span> <span class="n">Lesson</span>
+<span class="kn">from</span> <span class="nn">essays.models</span> <span class="kn">import</span> <span class="n">EssayResponse</span>
+
+<span class="kn">from</span> <span class="nn">cltlanglab.settings</span> <span class="kn">import</span> <span class="n">base</span>
+
+
+<div class="viewcode-block" id="CourseListMixin"><a class="viewcode-back" href="../../core.html#core.mixins.CourseListMixin">[docs]</a><span class="k">class</span> <span class="nc">CourseListMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- CourseListMixin passes a list of courses that current user has access to.  &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="CourseListMixin.get_context_data"><a class="viewcode-back" href="../../core.html#core.mixins.CourseListMixin.get_context_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_context_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;  :returns: A list of courses into *context[&#39;course_list&#39;]* .&#39;&#39;&#39;</span>
+
+        <span class="n">context</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">CourseListMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_context_data</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">context</span><span class="p">[</span><span class="s">&#39;course_list&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_objects_for_user</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="p">[</span>
+                                                          <span class="s">&#39;core.view_course&#39;</span><span class="p">,</span> <span class="s">&#39;core.edit_course&#39;</span><span class="p">],</span> <span class="n">any_perm</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">is_deleted</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">context</span>
+
+</div></div>
+<div class="viewcode-block" id="FakeDeleteMixin"><a class="viewcode-back" href="../../core.html#core.mixins.FakeDeleteMixin">[docs]</a><span class="k">class</span> <span class="nc">FakeDeleteMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- FakeDeleteMixin performs the soft deletion of a Course or Activity  &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="FakeDeleteMixin.delete"><a class="viewcode-back" href="../../core.html#core.mixins.FakeDeleteMixin.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;  :returns: Append to the name of course or activity a time stamp to mark as deleted. &#39;&#39;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">object</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">success_url</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">success_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">get_absolute_url</span><span class="p">()</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">timeStamp</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">month</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">day</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">year</span><span class="p">)</span> <span class="o">+</span> \
+            <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">hour</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">minute</span><span class="p">)</span> <span class="o">+</span> \
+            <span class="s">&quot;:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">is_deleted</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s">&quot;(deleted - &quot;</span> <span class="o">+</span> <span class="n">timeStamp</span> <span class="o">+</span> <span class="s">&quot;)&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">title</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">HttpResponseRedirect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_success_url</span><span class="p">())</span>
+
+</div></div>
+<div class="viewcode-block" id="UsersWithPermsMixin"><a class="viewcode-back" href="../../core.html#core.mixins.UsersWithPermsMixin">[docs]</a><span class="k">class</span> <span class="nc">UsersWithPermsMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- UsersWithPermsMixin provides user list with permission in Course Detail View and Activity Detail View.  &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="UsersWithPermsMixin.get_context_data"><a class="viewcode-back" href="../../core.html#core.mixins.UsersWithPermsMixin.get_context_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_context_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;  :returns: Activity users, course users and course instructors in  activity detail view; Course users in course detail view. &#39;&#39;&#39;</span>
+
+        <span class="n">context</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">UsersWithPermsMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_context_data</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c"># for activity detail view</span>
+            <span class="n">context</span><span class="p">[</span><span class="s">&#39;object_course_users&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_users_with_perms</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">()</span><span class="o">.</span><span class="n">collection</span><span class="p">,</span>  <span class="n">attach_perms</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">with_superusers</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+            <span class="n">context</span><span class="p">[</span><span class="s">&#39;object_users&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_users_with_perms</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">(),</span>  <span class="n">attach_perms</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">with_superusers</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+            <span class="c"># get private message users for activity detail view</span>
+            <span class="n">anyperm</span> <span class="o">=</span> <span class="n">get_users_with_perms</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">()</span><span class="o">.</span><span class="n">collection</span><span class="p">,</span> <span class="n">attach_perms</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">with_superusers</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">is_superuser</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">user</span><span class="p">,</span> <span class="n">perms</span> <span class="ow">in</span> <span class="n">anyperm</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="k">if</span> <span class="s">&#39;edit_course&#39;</span> <span class="ow">in</span> <span class="n">perms</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">chain</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">user</span><span class="p">))</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">context</span><span class="p">[</span><span class="s">&#39;private_users&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="c"># for course detail view</span>
+            <span class="n">context</span><span class="p">[</span><span class="s">&#39;object_users&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_users_with_perms</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">(),</span>  <span class="n">attach_perms</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">with_superusers</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">context</span>
+</div>
+    <span class="k">def</span> <span class="nf">get_users_with_perm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">permission</span><span class="p">):</span>
+
+        <span class="n">anyperm</span> <span class="o">=</span> <span class="n">get_users_with_perms</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">()</span><span class="o">.</span><span class="n">collection</span><span class="p">,</span> <span class="n">attach_perms</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">with_superusers</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">is_superuser</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">print</span> <span class="s">&#39;super users are:&#39;</span>
+        <span class="k">print</span> <span class="n">result</span>
+        <span class="k">for</span> <span class="n">user</span><span class="p">,</span> <span class="n">perms</span> <span class="ow">in</span> <span class="n">anyperm</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">print</span> <span class="n">permission</span>
+            <span class="k">print</span> <span class="n">perms</span>
+            <span class="k">print</span> <span class="n">result</span>
+            <span class="k">if</span> <span class="n">permission</span> <span class="ow">in</span> <span class="n">perms</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s">&#39;old result is:&#39;</span>
+                <span class="k">print</span> <span class="n">result</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">chain</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">user</span><span class="p">))</span>
+                <span class="k">print</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">user</span><span class="p">)</span>
+                <span class="k">print</span> <span class="s">&#39;yes and new result is&#39;</span>
+                <span class="k">print</span> <span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s">&#39;no&#39;</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+</div>
+<div class="viewcode-block" id="UserPostNumMixin"><a class="viewcode-back" href="../../core.html#core.mixins.UserPostNumMixin">[docs]</a><span class="k">class</span> <span class="nc">UserPostNumMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- UserPostNumMixin gives the number of posts the user has published. &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="UserPostNumMixin.get_context_data"><a class="viewcode-back" href="../../core.html#core.mixins.UserPostNumMixin.get_context_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_context_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;  :returns: number of posts the user has published into *context[&#39;user_post_num&#39;]*. &#39;&#39;&#39;</span>
+
+        <span class="n">context</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">UserPostNumMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_context_data</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">context</span><span class="p">[</span><span class="s">&#39;user_post_num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">()</span><span class="o">.</span><span class="n">posts</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">creator</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">context</span>
+
+</div></div>
+<div class="viewcode-block" id="ActivityPermsMixin"><a class="viewcode-back" href="../../core.html#core.mixins.ActivityPermsMixin">[docs]</a><span class="k">class</span> <span class="nc">ActivityPermsMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- ActivityPermsMixin checks current user&#39;s permission of certain course and provide screening. &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="ActivityPermsMixin.get_object"><a class="viewcode-back" href="../../core.html#core.mixins.ActivityPermsMixin.get_object">[docs]</a>    <span class="k">def</span> <span class="nf">get_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queryset</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;  :returns: &quot;Permission Denied&quot; page if user is a not an Instrctor and the course is not active or is deleted. &#39;&#39;&#39;</span>
+
+        <span class="n">obj</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ActivityPermsMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_object</span><span class="p">(</span><span class="n">queryset</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">obj</span>
+        <span class="k">if</span> <span class="p">((</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">has_perm</span><span class="p">(</span><span class="s">&quot;core.edit_course&quot;</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">collection</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">obj</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">is_active</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">is_deleted</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">PermissionDenied</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
+</div></div>
+<div class="viewcode-block" id="ActivityListMixin"><a class="viewcode-back" href="../../core.html#core.mixins.ActivityListMixin">[docs]</a><span class="k">class</span> <span class="nc">ActivityListMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- ActivityListMixin extracts all activities related to current course. &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="ActivityListMixin.get_context_data"><a class="viewcode-back" href="../../core.html#core.mixins.ActivityListMixin.get_context_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_context_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;  :returns:  Activitylist for navigation bar and page body. &#39;&#39;&#39;</span>
+
+        <span class="n">context</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ActivityListMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_context_data</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>  <span class="c"># in activity index view?</span>
+            <span class="n">course</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">()</span><span class="o">.</span><span class="n">collection</span>
+
+        <span class="k">except</span><span class="p">:</span>  <span class="c"># in course detail view?</span>
+            <span class="n">course</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">()</span>
+
+        <span class="n">nodes</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">course</span><span class="o">.</span><span class="n">discussions</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">is_deleted</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span>
+            <span class="n">course</span><span class="o">.</span><span class="n">essays</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">is_deleted</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span>
+            <span class="n">course</span><span class="o">.</span><span class="n">overdubs</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">is_deleted</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span>
+            <span class="c"># Add new types here...</span>
+        <span class="p">]</span>
+
+        <span class="n">acts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">acts_navi</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">act_orphans</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+
+        <span class="c"># Activities associated with lessons...</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">eachActivity</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="k">print</span> <span class="n">eachActivity</span><span class="o">.</span><span class="n">lesson</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">eachActivity</span><span class="o">.</span><span class="n">lesson</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">acts_navi</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eachActivity</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">eachActivity</span><span class="o">.</span><span class="n">lesson</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+                        <span class="n">tempActivity</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">eachActivity</span><span class="p">)</span>
+                        <span class="n">tempActivity</span><span class="o">.</span><span class="n">activity_to_lesson</span> <span class="o">=</span> <span class="n">j</span>
+                        <span class="n">acts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tempActivity</span><span class="p">)</span>
+                        <span class="k">print</span> <span class="n">tempActivity</span>
+                        <span class="k">print</span> <span class="n">tempActivity</span><span class="o">.</span><span class="n">activity_to_lesson</span>
+
+        <span class="c"># Orphans - Activities NOT associated with lessons</span>
+        <span class="n">orphan_num</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+            <span class="n">act_orphans</span> <span class="o">=</span> <span class="n">chain</span><span class="p">(</span><span class="n">act_orphans</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">lesson__isnull</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+            <span class="n">orphan_num</span> <span class="o">+=</span> <span class="n">i</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">lesson__isnull</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+        <span class="c"># Sort the activities list by lesson display order then by activity</span>
+        <span class="c"># display order</span>
+        <span class="c"># we may do the sorting as an array</span>
+        <span class="n">acts</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">activity_to_lesson</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="n">acts</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span>
+            <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">activity_to_lesson</span><span class="o">.</span><span class="n">display_order</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">acts</span><span class="p">:</span>
+            <span class="k">print</span> <span class="n">i</span><span class="o">.</span><span class="n">title</span> <span class="o">+</span> <span class="s">&#39; || &#39;</span> <span class="o">+</span> <span class="n">i</span><span class="o">.</span><span class="n">activity_to_lesson</span><span class="o">.</span><span class="n">title</span> <span class="o">+</span> <span class="s">&#39;||&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">activity_to_lesson</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+        <span class="n">context</span><span class="p">[</span><span class="s">&#39;course&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">course</span>
+        <span class="n">context</span><span class="p">[</span><span class="s">&#39;activity_list_course&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">acts</span>
+        <span class="n">context</span><span class="p">[</span><span class="s">&#39;activity_list&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">acts_navi</span>
+        <span class="n">context</span><span class="p">[</span><span class="s">&#39;orphan_list&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">act_orphans</span>
+        <span class="n">context</span><span class="p">[</span><span class="s">&#39;orphan_num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">orphan_num</span>
+
+        <span class="k">return</span> <span class="n">context</span>
+
+</div></div>
+<div class="viewcode-block" id="CreateActivityMixin"><a class="viewcode-back" href="../../core.html#core.mixins.CreateActivityMixin">[docs]</a><span class="k">class</span> <span class="nc">CreateActivityMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- CreatedActivityMixin is used in CreateView for activities. &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="CreateActivityMixin.get_context_data"><a class="viewcode-back" href="../../core.html#core.mixins.CreateActivityMixin.get_context_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_context_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;  :returns:  context that contains activity_type and course infomation for new activites. &#39;&#39;&#39;</span>
+
+        <span class="n">context</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">CreateActivityMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_context_data</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">context</span><span class="p">[</span><span class="s">&#39;activity_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">activity_type</span>
+        <span class="n">context</span><span class="p">[</span><span class="s">&#39;course&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span>
+            <span class="n">ActivityCollection</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;pk&#39;</span><span class="p">])</span>
+        <span class="c"># Feed an lesson Adding Form context to activity_create view</span>
+        <span class="c"># context[&#39;lessonForm&#39;] = LessonForm()</span>
+        <span class="k">return</span> <span class="n">context</span>
+
+</div></div>
+<div class="viewcode-block" id="CreateActivity4UpdateMixin"><a class="viewcode-back" href="../../core.html#core.mixins.CreateActivity4UpdateMixin">[docs]</a><span class="k">class</span> <span class="nc">CreateActivity4UpdateMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- CreatedActivityMixin is used in CreateView for activities. &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="CreateActivity4UpdateMixin.get_context_data"><a class="viewcode-back" href="../../core.html#core.mixins.CreateActivity4UpdateMixin.get_context_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_context_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; :returns: context that contains the information needed to create lesson on the fly in activity edit view.&#39;&#39;&#39;</span>
+
+        <span class="n">context</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span>
+            <span class="n">CreateActivity4UpdateMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_context_data</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">context</span><span class="p">[</span><span class="s">&#39;activity_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">activity_type</span>
+        <span class="n">context</span><span class="p">[</span><span class="s">&#39;course&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span>
+            <span class="n">ActivityCollection</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">context</span>
+
+</div></div>
+<div class="viewcode-block" id="RecorderMixin"><a class="viewcode-back" href="../../core.html#core.mixins.RecorderMixin">[docs]</a><span class="k">class</span> <span class="nc">RecorderMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- RecorderMixin extracts configuration for recorder. &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="RecorderMixin.get_context_data"><a class="viewcode-back" href="../../core.html#core.mixins.RecorderMixin.get_context_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_context_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; :returns: context that contains recorder configuration. &#39;&#39;&#39;</span>
+
+        <span class="n">context</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">RecorderMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_context_data</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">context</span><span class="p">[</span><span class="s">&#39;recorder_myServer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">recorder_myServer</span>
+        <span class="n">context</span><span class="p">[</span><span class="s">&#39;recorder_myHandler&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">recorder_myHandler</span>
+        <span class="n">context</span><span class="p">[</span><span class="s">&#39;recorder_myDirectory&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">recorder_myDirectory</span>
+        <span class="k">print</span> <span class="s">&#39;my server is : &#39;</span> <span class="o">+</span> <span class="n">context</span><span class="p">[</span><span class="s">&#39;recorder_myServer&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">context</span>
+
+</div></div>
+<div class="viewcode-block" id="EssayResponseListMixin"><a class="viewcode-back" href="../../core.html#core.mixins.EssayResponseListMixin">[docs]</a><span class="k">class</span> <span class="nc">EssayResponseListMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- EssayResponseListMixin is used in Essay Detail View to provide information about essay drafts and reviews. &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="EssayResponseListMixin.get_context_data"><a class="viewcode-back" href="../../core.html#core.mixins.EssayResponseListMixin.get_context_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_context_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; :returns: context that contains submitted/progressing/graded drafts. &#39;&#39;&#39;</span>
+
+        <span class="n">context</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span>
+            <span class="n">EssayResponseListMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_context_data</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">context</span><span class="p">[</span><span class="s">&#39;submitted_essay_responses&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">EssayResponse</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">essay_activity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">())</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="s">&#39;in progress&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">&#39;-draft_number&#39;</span><span class="p">)</span>
+        <span class="n">context</span><span class="p">[</span><span class="s">&#39;progressing_essay_response&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">EssayResponse</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">essay_activity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">(),</span> <span class="n">status</span><span class="o">=</span><span class="s">&#39;in progress&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">&#39;modified&#39;</span><span class="p">,</span> <span class="s">&#39;-draft_number&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="n">context</span><span class="p">[</span><span class="s">&#39;graded_essay_responses&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">EssayResponse</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">essay_activity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">(),</span> <span class="n">status</span><span class="o">=</span><span class="s">&#39;graded&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">&#39;-draft_number&#39;</span><span class="p">)</span>
+        <span class="n">context</span><span class="p">[</span><span class="s">&#39;all_essay_responses&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">EssayResponse</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">essay_activity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">())</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="s">&#39;in progress&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="s">&#39;-draft_number&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">context</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">clt-langlabs-dev-py  documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

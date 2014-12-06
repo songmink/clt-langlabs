@@ -16,7 +16,7 @@ socket.on('connect', function () {
                 $('#connectingDIV').removeClass('show').addClass('hidden');
                 $('#connectedDIV').removeClass('hidden').addClass('show');
                 clear();
-                console.log("user is added to discussion")
+                // console.log("user is added to discussion")
             }else{
                 $('#sysMessage').html("<i class='fa fa-frown-o fa-5x'></i> Server Error, please contact site admin for assistance")
             }
@@ -24,27 +24,27 @@ socket.on('connect', function () {
     });
 
     socket.on('announcement', function (msg) {
-        console.log("announcement: "+msg)
+        // console.log("announcement: "+msg)
     });
 
     socket.on('nicknames', function (nicknames) {
-        console.log('nicknames: '+nicknames)
+        // console.log('nicknames: '+nicknames)
     });
 
     socket.on('msg_to_room', message);
     socket.on('cmt_to_room', comment);
 
     socket.on('reconnect', function () {
-        console.log("reconnect: "+"reconnected to the server")
+        // console.log("reconnect: "+"reconnected to the server")
     });
 
     socket.on('reconnecting', function () {
-        console.log('reconnecting: '+'attempting to reconnect the server')
+        // console.log('reconnecting: '+'attempting to reconnect the server')
     });
 
     socket.on('error', function (e) {
         var temp = e ? e : 'A unknown error occurred'
-        console.log('error: '+ temp)
+        // console.log('error: '+ temp)
     });
 
 
@@ -60,7 +60,7 @@ var testtt=0;
             if(recordingFlag==false){  //check if there is un-uploaded recording
                 //Post textarea is not empty 
                 if ($('#postTextarea').html().trim()){
-                    console.log($("#postTextarea").html())
+                    // console.log($("#postTextarea").html())
                     // get the attached files
                     var tempATT=[]
                     $("#inputAttachments").find('.fileLink').each(function(index){ tempATT.push($(this).attr('href'))})
@@ -70,25 +70,25 @@ var testtt=0;
                     var tempATT_audio=''
                     tempATT_audio+=$("#inputAttachments").find('.audioName').first().text();
                     // send Post to server and get a reply of post id
-                    console.log("tempATT")
-                    console.log(tempATT)
-                    console.log("tempATT_name")
-                    console.log(tempATT_name)
+                    // console.log("tempATT")
+                    // console.log(tempATT)
+                    // console.log("tempATT_name")
+                    // console.log(tempATT_name)
                     socket.emit('user message', {msg : $("#postTextarea").html() ,attaches: tempATT, attachesName:tempATT_name, audioURL:tempATT_audio});
                     clear();
                     if($('#posts2').size()==0 && $('#activity_title').data('readafterpost')=='True'){
-                        console.log('executed_read_after_post')
+                        // console.log('executed_read_after_post')
                         $( "#posts" ).load( window.location.pathname+" #posts2", function( response, status, xhr ) {
                           if ( status == "error" ) {
                             var msg = "Sorry but there was an error: ";
-                            console.log(msg)
+                            // console.log(msg)
                           }
                         });
                     }
                     return false;
                 }
             }else{
-                 console.log("Please save recording before sending post or click cancel")
+                 // console.log("Please save recording before sending post or click cancel")
                  $('.notificationButton').trigger("click");
             }
 
@@ -97,7 +97,7 @@ var testtt=0;
         $( "#posts" ).on( "keydown", "textarea", function(event) {
             if ( event.which == 13 && $(this).val!="" ) {
                event.preventDefault();
-               console.log($(this).val())
+               // console.log($(this).val())
                // comment($('#activityUSER').val(), $(this).val(), $(this).closest(".comment"))
                socket.emit('user comment',{cmt : $(this).val(),parentID: $(this).closest(".comment").parent().prev().data('postid')});
                //clear the input
@@ -119,8 +119,8 @@ var testtt=0;
             msg = mess.message
             created = mess.createTime
             msgID = mess.msgID
-            console.log(mess.message)
-            console.log(from+" says: "+msg.msg);
+            // console.log(mess.message)
+            // console.log(from+" says: "+msg.msg);
             if(msg.attaches.length>0){
                 var tempAttachments ='<p class="attachDIV well " style="padding:8px;margin-bottom:0px;border-radius:0px;border:0px;background-color:#F8F8F8;">'
                 for(var i=0; i<msg.attaches.length;i++){
@@ -154,8 +154,8 @@ var testtt=0;
             msgID = mess.msgID
             parentPost = mess.parentPost
             var pp =$("li[data-postid="+parentPost+"]").next().find('.comment')
-            console.log(from+" says(comment): "+msg.cmt);
-            console.log(parentPost)
+            // console.log(from+" says(comment): "+msg.cmt);
+            // console.log(parentPost)
             testtt=pp
             var temp =  '<li class="left clearfix commentlist" data-postid='+msgID+'><span class="chat-img pull-left"><img src="http://placehold.it/50/55C1E7/fff&amp;ltext=U" alt='+from+' class="img-circle  img-responsive" /></span><div class="chat-body clearfix"><div class="header"><strong class="primary-font">'+from.substr(0,1).toUpperCase()+from.substr(1)+'</strong> <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span>'+created+'</small></div><p>'+msg.cmt+'</p></div></li>';
             pp.prepend(temp);

@@ -40,6 +40,7 @@
     {% if "edit_course" in course_perms%}
 
 	<div id='activity_admin_div' class='well' style='display:none'>
+	<!-- Activity Permission control Toggle -->
 	<h2 id='activity_admin' data-ajaxURL="{% url 'change_perm' %}" data-activityid="{{activity.id}}">Activity Membership Administration
 	<span> &nbsp;
 		<small>
@@ -186,7 +187,7 @@
 		</div>
 	</div>
 	{% endif %}
-
+	<!-- Essay Discussion Section -->
 	<div id='essay_discussion' class='col-xs-10 col-xs-offset-1' data-ajaxurl='{% url "save_post" %}' data-activityid='{{activity.id}}' data-activitytype='{{ activity.activity_type }}' {% if "edit_course" not in course_perms %} style='display:none;' {% endif %}>
 		<div id="essay_discussion2">
         <h3>Instructions</h3>
@@ -219,6 +220,7 @@
                  {% endif %}
                  
                  <div class="btn-group progress_drafts pull-right" data-toggle="buttons" >
+             	 <!-- Draft Number Toggle -->
                  {% for response in responses.list  reversed %}
                   
 	                  {% if forloop.last %}
@@ -235,9 +237,9 @@
                  {% endfor %}
 			     </div>
 
+			    <!-- Draft Content -->
 				{% for response in responses.list %}
-                    <!--  box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
-                    background-image:url("{% static 'img/paper.jpg' %}"); -->
+                   
                     <div id="essayResponse{{response.id}}" style="{% if forloop.first %}{% else %}display:none; {% endif %}border-radius:0px;margin-bottom:0px;">
 
 			        <div class="panel panel-default" style='margin-bottom:0px;border-color:#FFFFFF;border-radius:0px;border:0px;background-image: url("{% static 'img/paper4.png' %}");background-repeat: repeat; '>
@@ -286,7 +288,8 @@
 					  {% endif %}
 
 					</div>
- 
+ 					
+ 					<!-- Comment Section for Draft -->
 					<div   style='width:99%;margin-top:0px;margin-left:1%;'>
 
                         <ul  style='list-style-type: none;padding:0; margin:0;' data-responseid="{{response.id}}">
@@ -328,6 +331,7 @@
 
 	                    </ul>
 					</div>
+					<!-- End of Comment Section for Draft -->
 	                </div>
 	            {% endfor %}
 				<br>

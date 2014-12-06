@@ -1,0 +1,38 @@
+overdub_discussions.migrations package
+======================================
+
+Submodules
+----------
+
+overdub_discussions.migrations.0001_initial module
+--------------------------------------------------
+
+.. automodule:: overdub_discussions.migrations.0001_initial
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+overdub_discussions.migrations.0002_auto__add_field_overdubactivity_upload_video__chg_field_overdubactivit module
+-----------------------------------------------------------------------------------------------------------------
+
+.. automodule:: overdub_discussions.migrations.0002_auto__add_field_overdubactivity_upload_video__chg_field_overdubactivit
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+overdub_discussions.migrations.0003_auto__del_field_overdubactivity_upload_video__chg_field_overdubactivit module
+-----------------------------------------------------------------------------------------------------------------
+
+.. automodule:: overdub_discussions.migrations.0003_auto__del_field_overdubactivity_upload_video__chg_field_overdubactivit
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: overdub_discussions.migrations
+    :members:
+    :undoc-members:
+    :show-inheritance:

@@ -1,0 +1,54 @@
+core.migrations package
+=======================
+
+Submodules
+----------
+
+core.migrations.0001_initial module
+-----------------------------------
+
+.. automodule:: core.migrations.0001_initial
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+core.migrations.0002_auto__del_field_document_post__add_field_document_content_type__add_fi module
+--------------------------------------------------------------------------------------------------
+
+.. automodule:: core.migrations.0002_auto__del_field_document_post__add_field_document_content_type__add_fi
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+core.migrations.0003_auto__add_field_activitycollection_accesscode module
+-------------------------------------------------------------------------
+
+.. automodule:: core.migrations.0003_auto__add_field_activitycollection_accesscode
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+core.migrations.0004_auto module
+--------------------------------
+
+.. automodule:: core.migrations.0004_auto
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+core.migrations.0005_auto__add_field_activitycollection_is_active__add_field_activitycollec module
+--------------------------------------------------------------------------------------------------
+
+.. automodule:: core.migrations.0005_auto__add_field_activitycollection_is_active__add_field_activitycollec
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: core.migrations
+    :members:
+    :undoc-members:
+    :show-inheritance:

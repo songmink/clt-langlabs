@@ -1,3 +1,6 @@
+"""
+Django dev settings for cltlanglab project.
+"""
 # settings/dev.py
 
 # Example use with manage.py:

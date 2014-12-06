@@ -1,3 +1,6 @@
+"""
+Cltlanglab Chat Server configuration file
+"""
 # run.py
 #!/usr/bin/env python
 import os, sys
