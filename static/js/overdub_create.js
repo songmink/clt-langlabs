@@ -1,5 +1,7 @@
 $( document ).ready(function() {
   // Handler for .ready() called.
+
+  // combine "youtubeURL" and "file upload" together
   $("#div_id_media").addClass(" tab-pane active ")
   .find('label').remove();
 

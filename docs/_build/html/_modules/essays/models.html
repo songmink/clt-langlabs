@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>essays.models &mdash; clt-langlabs-dev-py  documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="clt-langlabs-dev-py  documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">clt-langlabs-dev-py  documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for essays.models</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">User</span>
+
+<span class="kn">from</span> <span class="nn">core.models</span> <span class="kn">import</span> <span class="n">ActivityCollection</span><span class="p">,</span> <span class="n">AbstractActivity</span><span class="p">,</span> <span class="n">Post</span>
+
+
+<div class="viewcode-block" id="EssayActivity"><a class="viewcode-back" href="../../essays.html#essays.models.EssayActivity">[docs]</a><span class="k">class</span> <span class="nc">EssayActivity</span><span class="p">(</span><span class="n">AbstractActivity</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;-- EssayActivity is the class for *Essay*.</span>
+
+<span class="sd">        :Fields:</span>
+<span class="sd">            | **title**  -- Title of activity.</span>
+<span class="sd">            | **instructions**   -- Instructions about this activity.</span>
+<span class="sd">            | **lesson** -- A lesson this activity belongs to, it could be null.</span>
+<span class="sd">            | **display_order**    -- Display order of activity.</span>
+<span class="sd">            | **created**    -- Time of creation.</span>
+<span class="sd">            | **modified**    -- Time of last modification.</span>
+<span class="sd">            | **is_active**    -- Flag for activation of activity.</span>
+<span class="sd">            | **activity_type**    -- Type of current activity.</span>
+<span class="sd">            | **posts**    -- Associated comments/posts.</span>
+<span class="sd">            | **permission_control**    -- Flag for permission control within an activity.</span>
+<span class="sd">            | **is_deleted**    -- Flag for soft deletion of current activity.</span>
+<span class="sd">            | **collection**    -- The course that this discussion activity belongs to.</span>
+<span class="sd">            | **required_revisions**  -- Number of required revisions in an essay assignment</span>
+<span class="sd">        :Meta:</span>
+<span class="sd">            | **abstract**  -- Set class to abstract</span>
+<span class="sd">            | **permissions**   -- Object level permission control(&quot;view_activity&quot; permission is checked when *permission_control* is set to true )</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">collection</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">ActivityCollection</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">SET_NULL</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s">&#39;essays&#39;</span><span class="p">)</span>
+    <span class="n">required_revisions</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">()</span>
+
+</div>
+<div class="viewcode-block" id="EssayResponse"><a class="viewcode-back" href="../../essays.html#essays.models.EssayResponse">[docs]</a><span class="k">class</span> <span class="nc">EssayResponse</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;-- EssayResponse is the class for *Essay Draft*.</span>
+
+<span class="sd">        :Fields:</span>
+<span class="sd">            | **essay_activity**  -- The essay activity that the draft belongs to.</span>
+<span class="sd">            | **draft_title**  -- Title of draft.</span>
+<span class="sd">            | **user**  -- User of the draft.</span>
+<span class="sd">            | **draft_number**  -- Draft number of this draft.</span>
+<span class="sd">            | **status**  -- Status of the draft(it starts from &quot;in progress&quot; then become &quot;submitted&quot; and later become &quot;graded&quot;).</span>
+<span class="sd">            | **modified**  -- Time of last modification.</span>
+<span class="sd">            | **draft**  -- Content of the draft.</span>
+<span class="sd">            | **review**  -- The review of the draft by an Instructor.</span>
+<span class="sd">            | **reviewed_by**  -- An instructor that reviews the draft.</span>
+<span class="sd">            | **flagged**  -- Flag for inappropriate contents.</span>
+<span class="sd">            | **posts**  -- Comments of a draft.</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">essay_activity</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">EssayActivity</span><span class="p">)</span>
+    <span class="n">draft_title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;default_draft_title&#39;</span><span class="p">)</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">User</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s">&#39;authored_essay_drafts&#39;</span><span class="p">)</span>
+    <span class="n">draft_number</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;in progress&#39;</span><span class="p">)</span>
+    <span class="n">modified</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">draft</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">review</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">reviewed_by</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">User</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s">&#39;reviewed_essay_drafts&#39;</span><span class="p">)</span>
+    <span class="n">flagged</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">posts</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span><span class="n">Post</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__unicode__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">draft_title</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">clt-langlabs-dev-py  documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

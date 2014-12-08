@@ -1,5 +1,5 @@
 """
-Django settings for cltlanglab project.
+Django base settings for cltlanglab project.
 """
 import os
 from unipath import Path

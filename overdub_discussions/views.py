@@ -29,12 +29,16 @@ from .models import OverdubActivity
 
 
 class OverdubDetailView(CourseListMixin, ActivityListMixin, RecorderMixin, UsersWithPermsMixin, ActivityPermsMixin, UserPostNumMixin, DetailView):
+    ''' -- Overdub Detail Page '''
+
     model = OverdubActivity
     context_object_name = 'activity'
     template_name = 'overdub.html'
 
 
 class OverdubCreateView(CourseListMixin, CreateActivityMixin, CreateView):
+    ''' -- Overdub Create Page '''
+
     model = OverdubActivity
     template_name = 'activity_create.html'
     fields = ['title', 'instructions', 'media',
@@ -69,6 +73,8 @@ class OverdubCreateView(CourseListMixin, CreateActivityMixin, CreateView):
         return super(OverdubCreateView, self).form_valid(form)
 
 class OverdubUpdateView(CourseListMixin, CreateActivity4UpdateMixin, ActivityPermsMixin, UpdateView):
+    ''' -- Overdub Edit Page '''
+
     model= OverdubActivity
     context_object_name = 'activity' 
     template_name = 'activity_edit.html'
@@ -87,6 +93,8 @@ class OverdubUpdateView(CourseListMixin, CreateActivity4UpdateMixin, ActivityPer
         return form
     
     def form_valid(self, form):
+        ''' :returns: *"Media"* is assigned to an external URL if it's filled, otherwise it points to the uploaded file. '''
+
         try:
             instance = Document(file_upload = self.request.FILES['upload_video'])
             instance.save()
@@ -98,6 +106,8 @@ class OverdubUpdateView(CourseListMixin, CreateActivity4UpdateMixin, ActivityPer
         return super(OverdubUpdateView, self).form_valid(form)
 
 class OverdubDeleteView(CourseListMixin, FakeDeleteMixin, DeleteView):
+    ''' -- Overdub Delete Confirmation Page '''
+
     model = OverdubActivity
     # success_url = reverse_lazy('home')
     template_name = 'activity_delete.html'

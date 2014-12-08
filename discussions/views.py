@@ -13,12 +13,16 @@ from .models import DiscussionActivity
 
 
 class DiscussionDetailView(CourseListMixin, ActivityListMixin, RecorderMixin, UsersWithPermsMixin, ActivityPermsMixin, UserPostNumMixin, DetailView):
+    ''' -- Discussion Detail Page '''
+
     model = DiscussionActivity
     context_object_name = 'activity'
     template_name = 'discussion.html'
 
 
 class DiscussionCreateView(CourseListMixin, CreateActivityMixin, CreateView):
+    ''' -- Discussion Create Page '''
+
     model = DiscussionActivity
     template_name = 'activity_create.html'
     fields = ['title', 'instructions',
@@ -26,6 +30,8 @@ class DiscussionCreateView(CourseListMixin, CreateActivityMixin, CreateView):
     activity_type = 'discussion'
 
     def get_form(self, form_class):
+        ''' :returns: A list of lessons the course has into *"form"*. '''
+
         form = super(DiscussionCreateView, self).get_form(
             form_class)  # instantiate using parent
         form.fields['lesson'].queryset = Lesson.objects.filter(
@@ -40,6 +46,8 @@ class DiscussionCreateView(CourseListMixin, CreateActivityMixin, CreateView):
         return super(DiscussionCreateView, self).form_valid(form)
 
 class DiscussionUpdateView(CourseListMixin, CreateActivity4UpdateMixin, ActivityPermsMixin, UpdateView):
+    ''' -- Discussion Edit Page '''
+
     model=DiscussionActivity
     context_object_name = 'activity' 
     template_name = 'activity_edit.html'
@@ -48,6 +56,8 @@ class DiscussionUpdateView(CourseListMixin, CreateActivity4UpdateMixin, Activity
     activity_type = 'discussion'
 
     def get_form(self, form_class):
+        ''' :returns: A list of lessons the course has into *"form"*. '''
+
         form = super(DiscussionUpdateView, self).get_form(
             form_class)  # instantiate using parent
         form.fields['lesson'].queryset = Lesson.objects.filter(
@@ -55,6 +65,8 @@ class DiscussionUpdateView(CourseListMixin, CreateActivity4UpdateMixin, Activity
         return form
 
 class DiscussionDeleteView(CourseListMixin, FakeDeleteMixin, DeleteView):
+    ''' -- Discussion Delete Confirmation Page '''
+
     model = DiscussionActivity
     # success_url = 'ToBeReplaced'
     template_name = 'activity_delete.html'

@@ -1,5 +1,9 @@
 // socket.io specific code
+
+// connect to name space
 var socket = io.connect("http://localhost:8001/discussionsPosts");
+
+// "read after post" check
 if( ($('#activity_title').data('userpostnum')===0  &&  $('#activity_title').data('readafterpost')=='True') && $('#activity_title').data('userisinstructor')===false){
     var read_after_post_lock = true;
     $("#posts").append(' <div id="readafterpost_div" class="col-xs-12  well " style="background-color:rgba(255, 227, 187, 0.21);">' +
@@ -24,6 +28,7 @@ socket.on('connect', function () {
     // SPECIFY THREAD ID TO SPECIFY ROOM
     socket.emit( 'join',  'discussion' ,$('#activityID').val() );
 
+    // Nickname event to declare user identity
     socket.emit('nickname', $('#activityUSER').val(), function (set) {
             if (set) {
                 $('#connectingDIV').removeClass('show').addClass('hidden');
@@ -44,7 +49,10 @@ socket.on('connect', function () {
         // console.log('nicknames: '+nicknames)
     });
 
+    // receive broadcast message
     socket.on('msg_to_room', message);
+
+    // receive broadcast comment
     socket.on('cmt_to_room', comment);
 
     socket.on('reconnect', function () {
@@ -57,7 +65,7 @@ socket.on('connect', function () {
 
     socket.on('error', function (e) {
         var temp = e ? e : 'A unknown error occurred';
-        console.log('error: '+ temp);
+        // console.log('error: '+ temp);
     });
 
 
@@ -125,7 +133,7 @@ socket.on('connect', function () {
         }
     });
     
-
+    // receive message and generate the content to web page
     function message (message) {
         if( read_after_post_lock === false) {
             var mess=eval ("(" + message + ")");
@@ -166,6 +174,8 @@ socket.on('connect', function () {
 
         }
     }
+
+    // receive the comment and show them on web page
     function comment (message) {
         if( read_after_post_lock === false) {
             var mess=eval ("(" + message + ")");

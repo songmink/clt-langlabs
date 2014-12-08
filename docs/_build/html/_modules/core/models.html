@@ -1,0 +1,325 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>core.models &mdash; clt-langlabs-dev-py  documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="clt-langlabs-dev-py  documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">clt-langlabs-dev-py  documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for core.models</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">User</span>
+<span class="kn">from</span> <span class="nn">django.core.urlresolvers</span> <span class="kn">import</span> <span class="n">reverse</span>
+<span class="kn">from</span> <span class="nn">django.core.validators</span> <span class="kn">import</span> <span class="n">MinLengthValidator</span>
+<span class="kn">from</span> <span class="nn">django.contrib.contenttypes.models</span> <span class="kn">import</span> <span class="n">ContentType</span>
+<span class="kn">from</span> <span class="nn">django.contrib.contenttypes.generic</span> <span class="kn">import</span> <span class="n">GenericForeignKey</span>
+<span class="kn">from</span> <span class="nn">guardian.shortcuts</span> <span class="kn">import</span> <span class="n">get_objects_for_user</span><span class="p">,</span> <span class="n">get_users_with_perms</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">ACTIVITY_TYPES</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="s">&#39;DiscussionActivity&#39;</span><span class="p">,</span>  <span class="s">&#39;Discussion Activity&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;EssayActivity&#39;</span><span class="p">,</span>       <span class="s">&#39;Essay Activity&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;OverdubActivity&#39;</span><span class="p">,</span>     <span class="s">&#39;Overdub Media Activity&#39;</span><span class="p">),</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="ActivityCollection"><a class="viewcode-back" href="../../core.html#core.models.ActivityCollection">[docs]</a><span class="k">class</span> <span class="nc">ActivityCollection</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;-- ActivityCollection(course) is used to manage lessons and activities .</span>
+
+<span class="sd">        :Fields:</span>
+<span class="sd">            | **title**  -- Title of course.</span>
+<span class="sd">            | **nickname**   -- Course nickname.</span>
+<span class="sd">            | **description** -- Description of the course.</span>
+<span class="sd">            | **accesscode**    -- Code for students to subscribe a course.</span>
+<span class="sd">            | **is_active**    -- Flag the activation of a course.</span>
+<span class="sd">            | **is_public**    -- Flag whether this course can be joined by any user.</span>
+<span class="sd">            | **is_deleted**    -- Flag for soft deletion of current collection/course.</span>
+<span class="sd">        :Meta:</span>
+<span class="sd">            | **permissions**   -- Object level permission control(&quot;edit_course&quot; -&gt; Instructor ; &quot;view_course&quot; -&gt; Student)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span> 
+
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">nickname</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">accesscode</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                                  <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">verbose_name</span><span class="o">=</span><span class="s">&#39;Access Code&#39;</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">MinLengthValidator</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+    <span class="n">is_active</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">is_public</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">is_deleted</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">permissions</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="s">&#39;view_course&#39;</span><span class="p">,</span> <span class="s">&#39;view course&#39;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s">&#39;edit_course&#39;</span><span class="p">,</span> <span class="s">&#39;edit course&#39;</span><span class="p">),</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="ActivityCollection.get_private_users"><a class="viewcode-back" href="../../core.html#core.models.ActivityCollection.get_private_users">[docs]</a>    <span class="k">def</span> <span class="nf">get_private_users</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; :returns: All users that have &quot;edit_course&quot; permission to this course. &#39;&#39;&#39;</span>
+
+        <span class="n">anyperm</span> <span class="o">=</span> <span class="n">get_users_with_perms</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">attach_perms</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">with_superusers</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">user</span><span class="p">,</span> <span class="n">perms</span> <span class="ow">in</span> <span class="n">anyperm</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s">&#39;edit_course&#39;</span> <span class="ow">in</span> <span class="n">perms</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">chain</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">user</span><span class="p">))</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+</div>
+<div class="viewcode-block" id="ActivityCollection.get_user_num"><a class="viewcode-back" href="../../core.html#core.models.ActivityCollection.get_user_num">[docs]</a>    <span class="k">def</span> <span class="nf">get_user_num</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; :returns: Number of all users whoever has any permission to this course. &#39;&#39;&#39;</span>
+
+        <span class="n">anyperm</span> <span class="o">=</span> <span class="n">get_users_with_perms</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">attach_perms</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">with_superusers</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">anyperm</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="ActivityCollection.get_absolute_url"><a class="viewcode-back" href="../../core.html#core.models.ActivityCollection.get_absolute_url">[docs]</a>    <span class="k">def</span> <span class="nf">get_absolute_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; :returns: Absolute URL of the Course. &#39;&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="n">reverse</span><span class="p">(</span><span class="s">&#39;course&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)])</span>
+</div>
+    <span class="k">def</span> <span class="nf">__unicode__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">+</span> <span class="s">&quot; (&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nickname</span> <span class="o">+</span> <span class="s">&quot;)&quot;</span>
+
+</div>
+<div class="viewcode-block" id="Lesson"><a class="viewcode-back" href="../../core.html#core.models.Lesson">[docs]</a><span class="k">class</span> <span class="nc">Lesson</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;-- Lesson Model is used to manage activities but activities can belong to a collection/course without a lesson associated with it.</span>
+
+<span class="sd">        :Fields:</span>
+<span class="sd">            | **title**  -- Title of a lesson.</span>
+<span class="sd">            | **description**      -- A description of the lesson.</span>
+<span class="sd">            | **display_order** -- Display order of a lesson.</span>
+<span class="sd">            | **collectoin**    -- The collection/course the lesson is under.</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
+    <span class="n">display_order</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">collection</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">ActivityCollection</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">SET_NULL</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_absolute_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">reverse</span><span class="p">(</span><span class="s">&#39;lesson&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)])</span>
+
+    <span class="k">def</span> <span class="nf">__unicode__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span>
+
+</div>
+<div class="viewcode-block" id="Post"><a class="viewcode-back" href="../../core.html#core.models.Post">[docs]</a><span class="k">class</span> <span class="nc">Post</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;-- Post Model is used to manage posts/comments.</span>
+
+<span class="sd">        :Fields:</span>
+<span class="sd">            | **text**  -- Content of a post.</span>
+<span class="sd">            | **created**      -- Time the post is created.</span>
+<span class="sd">            | **creator** -- Creator of the post.</span>
+<span class="sd">            | **parent_post**    -- The parent post of current post if it&#39;s a comment or feedback.</span>
+<span class="sd">            | **audio_URL**    -- The url link to audio files if there is recording attached to it.</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">text</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
+    <span class="n">created</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">creator</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">User</span><span class="p">)</span>
+    <span class="n">parent_post</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s">&#39;self&#39;</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">audio_URL</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">URLField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Post.get_absolute_url"><a class="viewcode-back" href="../../core.html#core.models.Post.get_absolute_url">[docs]</a>    <span class="k">def</span> <span class="nf">get_absolute_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; :returns: Absolute URL of a. &#39;&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="n">reverse</span><span class="p">(</span><span class="s">&#39;post&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)])</span>
+</div>
+    <span class="k">def</span> <span class="nf">__unicode__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span>
+ 
+<div class="viewcode-block" id="Post.get_documents"><a class="viewcode-back" href="../../core.html#core.models.Post.get_documents">[docs]</a>    <span class="k">def</span> <span class="nf">get_documents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; :returns: Documents that are related to a Post. &#39;&#39;&#39;</span>
+
+        <span class="c"># issue_id=issue.id, issue_ct=ContentType.objects.get_for_model(issue)</span>
+        <span class="k">return</span> <span class="n">Document</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">object_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="n">ContentType</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get_for_model</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+</div></div>
+<div class="viewcode-block" id="AbstractActivity"><a class="viewcode-back" href="../../core.html#core.models.AbstractActivity">[docs]</a><span class="k">class</span> <span class="nc">AbstractActivity</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;-- AbstractActivity is abstract class for *Discussion*, *Essay* and *Overdub*.</span>
+
+<span class="sd">        :Fields:</span>
+<span class="sd">            | **title**  -- Title of activity.</span>
+<span class="sd">            | **instructions**   -- Instructions about this activity.</span>
+<span class="sd">            | **lesson** -- A lesson this activity belongs to, it could be null.</span>
+<span class="sd">            | **display_order**    -- Display order of activity.</span>
+<span class="sd">            | **created**    -- Time of creation.</span>
+<span class="sd">            | **modified**    -- Time of last modification.</span>
+<span class="sd">            | **is_active**    -- Flag for activation of activity.</span>
+<span class="sd">            | **activity_type**    -- Type of current activity.</span>
+<span class="sd">            | **posts**    -- Associated comments/posts.</span>
+<span class="sd">            | **permission_control**    -- Flag for permission control within an activity.</span>
+<span class="sd">            | **is_deleted**    -- Flag for soft deletion of current activity.</span>
+<span class="sd">        :Meta:</span>
+<span class="sd">            | **abstract**  -- Set class to abstract</span>
+<span class="sd">            | **permissions**   -- Object level permission control(&quot;view_activity&quot; permission is checked when *permission_control* is set to true )</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>    
+    <span class="n">DISCUSSION</span> <span class="o">=</span> <span class="s">&#39;discussion&#39;</span>
+    <span class="n">ESSAY</span> <span class="o">=</span> <span class="s">&#39;essay&#39;</span>
+    <span class="n">OVERDUB</span> <span class="o">=</span> <span class="s">&#39;overdub&#39;</span>
+    <span class="n">ACTIVITY_TYPES</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">DISCUSSION</span><span class="p">,</span>  <span class="s">&#39;Discussion Activity&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">ESSAY</span><span class="p">,</span>       <span class="s">&#39;Essay Activity&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">OVERDUB</span><span class="p">,</span>     <span class="s">&#39;Overdub Media Activity&#39;</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">instructions</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
+    <span class="n">lesson</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span>
+        <span class="n">Lesson</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">display_order</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">created</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">modified</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">is_active</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">activity_type</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">ACTIVITY_TYPES</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">DISCUSSION</span><span class="p">)</span>
+    <span class="n">posts</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span><span class="n">Post</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">permission_control</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">is_deleted</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+
+        <span class="n">abstract</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">permissions</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="s">&#39;view_activity&#39;</span><span class="p">,</span> <span class="s">&#39;view activity&#39;</span><span class="p">),</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="AbstractActivity.get_siblings"><a class="viewcode-back" href="../../core.html#core.models.AbstractActivity.get_siblings">[docs]</a>    <span class="k">def</span> <span class="nf">get_siblings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;  :returns: Sibling activites of same collection(course). &#39;&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">collection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">collection</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">&quot;display_order&quot;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="AbstractActivity.get_absolute_url"><a class="viewcode-back" href="../../core.html#core.models.AbstractActivity.get_absolute_url">[docs]</a>    <span class="k">def</span> <span class="nf">get_absolute_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; :returns: Absolute URL of Document. &#39;&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="n">reverse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">activity_type</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)])</span>
+</div>
+    <span class="k">def</span> <span class="nf">__unicode__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span>
+
+</div>
+<div class="viewcode-block" id="Document"><a class="viewcode-back" href="../../core.html#core.models.Document">[docs]</a><span class="k">class</span> <span class="nc">Document</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;-- Document Model is used to manage files in our project.</span>
+
+<span class="sd">        :Fields:</span>
+<span class="sd">            | **file_upload**  -- FileField object to store files.</span>
+<span class="sd">            | **created**      -- Record created time.</span>
+<span class="sd">            | **content_type** -- File content types.</span>
+<span class="sd">            | **accessURL**    -- The url link to files and is created when file is saved.</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c"># file objects</span>
+    <span class="n">file_upload</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">FileField</span><span class="p">(</span>
+        <span class="n">upload_to</span><span class="o">=</span><span class="s">&#39;documents&#39;</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">created</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">content_type</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">ContentType</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">object_id</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">content_object</span> <span class="o">=</span> <span class="n">GenericForeignKey</span><span class="p">(</span><span class="s">&#39;content_type&#39;</span><span class="p">,</span> <span class="s">&#39;object_id&#39;</span><span class="p">)</span>
+    <span class="c"># The url link to this file</span>
+    <span class="n">accessURL</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">URLField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Document.get_absolute_url"><a class="viewcode-back" href="../../core.html#core.models.Document.get_absolute_url">[docs]</a>    <span class="k">def</span> <span class="nf">get_absolute_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; :returns: Absolute URL of Document. &#39;&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_upload</span><span class="o">.</span><span class="n">url</span>
+</div>
+    <span class="k">def</span> <span class="nf">__unicode__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_upload</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Document.save"><a class="viewcode-back" href="../../core.html#core.models.Document.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;  The *file_upload* field has to be saved before saving its URL to *accessURL* &#39;&#39;&#39;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Document</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">accessURL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_upload</span><span class="o">.</span><span class="n">url</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Document</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">clt-langlabs-dev-py  documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

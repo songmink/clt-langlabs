@@ -14,57 +14,73 @@ from essays.models import EssayResponse
 
 from cltlanglab.settings import base
 
+
 class CourseListMixin(object):
+    ''' -- CourseListMixin passes a list of courses that current user has access to.  '''
 
     def get_context_data(self, **kwargs):
+        '''  :returns: A list of courses into *context['course_list']* .'''
+
         context = super(CourseListMixin, self).get_context_data(**kwargs)
         try:
-            context['course_list'] = get_objects_for_user(self.request.user, ['core.view_course', 'core.edit_course'], any_perm=True).filter(is_deleted=False)
+            context['course_list'] = get_objects_for_user(self.request.user, [
+                                                          'core.view_course', 'core.edit_course'], any_perm=True).filter(is_deleted=False)
         except:
             pass
         return context
 
+
 class FakeDeleteMixin(object):
+    ''' -- FakeDeleteMixin performs the soft deletion of a Course or Activity  '''
 
     def delete(self, request, *args, **kwargs):
+        '''  :returns: Append to the name of course or activity a time stamp to mark as deleted. '''
+
         self.object = self.get_object()
         if not self.success_url:
             self.success_url = self.object.collection.get_absolute_url()
         time = datetime.now()
-        timeStamp = str(time.month)+"/"+str(time.day)+"/"+str(time.year)+" "+str(time.hour)+":"+str(time.minute)+":"+str(time.second)
+        timeStamp = str(time.month) + "/" + str(time.day) + "/" + str(time.year) + \
+            " " + str(time.hour) + ":" + str(time.minute) + \
+            ":" + str(time.second)
         self.object.is_deleted = True
-        self.object.title = "(deleted - "+timeStamp+")"+self.object.title
+        self.object.title = "(deleted - " + timeStamp + ")" + self.object.title
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
 
+
 class UsersWithPermsMixin(object):
+    ''' -- UsersWithPermsMixin provides user list with permission in Course Detail View and Activity Detail View.  '''
 
     def get_context_data(self, **kwargs):
+        '''  :returns: Activity users, course users and course instructors in  activity detail view; Course users in course detail view. '''
 
         context = super(UsersWithPermsMixin, self).get_context_data(**kwargs)
         try:
             # for activity detail view
-            context['object_course_users'] = get_users_with_perms( self.get_object().collection,  attach_perms=True, with_superusers=False)
-            context['object_users'] = get_users_with_perms( self.get_object(),  attach_perms=False, with_superusers=False)  
+            context['object_course_users'] = get_users_with_perms(
+                self.get_object().collection,  attach_perms=True, with_superusers=False)
+            context['object_users'] = get_users_with_perms(
+                self.get_object(),  attach_perms=False, with_superusers=False)
             # get private message users for activity detail view
-            anyperm = get_users_with_perms(self.get_object().collection , attach_perms=True, with_superusers=False)
+            anyperm = get_users_with_perms(
+                self.get_object().collection, attach_perms=True, with_superusers=False)
             result = User.objects.filter(is_superuser=True).all()
             for user, perms in anyperm.iteritems():
-                if 'edit_course' in perms: 
-                    result=chain(result, User.objects.filter(username=user))
+                if 'edit_course' in perms:
+                    result = chain(result, User.objects.filter(username=user))
             result = list(result)
-            context['private_users'] = result     
+            context['private_users'] = result
         except:
             # for course detail view
-            context['object_users'] = get_users_with_perms( self.get_object(),  attach_perms=True, with_superusers=False)
+            context['object_users'] = get_users_with_perms(
+                self.get_object(),  attach_perms=True, with_superusers=False)
         return context
 
     def get_users_with_perm(self, permission):
-        '''
-        Returns list of users(worn:not QuerySet) with specific permission for this object
-        :param permission: permission string
-        '''
-        anyperm = get_users_with_perms(self.get_object().collection , attach_perms=True, with_superusers=False)
+
+        anyperm = get_users_with_perms(
+            self.get_object().collection, attach_perms=True, with_superusers=False)
         result = User.objects.filter(is_superuser=True).all()
         print 'super users are:'
         print result
@@ -72,10 +88,10 @@ class UsersWithPermsMixin(object):
             print permission
             print perms
             print result
-            if permission in perms: 
+            if permission in perms:
                 print 'old result is:'
                 print result
-                result=chain(result, User.objects.filter(username=user))
+                result = chain(result, User.objects.filter(username=user))
                 print User.objects.filter(username=user)
                 print 'yes and new result is'
                 print list(result)
@@ -83,29 +99,42 @@ class UsersWithPermsMixin(object):
                 print 'no'
 
         result = list(result)
-        
+
         return result
 
+
 class UserPostNumMixin(object):
+    ''' -- UserPostNumMixin gives the number of posts the user has published. '''
 
     def get_context_data(self, **kwargs):
+        '''  :returns: number of posts the user has published into *context['user_post_num']*. '''
+
         context = super(UserPostNumMixin, self).get_context_data(**kwargs)
-        context['user_post_num'] = self.get_object().posts.filter(creator=self.request.user).count()
+        context['user_post_num'] = self.get_object().posts.filter(
+            creator=self.request.user).count()
 
         return context
 
+
 class ActivityPermsMixin(object):
+    ''' -- ActivityPermsMixin checks current user's permission of certain course and provide screening. '''
 
     def get_object(self, queryset=None):
+        '''  :returns: "Permission Denied" page if user is a not an Instrctor and the course is not active or is deleted. '''
+
         obj = super(ActivityPermsMixin, self).get_object(queryset)
         print obj
-        if ( (not self.request.user.has_perm("core.edit_course", obj.collection)) and (not obj.collection.is_active) ) or (obj.is_deleted):
+        if ((not self.request.user.has_perm("core.edit_course", obj.collection)) and (not obj.collection.is_active)) or (obj.is_deleted):
             raise PermissionDenied()
         return obj
 
+
 class ActivityListMixin(object):
+    ''' -- ActivityListMixin extracts all activities related to current course. '''
 
     def get_context_data(self, **kwargs):
+        '''  :returns:  Activitylist for navigation bar and page body. '''
+
         context = super(ActivityListMixin, self).get_context_data(**kwargs)
 
         try:  # in activity index view?
@@ -139,42 +168,35 @@ class ActivityListMixin(object):
                         print tempActivity.activity_to_lesson
 
         # Orphans - Activities NOT associated with lessons
-        orphan_num=0
+        orphan_num = 0
         for i in nodes:
             act_orphans = chain(act_orphans, i.filter(lesson__isnull=True))
-            orphan_num+=i.filter(lesson__isnull=True).count()
+            orphan_num += i.filter(lesson__isnull=True).count()
 
         # Sort the activities list by lesson display order then by activity
-        # display order 
+        # display order
         # we may do the sorting as an array
         acts.sort(key=lambda x: x.activity_to_lesson.title, reverse=False)
-        acts.sort(key=lambda x: x.activity_to_lesson.display_order, reverse=False)
-        # acts_navi.sort(key=lambda x: x.lesson.display_order, reverse=False)
+        acts.sort(
+            key=lambda x: x.activity_to_lesson.display_order, reverse=False)
         for i in acts:
-            print i.title +' || '+i.activity_to_lesson.title+'||'+str(i.activity_to_lesson.id)
-        # acts = sorted(acts, key=attrgetter(
-        #     'activity_to_lesson.display_order', 'display_order'))
-        
+            print i.title + ' || ' + i.activity_to_lesson.title + '||' + str(i.activity_to_lesson.id)
+
         context['course'] = course
         context['activity_list_course'] = acts
         context['activity_list'] = acts_navi
         context['orphan_list'] = act_orphans
         context['orphan_num'] = orphan_num
 
-        # determine if we are generating list from an activity object context (self.object) or from a course object using view arguments (pk)
-      # try:# in activity index view
-            # key = self.object.collection
-            # context['course'] = self.object.collection
-            # context['activity_list'] = AbstractActivity.objects.filter(collection=key).order_by("lesson__id","display_order")
-      # except: # in course detail view
-      #     key = self.kwargs['pk']
-      #     context['activity_list'] = AbstractActivity.objects.filter(collection=key).order_by("lesson__id","display_order")
         return context
 
 
 class CreateActivityMixin(object):
+    ''' -- CreatedActivityMixin is used in CreateView for activities. '''
 
     def get_context_data(self, **kwargs):
+        '''  :returns:  context that contains activity_type and course infomation for new activites. '''
+
         context = super(CreateActivityMixin, self).get_context_data(**kwargs)
         context['activity_type'] = self.activity_type
         context['course'] = get_object_or_404(
@@ -183,36 +205,50 @@ class CreateActivityMixin(object):
         # context['lessonForm'] = LessonForm()
         return context
 
+
 class CreateActivity4UpdateMixin(object):
+    ''' -- CreatedActivityMixin is used in CreateView for activities. '''
 
     def get_context_data(self, **kwargs):
-        context = super(CreateActivity4UpdateMixin, self).get_context_data(**kwargs)
+        ''' :returns: context that contains the information needed to create lesson on the fly in activity edit view.'''
+
+        context = super(
+            CreateActivity4UpdateMixin, self).get_context_data(**kwargs)
         context['activity_type'] = self.activity_type
         context['course'] = get_object_or_404(
             ActivityCollection, pk=self.object.collection.id)
         return context
 
+
 class RecorderMixin(object):
+    ''' -- RecorderMixin extracts configuration for recorder. '''
 
     def get_context_data(self, **kwargs):
+        ''' :returns: context that contains recorder configuration. '''
+
         context = super(RecorderMixin, self).get_context_data(**kwargs)
         context['recorder_myServer'] = base.recorder_myServer
         context['recorder_myHandler'] = base.recorder_myHandler
         context['recorder_myDirectory'] = base.recorder_myDirectory
-        print 'my server is : '+context['recorder_myServer']
+        print 'my server is : ' + context['recorder_myServer']
         return context
+
 
 class EssayResponseListMixin(object):
+    ''' -- EssayResponseListMixin is used in Essay Detail View to provide information about essay drafts and reviews. '''
 
     def get_context_data(self, **kwargs):
-        context = super(EssayResponseListMixin, self).get_context_data(**kwargs)
-        context['submitted_essay_responses'] = EssayResponse.objects.filter(user=self.request.user, essay_activity=self.get_object()).exclude(status='in progress').order_by('-draft_number')
-        context['progressing_essay_response'] = EssayResponse.objects.filter(user=self.request.user, essay_activity=self.get_object(), status='in progress').order_by('modified','-draft_number').first()
-        context['graded_essay_responses'] = EssayResponse.objects.filter(user=self.request.user, essay_activity=self.get_object(), status='graded').order_by('-draft_number')
-        context['all_essay_responses'] = EssayResponse.objects.filter(essay_activity=self.get_object()).exclude(status='in progress').order_by('user','-draft_number')
+        ''' :returns: context that contains submitted/progressing/graded drafts. '''
+
+        context = super(
+            EssayResponseListMixin, self).get_context_data(**kwargs)
+        context['submitted_essay_responses'] = EssayResponse.objects.filter(
+            user=self.request.user, essay_activity=self.get_object()).exclude(status='in progress').order_by('-draft_number')
+        context['progressing_essay_response'] = EssayResponse.objects.filter(
+            user=self.request.user, essay_activity=self.get_object(), status='in progress').order_by('modified', '-draft_number').first()
+        context['graded_essay_responses'] = EssayResponse.objects.filter(
+            user=self.request.user, essay_activity=self.get_object(), status='graded').order_by('-draft_number')
+        context['all_essay_responses'] = EssayResponse.objects.filter(
+            essay_activity=self.get_object()).exclude(status='in progress').order_by('user', '-draft_number')
 
         return context
-
-
-
-

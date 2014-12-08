@@ -45,6 +45,7 @@
 
 	</h1>
 
+	<!-- Preset the thumbNail style for Instructors and Students -->
     <script>
     var private_users="{{private_users|safe}}"
     var current_user ="{{user}}"
@@ -54,11 +55,14 @@
     	var thumbNail_comment='<li class="left clearfix commentlist"><span><i class="fa fa-user fa-2x pull-left fa-fw text-muted text-center" style="font-size:2.1em; margin-right:0.2em;"></i></span><div class="chat-body clearfix" style="margin-left: 46px;"><textarea class="form-control" rows="2"></textarea></div></li>'
     }
     </script>
+
+
     {% if "edit_course" in course_perms%}
     <!-- activity admin div -->
 	<div id='activity_admin_div' class='well' style='display:none'>
 	<h2 id='activity_admin' data-ajaxURL="{% url 'change_perm' %}" data-activityid="{{activity.id}}">Activity Membership Administration
 	<span> &nbsp;
+		<!-- Permission control for students of this course -->
 		<small>
 		{% if activity.permission_control%}
 		<i class="fa fa-toggle-on text-primary control_togg" style='cursor:pointer;'></i>
@@ -98,7 +102,7 @@
 		{% endfor %}
 	</div>
 	</div>
-	<!-- activity copy div -->
+	<!-- Activity Copy -->
 	<div id='activity_copy_div' class='well' style='display:none'>
 	<h2 id='activity_copy' > Activity Duplicate </h2>
 
@@ -118,7 +122,9 @@
 	    <div class='col-xs-3'><button id='activity_copy_btn' type="button" class="btn btn-success" data-ajaxurl="{% url 'copy_activity' %}" data-activitytype='{{activity.activity_type}}' data-activityid='{{activity.id}}'>Go Copy</button></div>
 	</div>
 	</div>
+	<!-- End of Activity Copy -->
 	{% else %}
+		<!-- Group Members Info -->
 	    {% if activity.permission_control %}
 	    <div id='activity_members_div' class='well' style='display:none;'>
 		<span id='activity_members'>GROUP MEMBERS: </span>
@@ -132,6 +138,7 @@
 			{% endfor %}
         </div>
 	    {% endif %}
+	    <!-- End of Group Members Info -->
 	{% endif %}
 
 	<div class="container-fluid" style='height:100%;'>
@@ -184,13 +191,7 @@
 
 		                        <!-- Other's posts -->
 		                        <li class="left clearfix chatlist" data-postid={{post.id}}>
-<!-- 		                    	<span class="chat-img pull-left">
-		                            <img src="http://placehold.it/50/55C1E7/fff&amp;text=U" alt={{ post.creator }} class="img-circle img-responsive" />
-		                        </span> -->
-<!-- 		                        <span class="fa-stack fa-2x pull-left">
-								  <i class="fa fa-square-o fa-stack-2x"></i>
-								  <i class="fa fa-user fa-stack-1x"></i>
-								</span> -->
+
 								{% if post.creator in private_users or post.creator.is_superuser %}
 								<span><i class="fa fa-graduation-cap fa-fw fa-2x pull-left text-muted" style='font-size:2.1em; vertical-align: middle;'></i></span>
 								{% else %}
@@ -236,9 +237,7 @@
 				                 	    {% if user in private_users or post2.creator in private_users or post2.creator == user %}
 				                 	    {% if post2.parent_post == post %}
 				                        <li class="left clearfix commentlist" data-postid={{post2.id}}>
-<!-- 				                        	<span class="chat-img pull-left">
-					                            <img src="http://placehold.it/50/55C1E7/fff&amp;ltext=U" alt={{ post2.creator }} class="img-circle  img-responsive" />
-					                        </span> -->
+
 											{% if post2.creator in private_users or post2.creator.is_superuser %}
 											<span><i class="fa fa-graduation-cap fa-fw fa-2x pull-left text-muted" style='font-size:2.1em;'></i></span>
 											{% else %}

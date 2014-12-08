@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>essays.views &mdash; clt-langlabs-dev-py  documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="clt-langlabs-dev-py  documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">clt-langlabs-dev-py  documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for essays.views</h1><div class="highlight"><pre>
+<span class="c"># essays/views.py</span>
+<span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span><span class="p">,</span> <span class="n">get_object_or_404</span>
+<span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="kn">import</span> <span class="n">DetailView</span><span class="p">,</span> <span class="n">CreateView</span>
+<span class="kn">from</span> <span class="nn">django.views.generic.edit</span> <span class="kn">import</span> <span class="n">FormView</span><span class="p">,</span> <span class="n">UpdateView</span><span class="p">,</span> <span class="n">DeleteView</span>
+<span class="kn">from</span> <span class="nn">django.core.urlresolvers</span> <span class="kn">import</span> <span class="n">reverse_lazy</span>
+
+<span class="kn">from</span> <span class="nn">core.models</span> <span class="kn">import</span> <span class="n">ActivityCollection</span><span class="p">,</span> <span class="n">AbstractActivity</span><span class="p">,</span> <span class="n">Post</span><span class="p">,</span> <span class="n">Lesson</span>
+<span class="kn">from</span> <span class="nn">core.mixins</span> <span class="kn">import</span> <span class="n">CourseListMixin</span><span class="p">,</span> <span class="n">ActivityListMixin</span><span class="p">,</span> <span class="n">EssayResponseListMixin</span><span class="p">,</span> <span class="n">CreateActivityMixin</span><span class="p">,</span> <span class="n">CreateActivity4UpdateMixin</span><span class="p">,</span> <span class="n">UsersWithPermsMixin</span><span class="p">,</span> <span class="n">ActivityPermsMixin</span><span class="p">,</span> <span class="n">FakeDeleteMixin</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">EssayActivity</span><span class="p">,</span> <span class="n">EssayResponse</span>
+
+
+<div class="viewcode-block" id="EssayDetailView"><a class="viewcode-back" href="../../essays.html#essays.views.EssayDetailView">[docs]</a><span class="k">class</span> <span class="nc">EssayDetailView</span><span class="p">(</span><span class="n">CourseListMixin</span><span class="p">,</span> <span class="n">ActivityListMixin</span><span class="p">,</span> <span class="n">EssayResponseListMixin</span><span class="p">,</span> <span class="n">UsersWithPermsMixin</span><span class="p">,</span> <span class="n">ActivityPermsMixin</span><span class="p">,</span> <span class="n">DetailView</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- Essay Detail Page &#39;&#39;&#39;</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">EssayActivity</span>
+    <span class="n">context_object_name</span> <span class="o">=</span> <span class="s">&#39;activity&#39;</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s">&#39;essay.html&#39;</span>
+</div>
+<div class="viewcode-block" id="EssayUpdateView"><a class="viewcode-back" href="../../essays.html#essays.views.EssayUpdateView">[docs]</a><span class="k">class</span> <span class="nc">EssayUpdateView</span><span class="p">(</span><span class="n">CourseListMixin</span><span class="p">,</span> <span class="n">CreateActivity4UpdateMixin</span><span class="p">,</span> <span class="n">ActivityPermsMixin</span><span class="p">,</span> <span class="n">UpdateView</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- Essay Edit Page &#39;&#39;&#39;</span>
+
+    <span class="n">model</span><span class="o">=</span><span class="n">EssayActivity</span>
+    <span class="n">context_object_name</span> <span class="o">=</span> <span class="s">&#39;activity&#39;</span> 
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s">&#39;activity_edit.html&#39;</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">,</span> <span class="s">&#39;instructions&#39;</span><span class="p">,</span>
+              <span class="s">&#39;lesson&#39;</span><span class="p">,</span> <span class="s">&#39;is_active&#39;</span><span class="p">,</span> <span class="s">&#39;required_revisions&#39;</span><span class="p">]</span>
+    <span class="n">activity_type</span> <span class="o">=</span> <span class="s">&#39;essay&#39;</span>
+
+<div class="viewcode-block" id="EssayUpdateView.get_form"><a class="viewcode-back" href="../../essays.html#essays.views.EssayUpdateView.get_form">[docs]</a>    <span class="k">def</span> <span class="nf">get_form</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">form_class</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; :returns: A list of lessons the course has into *&quot;form&quot;*. &#39;&#39;&#39;</span>
+
+        <span class="n">form</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">EssayUpdateView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_form</span><span class="p">(</span>
+            <span class="n">form_class</span><span class="p">)</span>  <span class="c"># instantiate using parent</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s">&#39;lesson&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">queryset</span> <span class="o">=</span> <span class="n">Lesson</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">collection</span><span class="o">=</span><span class="n">get_object_or_404</span><span class="p">(</span><span class="n">ActivityCollection</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">form</span>
+</div></div>
+<div class="viewcode-block" id="EssayCreateView"><a class="viewcode-back" href="../../essays.html#essays.views.EssayCreateView">[docs]</a><span class="k">class</span> <span class="nc">EssayCreateView</span><span class="p">(</span><span class="n">CourseListMixin</span><span class="p">,</span> <span class="n">CreateActivityMixin</span><span class="p">,</span> <span class="n">CreateView</span><span class="p">):</span>
+    <span class="s">&quot; -- Essay Create Page &quot;</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">EssayActivity</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s">&#39;activity_create.html&#39;</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">,</span> <span class="s">&#39;instructions&#39;</span><span class="p">,</span> <span class="s">&#39;lesson&#39;</span><span class="p">,</span>
+              <span class="s">&#39;is_active&#39;</span><span class="p">,</span> <span class="s">&#39;required_revisions&#39;</span><span class="p">]</span>
+    <span class="n">activity_type</span> <span class="o">=</span> <span class="s">&#39;essay&#39;</span>
+
+<div class="viewcode-block" id="EssayCreateView.get_form"><a class="viewcode-back" href="../../essays.html#essays.views.EssayCreateView.get_form">[docs]</a>    <span class="k">def</span> <span class="nf">get_form</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">form_class</span><span class="p">):</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">EssayCreateView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_form</span><span class="p">(</span>
+            <span class="n">form_class</span><span class="p">)</span>  <span class="c"># instantiate using parent</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s">&#39;lesson&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">queryset</span> <span class="o">=</span> <span class="n">Lesson</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">collection</span><span class="o">=</span><span class="n">get_object_or_404</span><span class="p">(</span><span class="n">ActivityCollection</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;pk&#39;</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">form</span>
+</div>
+<div class="viewcode-block" id="EssayCreateView.form_valid"><a class="viewcode-back" href="../../essays.html#essays.views.EssayCreateView.form_valid">[docs]</a>    <span class="k">def</span> <span class="nf">form_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
+        <span class="c"># Auto set the following fields:</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">collection</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span>
+            <span class="n">ActivityCollection</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;pk&#39;</span><span class="p">])</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">activity_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">activity_type</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">EssayCreateView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">form_valid</span><span class="p">(</span><span class="n">form</span><span class="p">)</span>
+</div></div>
+<div class="viewcode-block" id="EssayDeleteView"><a class="viewcode-back" href="../../essays.html#essays.views.EssayDeleteView">[docs]</a><span class="k">class</span> <span class="nc">EssayDeleteView</span><span class="p">(</span><span class="n">CourseListMixin</span><span class="p">,</span> <span class="n">FakeDeleteMixin</span><span class="p">,</span> <span class="n">DeleteView</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- Essay Delete Confirmation Page &#39;&#39;&#39;</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">EssayActivity</span>
+    <span class="c"># success_url = &#39;ToBeReplaced&#39;</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s">&#39;activity_delete.html&#39;</span>
+</div>
+<div class="viewcode-block" id="EssayResponseUpdateView"><a class="viewcode-back" href="../../essays.html#essays.views.EssayResponseUpdateView">[docs]</a><span class="k">class</span> <span class="nc">EssayResponseUpdateView</span><span class="p">(</span><span class="n">CourseListMixin</span><span class="p">,</span> <span class="n">UpdateView</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- Essay Review Page &#39;&#39;&#39;</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">EssayResponse</span>
+    <span class="n">context_object_name</span> <span class="o">=</span> <span class="s">&#39;response&#39;</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s">&#39;essay_grade.html&#39;</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;draft&#39;</span><span class="p">,</span><span class="s">&#39;review&#39;</span><span class="p">,</span><span class="s">&#39;flagged&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="EssayResponseUpdateView.form_valid"><a class="viewcode-back" href="../../essays.html#essays.views.EssayResponseUpdateView.form_valid">[docs]</a>    <span class="k">def</span> <span class="nf">form_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
+        <span class="c"># Auto set the following fields:</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s">&#39;graded&#39;</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">reviewed_by</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">EssayResponseUpdateView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">form_valid</span><span class="p">(</span><span class="n">form</span><span class="p">)</span></div>
+<div class="viewcode-block" id="EssayResponseUpdateView.get_success_url"><a class="viewcode-back" href="../../essays.html#essays.views.EssayResponseUpdateView.get_success_url">[docs]</a>    <span class="k">def</span> <span class="nf">get_success_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">essay_activity</span><span class="o">.</span><span class="n">get_absolute_url</span><span class="p">()</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">clt-langlabs-dev-py  documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

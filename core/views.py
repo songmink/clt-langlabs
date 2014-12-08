@@ -34,15 +34,17 @@ class IndexView(TemplateView):
 
 
 class HomeView(LoginRequiredMixin, CourseListMixin, TemplateView):
+    ''' -- Homepage of cltlanglabs '''
     template_name = 'home.html'
 
 class CourseListView(LoginRequiredMixin, CourseListMixin,ListView):
+    ''' -- Course Search Page '''
     model = ActivityCollection
     context_object_name = 'courses'
     template_name = 'course_list.html'
 
     def get_queryset(self):
-        return ActivityCollection.objects.filter(is_active=True).all()
+        return ActivityCollection.objects.filter(is_active=True, is_deleted=False).all()
 
     def get_context_data(self, **kwargs):
         context = super(CourseListView, self).get_context_data(**kwargs)
@@ -55,11 +57,13 @@ class CourseListView(LoginRequiredMixin, CourseListMixin,ListView):
                 private_users.append(private_user.username)
             data.append({"course_name":course.title, "instructors":private_users})
         context['courses_json'] = json.dumps(data)
-        # except:
+        # except: 
             # pass
         return context
 
 class CourseIndexView(LoginRequiredMixin, CourseListMixin, ActivityListMixin, UsersWithPermsMixin, DetailView):
+    ''' -- User's homepage, a list of courses '''
+
     model = ActivityCollection
     context_object_name = 'course'
     template_name = 'course.html'
@@ -72,6 +76,8 @@ class CourseIndexView(LoginRequiredMixin, CourseListMixin, ActivityListMixin, Us
 
 
 class CourseCreateView(LoginRequiredMixin, CourseListMixin, CreateView):
+    ''' -- Course Create Page '''
+
     model = ActivityCollection
     template_name = 'collection_create.html'
     fields = ['title', 'nickname', 'description', 'accesscode', 'is_active','is_public']
@@ -89,6 +95,8 @@ class CourseCreateView(LoginRequiredMixin, CourseListMixin, CreateView):
     #     return super(CourseCreateView, self).form_valid(form)
 
 class CourseUpdateView(LoginRequiredMixin, PermissionRequiredMixin, CourseListMixin, UpdateView):
+    ''' -- Course Edit Page '''
+
     model = ActivityCollection
     template_name = 'collection_edit.html'
     fields = ['title', 'nickname', 'description', 'accesscode', 'is_active','is_public']
@@ -101,6 +109,8 @@ class CourseUpdateView(LoginRequiredMixin, PermissionRequiredMixin, CourseListMi
         return super(CourseUpdateView, self).form_valid(form)
 
 class CourseDeleteView(LoginRequiredMixin, PermissionRequiredMixin, CourseListMixin, FakeDeleteMixin, DeleteView):  #FakeDeleteMixin, 
+    ''' -- Course Delete Page '''
+
     model = ActivityCollection
     success_url = reverse_lazy('home')
     template_name = 'activity_delete.html'
@@ -108,6 +118,8 @@ class CourseDeleteView(LoginRequiredMixin, PermissionRequiredMixin, CourseListMi
     raise_exception = True
 
 class LessonCreateView(LoginRequiredMixin, CourseListMixin, CreateView):
+    ''' -- Lesson Create Page '''
+
     model = Lesson
     template_name = 'lesson_create.html'
     fields = ['title', 'description']
@@ -123,15 +135,17 @@ class LessonCreateView(LoginRequiredMixin, CourseListMixin, CreateView):
 
 
 class ActivityCreateIndexView(LoginRequiredMixin, CourseListMixin, ActivityListMixin, DetailView):
+    ''' -- Activity Create Index Page: users select from a list of available activity types. '''
+
     model = ActivityCollection
     context_object_name = 'course'
     template_name = "activity_create_index.html"
 
 
 # Used in the iframe when adding lesson on the fly
-
-
 class LessonAddView(LessonCreateView):
+    ''' -- This is a simple version of Lesson Create Page used by an iframe in Activity Create/Edit Page to add lesson on the fly. '''
+
     template_name = 'lesson_create_2.html'
 
     def form_valid(self, form):
@@ -144,9 +158,8 @@ class LessonAddView(LessonCreateView):
         return self.object.collection.get_absolute_url()
 
 # Save Post
-
-
 def savePost(request):
+    ''' -- Function-based View for save a post instead of the chat server. '''
 
     if request.method == 'POST':
         postuser = request.user
@@ -175,6 +188,8 @@ def savePost(request):
 
 
 def fileUpload(request):
+    ''' -- Function-based View for saving a file. '''
+
     response = {'files': []}
     # Loop through our files in the files list
     for singleFile in request.FILES.getlist('file'):
@@ -197,6 +212,8 @@ def fileUpload(request):
 # subscribe to a course:
 @login_required
 def subscribeCourse(request, accesskey):
+    ''' -- Function-based view for user to subscribe a course '''
+
     courseToSubscribe = get_object_or_404(ActivityCollection, accesscode=accesskey)
     assign_perm('core.view_course', request.user , courseToSubscribe)
 
@@ -205,6 +222,8 @@ def subscribeCourse(request, accesskey):
 # duplicate a course:
 @login_required
 def CourseCopyView(request, course_id):
+    ''' -- Function-based view for copying a course and its whole structure. '''
+
     # copy course
     courseToCopy = get_object_or_404(ActivityCollection, pk=course_id)
     lessonsToCopy = courseToCopy.lesson_set.all()
@@ -249,6 +268,7 @@ def CourseCopyView(request, course_id):
 # change user object permission
 @login_required
 def changePerm(request):
+    ''' -- Function-based view to perform permission control in an Activity. '''
 
     if request.method == 'POST':
         request_user = request.user
@@ -298,6 +318,7 @@ def changePerm(request):
 # copy activity
 @login_required
 def copyActivity(request):
+    ''' -- Function-based view to copy an activity to some course '''
 
     if request.method == 'POST':
         request_user = request.user
@@ -337,6 +358,7 @@ def copyActivity(request):
 # change lesson title
 @login_required
 def editLessonTitle(request):
+    ''' -- Function-based view for editing lesson title on the fly. '''
 
     if request.method == 'POST':
         lesson_id = request.POST.get("pk", '')
@@ -354,7 +376,8 @@ def editLessonTitle(request):
 # process essay draft
 @login_required
 def editEssayDraft(request):
-
+    ''' -- Function-based view to save the edition of an Essay Draft. '''
+ 
     if request.method == 'POST':
         operation = request.POST.get("operation", '')
         essay_id = request.POST.get("essay_id", '')

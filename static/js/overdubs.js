@@ -10,7 +10,7 @@ $(document).ready(function(){
         if($(e.target).is('.fileLink')){
             return;}
         if($(e.target).is('.attachDIV')){
-            console.log($(e.target))
+            // console.log($(e.target))
             return;}
 		$(this).next().find('.comment').slideToggle( "fast" );
 	});
@@ -42,8 +42,8 @@ $(document).ready(function(){
            if(toggleFlag == 0){
               toggleFlag=1
               recordingFlag = false
-              console.log('executed')
-              console.log(recordingFlag)
+              // console.log('executed')
+              // console.log(recordingFlag)
            }else{
               recorderInit()
               toggleFlag=0
@@ -75,7 +75,7 @@ $(document).ready(function(){
 	        done: function (e, data) {
 	            $.each(data.result.files, function (index, file) {
 	                // $('<p/>').text(file.name).appendTo('#files');
-	                console.log(file)
+	                // console.log(file)
 	                var attFile='<span class="attachedFile" style="cursor:pointer;"><a class="fileLink text-muted" href='+ file.url +'  ><i class="icon-file-alt"></i> <span class="fileName">'+file.name+'</span></a> <small> <i class="icon-remove removeIcon" style="color:grey; opacity:0.01;"></i></small></span>'
 	                $('#inputAttachments').append(attFile)
 	            });
@@ -250,10 +250,10 @@ function recorderInit(){
                     break;
                 case 2:
                     recordingFlag = true;  //there is recording
-                    console.log("case 2")
+                    // console.log("case 2")
                     break;
                 case 15:
-                    console.log("upload complete")
+                    // console.log("upload complete")
                     var attFile='<span class="attachedAudio" style="cursor:pointer;"><a class="audioLink text-muted" href='+ recorderServer+recorderDirectory+"/"+audioName+".mp3"+'  ><i class="icon-file-alt"></i> <span class="audioName">'+audioName+".mp3"+'</span></a> <small> <i class="icon-remove removeIcon" style="color:grey; opacity:0.01;"></i></small></span>'
                     $('#inputAttachments').append(attFile)
                     $( "#recordTrigger" ).trigger( "click" );

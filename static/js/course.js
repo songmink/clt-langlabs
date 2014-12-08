@@ -2,15 +2,19 @@ $(document).ready(function(){
     var ajax_URL = $('#course_admin').data("ajaxurl")
     var course_id = $('#course_admin').data("courseid")
     csrftoken=$("input[name=csrfmiddlewaretoken]").val()
+
     $(".course_admin_togg").click(function(){
       $("#course_admin_div").toggle(20)
     })
+
+    // turn on and off permission for certain user
     $(".perm_togg").click(function(){
       if ($(this).hasClass('fa-toggle-on')){
           var permission = $(this).closest('div').data('codename')
           var username = $(this).closest('div.admin_row').data('username')
           var changeFlag = ajaxChangePermission(ajax_URL, username, permission, 'course', course_id, 'remove_perm', csrftoken)
-          console.log("changeSuccess is : "+ changeFlag)
+          // console.log("changeSuccess is : "+ changeFlag)
+
           // make ajax call to change permission
           if(changeFlag){
               $(this).removeClass('fa-toggle-on text-primary')
@@ -19,9 +23,9 @@ $(document).ready(function(){
       }else{
           var permission = $(this).closest('div').data('codename')
           var username = $(this).closest('div.admin_row').data('username')
-          console.log(permission)
           var changeFlag = ajaxChangePermission(ajax_URL, username, permission, 'course', course_id, 'assign_perm', csrftoken)
-          console.log("changeSuccess is : "+changeFlag)
+          // console.log("changeSuccess is : "+changeFlag)
+
           // make ajax call to change permission 
           if(changeFlag){
             $(this).removeClass('fa-toggle-off text-muted')
@@ -56,6 +60,7 @@ function csrfSafeMethod(method) {
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 
+// Function to make changes to permission
 function ajaxChangePermission(ajax_URL, username, code_name, objecttype, objectid, operationType, csrftoken) {
     var changeSuccess=false
     $.ajax({
@@ -69,8 +74,8 @@ function ajaxChangePermission(ajax_URL, username, code_name, objecttype, objecti
     })
     .done(function( msg) {
       // alert( );
-      console.log(' codename: '+ code_name+'/object_type: '+objecttype+'/object_id: '+ objectid+ '/operation_type: '+operationType)
-      console.log("Permission Changed: " + msg )
+      // console.log(' codename: '+ code_name+'/object_type: '+objecttype+'/object_id: '+ objectid+ '/operation_type: '+operationType)
+      // console.log("Permission Changed: " + msg )
       if(msg=="successful change"){
         changeSuccess = true
       }else{
@@ -80,7 +85,7 @@ function ajaxChangePermission(ajax_URL, username, code_name, objecttype, objecti
     })
     .fail(function( jqXHR, textStatus) {
       // alert( "Request failed: " + textStatus );
-      console.log("Request failed: " + textStatus)
+      // console.log("Request failed: " + textStatus)
       changeSuccess = false
     });
     // console.log(changeSuccess)

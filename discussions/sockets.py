@@ -17,18 +17,31 @@ from .models import DiscussionActivity
 
 @namespace('/discussionsPosts')
 class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
+    ''' The main class for a namespace'''
+
     nicknames = []
 
     def initialize(self):
+
         self.logger = logging.getLogger("socketio.discussions")
         self.log("Socketio session started")
         
     def log(self, message):
+        """-- This is a log function
+
+        :param message: A message to be logged such as *connect*/*disconnect*/*nickname*.
+        :returns: Log the message.
+        """
+
         self.logger.info("[{0}] {1}".format(self.socket.sessid, message))
     
     def on_join(self, roomType, roomNumber):
-        # print self
-        # print "roomType is: "+roomType+" roomNumber is: "+roomNumber
+        """-- Join a chat room
+
+        :param roomType: Type of the activity such as *'discussion'*/*'overdub'*.
+        :param roomNumber: ID of the activity.
+        """
+
         self.room = roomType+'_'+roomNumber
         self.join(roomType+'_'+roomNumber)
         try: 
@@ -45,6 +58,11 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         return True
         
     def on_nickname(self, nickname):
+        """-- Validate a user and broadcast this event
+
+        :param nickname: username of potential user.
+        """
+
         self.log('Connected nickname is: {0}'.format(nickname))
         self.nicknames.append(nickname)
         self.socket.session['nickname'] = nickname
@@ -59,6 +77,9 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         return nickname
 
     def recv_disconnect(self):
+        """-- Disconnect current user.
+
+        """
         # Remove nickname from the list.
         self.log('Disconnected')
         nickname = self.socket.session['nickname']
@@ -69,8 +90,11 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         return True
 
     def on_user_message(self, msg):
+        """-- Save and boradcast a user's message
+
+        :param msg: user's message.
+        """
         # save to Post model: 
-        # self.log('User message: {0}'.format(msg["msg"]))
         savedMessage=self.postSave(msg["msg"], attachments = msg["attaches"], attachmentsName = msg["attachesName"], audio_URL=msg["audioURL"])
         thisID = savedMessage.id
         if savedMessage:
@@ -81,6 +105,10 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
             return False
 
     def on_user_comment(self, msg):
+        """-- Save and boradcast a user's comment to others' messages
+
+        :param msg: user's comment.
+        """
         # save to Post model as a comment
         self.log('User comment: {0}'.format(msg["cmt"]))
         savedMessage=self.postSave(msg["cmt"], parent_post=msg["parentID"])
@@ -94,6 +122,16 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
             return False
 
     def postSave(self, msg, parent_post=None, audio_URL=None, attachments = None, attachmentsName = None):
+        """-- Save a message as *POST*
+
+        :param msg: The text of a message.
+        :param parent_post: The parent post if it is a comment.
+        :param audio_URL: URL to the audio file.
+        :param attachments: URLs to attachments.
+        :param attachmentsName: Names of attachments.
+        
+        """
+
         postuser = self.socket.session['DjangoUser']
         textcontent = msg
         # activity to assign post to
@@ -125,7 +163,12 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
             return False
     # replace original room mixin's emit to room function which does not send msg to original sender
     def emit_to_room_include_me(self, room, event, *args):
-        """This is sent to all in the room (in this particular Namespace)"""
+        """-- Send this event to all users in the room (in this particular Namespace)
+
+        :param room: The room to boradcast.
+        :param event: The name of the event such as "eventX".("event X" should be listened on the client side and will be triggered if "event X" is boradcasted).
+
+        """
         pkt = dict(type="event",
                    name=event,
                    args=args,

@@ -3,6 +3,7 @@ $(document).ready(function(){
         
         $(".course_result_div").hide()
         
+
         $( "#searchInput" ).focusin(function() {
         		cursorInSearchBox=true;
         		currentMouseOver = true
@@ -13,6 +14,7 @@ $(document).ready(function(){
 		        currentMouseOver = false
 		});
 
+		// toggle bewteen auto complete results
 		$("#searchInput").keydown(function (event) {
             if (event.keyCode == 13) {
 		    	if($("#searchInput").val().trim()!=''){
@@ -26,22 +28,22 @@ $(document).ready(function(){
 
 			    if (event.keyCode == 38) {
 	                event.preventDefault();
-	                console.log(currentMouseOverObject)
+	                // console.log(currentMouseOverObject)
 	                if(currentMouseOverObject){
 
 	                }else{
-	                	console.log("1")
+	                	// console.log("1")
 	                	currentMouseOverObject = $("#autoComplete").children().first()
 		               	currentMouseOverObject.addClass("autoSelected")
 	                	return false
 	                }
 			    	if(currentMouseOverObject.prev().size()!=0){
-			    		console.log("2")
+			    		// console.log("2")
 			    		currentMouseOverObject.removeClass('autoSelected')
 			    		currentMouseOverObject.prev().addClass('autoSelected')
 			    		currentMouseOverObject = currentMouseOverObject.prev()
 			    	}else{
-			    		console.log("3")
+			    		// console.log("3")
 			    		currentMouseOverObject.removeClass('autoSelected')
 		            	currentMouseOverObject = $("#autoComplete").children().last()
 	                	currentMouseOverObject.addClass("autoSelected")
@@ -51,22 +53,22 @@ $(document).ready(function(){
 
 			    if (event.keyCode == 40) {
 			    	event.preventDefault();
-			    	console.log(currentMouseOverObject)
+			    	// console.log(currentMouseOverObject)
 	                if(currentMouseOverObject){
 
 	                }else{
-	                	console.log("4")
+	                	// console.log("4")
 	                	currentMouseOverObject = $("#autoComplete").children().first()
 	                	currentMouseOverObject.addClass("autoSelected")
 	                	return false
 	                }
 			    	if(currentMouseOverObject.next().size()!=0){
-			    		console.log("5")
+			    		// console.log("5")
 			    		currentMouseOverObject.removeClass('autoSelected')
 			    		currentMouseOverObject.next().addClass('autoSelected')
 			    		currentMouseOverObject = currentMouseOverObject.next()
 			    	}else{
-			    		console.log("6")
+			    		// console.log("6")
 			    		currentMouseOverObject.removeClass('autoSelected')
 		            	currentMouseOverObject = $("#autoComplete").children().first()
 	                	currentMouseOverObject.addClass("autoSelected")
@@ -77,11 +79,12 @@ $(document).ready(function(){
 		});
 
 
-
+		// select auto complete result
         $( "#autoComplete" ).on( "click", ".autoKey", function() {
 		    $("#searchInput").val($(this).text());
 		});
 
+        // generate key words out of the course db information
    	    courses().each(function (record,recordnumber) {
 			keywords.insert({keyword:record["course_name"]});
 			for(i=0; i<record["instructors"].length;i++){
@@ -93,16 +96,21 @@ $(document).ready(function(){
 				
 			} 
 		});
-		console.log(keywords().stringify())
+		// console.log(keywords().stringify())
+
+		// automatically check input and show auto complete
 	    previousSearchInput = $("#searchInput").val();
 		var searchTimer=setInterval(function () {
 			checkSearchInputUpdate();
 			checkAutoComplete();
 		}, 300);
         
+
         $(".courseSearchButton").click(function(){
         	displaySearchResults()
         })
+
+        // check if the input content has changed
 		function checkSearchInputUpdate() {
 		    if(previousSearchInput == $("#searchInput").val()){
 
@@ -113,7 +121,7 @@ $(document).ready(function(){
 
 		    	}else{
 			    	previousSearchInput = $("#searchInput").val()
-			    	console.log("updated")
+			    	// console.log("updated")
 			    	var resultString =""
 			    	// console.log(keywords([{course_name:{like:$("#searchInput").val()}},{instructors:{like:$("#searchInput").val()}}]).stringify())
 			    	keywords({keyword:{like:$("#searchInput").val()}}).each(function(record, recordnumber){
@@ -122,9 +130,10 @@ $(document).ready(function(){
 			    	})
 		    	}
 		    }
-		    // currentMouseOverObject = $("#autoComplete").children().first()
+
 		}
 
+		// check if the auto complete div should be shown
 		function checkAutoComplete() {
                 
                 if(cursorInSearchBox && $("#autoComplete").children().size()!=0){
@@ -135,33 +144,26 @@ $(document).ready(function(){
 
 		}
 
+		// Display the search result
 		function displaySearchResults(){
                 // code for result
 		    	$("#searchResult").children().remove()
 		    	var searchKey = $("#searchInput").val()
 		    	var resultString =""
-		    	console.log(courses([{course_name:{like:$("#searchInput").val()}},{instructors:{like:$("#searchInput").val()}}]).stringify())
+		    	// console.log(courses([{course_name:{like:$("#searchInput").val()}},{instructors:{like:$("#searchInput").val()}}]).stringify())
 		    	var resultCourses = courses([{course_name:{like:$("#searchInput").val()}},{instructors:{like:$("#searchInput").val()}}])
-		    	// resultCourses.each(function(record, recordnumber){
-		    	// 	var tempStr = "<p>"+"course: "+record['course_name']+"   "+"| instructors: "
-		    	// 	for(i=0; i<record["instructors"].length;i++){
-		    	// 		tempStr+=record["instructors"][i]+' '
-		    	// 	}
-		    	// 	tempStr+="</p>"
-		    	// 	$("#searchResult").append(tempStr)
-		    	// })
+
 		    	$("#searchInput").val("")
 		    	var selectedCourseNames=resultCourses.select("course_name") 
-                // console.log("selectedCourseNames : ")
-		    	// console.log(selectedCourseNames)
+
 		    	$(".course_result_div").show()
 	        	$(".course_row").each(function(){
 	                if(selectedCourseNames.indexOf($(this).data("coursename"))!= -1){
 	                	$(this).show()
-	                	// console.log("display")
+
 	                }else{
 	                	$(this).hide()
-	                	// console.log('hide')
+
 	                }        		
 	        	
 	        	})

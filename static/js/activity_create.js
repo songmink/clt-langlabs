@@ -1,7 +1,8 @@
 $( document ).ready(function() {
   // Handler for .ready() called.
-  // $("#div_id_lesson").find('label').after('<span id="modalFire"> + </span>');
+
   $("#div_id_lesson").find('label').after('&nbsp;&nbsp;&nbsp;<button id="modalFire" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span>New</button>');
+  
   // toggle modal using the '+' sign
   $( "#modalFire" ).click(function() {
 	    $('#myModal').modal('toggle')
@@ -16,28 +17,32 @@ $( document ).ready(function() {
   $("#id_instructions").addClass("hidden"); 
   $( "#id_instructions" ).after( '<div id="InstructionTextArea" class="form-control" style="border-radius:4px 4px 4px 4px;"></div>' );
   
+  // initialize the text edior
   rteInit()
   $( "#InstructionTextArea" ).append( $("#id_instructions").val());
   $( "form" ).submit(function( event ) {
       $( "#id_instructions" ).val($("#InstructionTextArea").html())
     });
 
+  // Add explaination to private mode
   if($('#div_id_private_mode').size()==1){
     $('#div_id_private_mode').append(' <small><i class="fa questionMark fa-question" style="cursor:pointer;" data-toggle="tooltip" data-placement="right" title="Students can have interactions with instructors only. Uncheck to allow every member interact with each other."></i></small>')
     
   }
+
+  // Add explaination to read_after_post
   if($('#div_id_read_after_post').size()==1){
     $('#div_id_read_after_post').append(' <small><i class="fa questionMark fa-question " style="cursor:pointer;" data-toggle="tooltip" data-placement="right" title="Users can not see others\' posts unless they have publish any post."></i></small>')
   }
-  // console.log($('.questionMark').size())
+
   $('.questionMark').mouseenter(function(e) {
-  // console.log('mouseenter')
+
      $(this).tooltip('show')
      $(this).addClass('fa-question-circle')
      $(this).removeClass('fa-question')
   })
   .mouseleave(function(e) {
-    // console.log('mouseleave')
+
      $(this).tooltip('hide')
      $(this).removeClass('fa-question-circle')
      $(this).addClass('fa-question')

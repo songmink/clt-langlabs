@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>discussions.models &mdash; clt-langlabs-dev-py  documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="clt-langlabs-dev-py  documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">clt-langlabs-dev-py  documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for discussions.models</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+
+<span class="kn">from</span> <span class="nn">core.models</span> <span class="kn">import</span> <span class="n">ActivityCollection</span><span class="p">,</span> <span class="n">AbstractActivity</span>
+
+
+<div class="viewcode-block" id="DiscussionActivity"><a class="viewcode-back" href="../../discussions.html#discussions.models.DiscussionActivity">[docs]</a><span class="k">class</span> <span class="nc">DiscussionActivity</span><span class="p">(</span><span class="n">AbstractActivity</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;-- DiscussionActivity is the class for *Discussion*.</span>
+
+<span class="sd">        :Fields:</span>
+<span class="sd">            | **title**  -- Title of activity.</span>
+<span class="sd">            | **instructions**   -- Instructions about this activity.</span>
+<span class="sd">            | **lesson** -- A lesson this activity belongs to, it could be null.</span>
+<span class="sd">            | **display_order**    -- Display order of activity.</span>
+<span class="sd">            | **created**    -- Time of creation.</span>
+<span class="sd">            | **modified**    -- Time of last modification.</span>
+<span class="sd">            | **is_active**    -- Flag for activation of activity.</span>
+<span class="sd">            | **activity_type**    -- Type of current activity.</span>
+<span class="sd">            | **posts**    -- Associated comments/posts.</span>
+<span class="sd">            | **permission_control**    -- Flag for permission control within an activity.</span>
+<span class="sd">            | **is_deleted**    -- Flag for soft deletion of current activity.</span>
+<span class="sd">            | **collection**    -- The course that this discussion activity belongs to.</span>
+<span class="sd">            | **read_after_post**  -- Flag for whether or not the student has to post their own post in order to see others&#39; posts.</span>
+<span class="sd">            | **private_mode**   -- Flag for whether or not students can only see their own interaction with instructors.</span>
+<span class="sd">        :Meta:</span>
+<span class="sd">            | **abstract**  -- Set class to abstract</span>
+<span class="sd">            | **permissions**   -- Object level permission control(&quot;view_activity&quot; permission is checked when *permission_control* is set to true )</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">collection</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">ActivityCollection</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">SET_NULL</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s">&#39;discussions&#39;</span><span class="p">)</span>
+    <span class="n">read_after_post</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">private_mode</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">clt-langlabs-dev-py  documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

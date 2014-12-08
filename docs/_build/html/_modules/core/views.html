@@ -1,0 +1,508 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>core.views &mdash; clt-langlabs-dev-py  documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="clt-langlabs-dev-py  documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">clt-langlabs-dev-py  documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for core.views</h1><div class="highlight"><pre>
+<span class="c"># core/views.py</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span><span class="p">,</span> <span class="n">get_object_or_404</span><span class="p">,</span> <span class="n">redirect</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponseRedirect</span><span class="p">,</span> <span class="n">HttpResponse</span><span class="p">,</span> <span class="n">HttpResponseBadRequest</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.decorators</span> <span class="kn">import</span> <span class="n">login_required</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">User</span>
+
+<span class="kn">from</span> <span class="nn">braces.views</span> <span class="kn">import</span> <span class="n">LoginRequiredMixin</span><span class="p">,</span> <span class="n">CsrfExemptMixin</span>
+<span class="kn">from</span> <span class="nn">guardian.shortcuts</span> <span class="kn">import</span> <span class="n">assign_perm</span><span class="p">,</span> <span class="n">remove_perm</span>
+<span class="kn">from</span> <span class="nn">guardian.mixins</span> <span class="kn">import</span> <span class="n">PermissionRequiredMixin</span>
+
+<span class="kn">from</span> <span class="nn">django.views.generic.base</span> <span class="kn">import</span> <span class="n">TemplateView</span>
+<span class="kn">from</span> <span class="nn">django.views.generic.list</span> <span class="kn">import</span> <span class="n">ListView</span>
+<span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="kn">import</span> <span class="n">DetailView</span><span class="p">,</span> <span class="n">CreateView</span>
+<span class="kn">from</span> <span class="nn">django.views.generic.edit</span> <span class="kn">import</span> <span class="n">FormView</span><span class="p">,</span> <span class="n">UpdateView</span><span class="p">,</span> <span class="n">DeleteView</span>
+<span class="kn">from</span> <span class="nn">django.views.decorators.csrf</span> <span class="kn">import</span> <span class="n">csrf_exempt</span>
+<span class="kn">from</span> <span class="nn">django.core.urlresolvers</span> <span class="kn">import</span> <span class="n">reverse_lazy</span>
+<span class="kn">from</span> <span class="nn">django.core.exceptions</span> <span class="kn">import</span> <span class="n">PermissionDenied</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="kn">from</span> <span class="nn">core.mixins</span> <span class="kn">import</span> <span class="n">CourseListMixin</span><span class="p">,</span> <span class="n">ActivityListMixin</span><span class="p">,</span> <span class="n">UsersWithPermsMixin</span><span class="p">,</span> <span class="n">FakeDeleteMixin</span>
+
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">AbstractActivity</span><span class="p">,</span> <span class="n">ActivityCollection</span><span class="p">,</span> <span class="n">Lesson</span><span class="p">,</span> <span class="n">Post</span><span class="p">,</span> <span class="n">Document</span>
+
+<span class="kn">from</span> <span class="nn">discussions.models</span> <span class="kn">import</span> <span class="n">DiscussionActivity</span>
+<span class="kn">from</span> <span class="nn">essays.models</span> <span class="kn">import</span> <span class="n">EssayActivity</span><span class="p">,</span> <span class="n">EssayResponse</span>
+<span class="kn">from</span> <span class="nn">overdub_discussions.models</span> <span class="kn">import</span> <span class="n">OverdubActivity</span>
+
+
+<div class="viewcode-block" id="IndexView"><a class="viewcode-back" href="../../core.html#core.views.IndexView">[docs]</a><span class="k">class</span> <span class="nc">IndexView</span><span class="p">(</span><span class="n">TemplateView</span><span class="p">):</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s">&#39;index.html&#39;</span>
+
+</div>
+<div class="viewcode-block" id="HomeView"><a class="viewcode-back" href="../../core.html#core.views.HomeView">[docs]</a><span class="k">class</span> <span class="nc">HomeView</span><span class="p">(</span><span class="n">LoginRequiredMixin</span><span class="p">,</span> <span class="n">CourseListMixin</span><span class="p">,</span> <span class="n">TemplateView</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- Homepage of cltlanglabs &#39;&#39;&#39;</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s">&#39;home.html&#39;</span>
+</div>
+<div class="viewcode-block" id="CourseListView"><a class="viewcode-back" href="../../core.html#core.views.CourseListView">[docs]</a><span class="k">class</span> <span class="nc">CourseListView</span><span class="p">(</span><span class="n">LoginRequiredMixin</span><span class="p">,</span> <span class="n">CourseListMixin</span><span class="p">,</span><span class="n">ListView</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- Course Search Page &#39;&#39;&#39;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">ActivityCollection</span>
+    <span class="n">context_object_name</span> <span class="o">=</span> <span class="s">&#39;courses&#39;</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s">&#39;course_list.html&#39;</span>
+
+<div class="viewcode-block" id="CourseListView.get_queryset"><a class="viewcode-back" href="../../core.html#core.views.CourseListView.get_queryset">[docs]</a>    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ActivityCollection</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">is_active</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">is_deleted</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="CourseListView.get_context_data"><a class="viewcode-back" href="../../core.html#core.views.CourseListView.get_context_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_context_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">CourseListView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_context_data</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c"># try:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">courses</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_queryset</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">course</span> <span class="ow">in</span> <span class="n">courses</span><span class="p">:</span>
+            <span class="n">private_users</span><span class="o">=</span><span class="p">[]</span>
+            <span class="k">for</span> <span class="n">private_user</span> <span class="ow">in</span> <span class="n">course</span><span class="o">.</span><span class="n">get_private_users</span><span class="p">():</span>
+                <span class="n">private_users</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">private_user</span><span class="o">.</span><span class="n">username</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&quot;course_name&quot;</span><span class="p">:</span><span class="n">course</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="s">&quot;instructors&quot;</span><span class="p">:</span><span class="n">private_users</span><span class="p">})</span>
+        <span class="n">context</span><span class="p">[</span><span class="s">&#39;courses_json&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="c"># except: </span>
+            <span class="c"># pass</span>
+        <span class="k">return</span> <span class="n">context</span>
+</div></div>
+<div class="viewcode-block" id="CourseIndexView"><a class="viewcode-back" href="../../core.html#core.views.CourseIndexView">[docs]</a><span class="k">class</span> <span class="nc">CourseIndexView</span><span class="p">(</span><span class="n">LoginRequiredMixin</span><span class="p">,</span> <span class="n">CourseListMixin</span><span class="p">,</span> <span class="n">ActivityListMixin</span><span class="p">,</span> <span class="n">UsersWithPermsMixin</span><span class="p">,</span> <span class="n">DetailView</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- User&#39;s homepage, a list of courses &#39;&#39;&#39;</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">ActivityCollection</span>
+    <span class="n">context_object_name</span> <span class="o">=</span> <span class="s">&#39;course&#39;</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s">&#39;course.html&#39;</span>
+
+<div class="viewcode-block" id="CourseIndexView.get_object"><a class="viewcode-back" href="../../core.html#core.views.CourseIndexView.get_object">[docs]</a>    <span class="k">def</span> <span class="nf">get_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queryset</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">CourseIndexView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_object</span><span class="p">(</span><span class="n">queryset</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">has_perm</span><span class="p">(</span><span class="s">&quot;core.edit_course&quot;</span><span class="p">,</span> <span class="n">obj</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="ow">not</span> <span class="n">obj</span><span class="o">.</span><span class="n">is_active</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">PermissionDenied</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
+</div></div>
+<div class="viewcode-block" id="CourseCreateView"><a class="viewcode-back" href="../../core.html#core.views.CourseCreateView">[docs]</a><span class="k">class</span> <span class="nc">CourseCreateView</span><span class="p">(</span><span class="n">LoginRequiredMixin</span><span class="p">,</span> <span class="n">CourseListMixin</span><span class="p">,</span> <span class="n">CreateView</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- Course Create Page &#39;&#39;&#39;</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">ActivityCollection</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s">&#39;collection_create.html&#39;</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">,</span> <span class="s">&#39;nickname&#39;</span><span class="p">,</span> <span class="s">&#39;description&#39;</span><span class="p">,</span> <span class="s">&#39;accesscode&#39;</span><span class="p">,</span> <span class="s">&#39;is_active&#39;</span><span class="p">,</span><span class="s">&#39;is_public&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="CourseCreateView.form_valid"><a class="viewcode-back" href="../../core.html#core.views.CourseCreateView.form_valid">[docs]</a>    <span class="k">def</span> <span class="nf">form_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="n">assign_perm</span><span class="p">(</span><span class="s">&#39;core.edit_course&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">form</span><span class="o">.</span><span class="n">instance</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CourseCreateView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">form_valid</span><span class="p">(</span><span class="n">form</span><span class="p">)</span>
+  <span class="c"># def form_valid(self, form):</span>
+    <span class="c">#     newcourse = form.save(commit=False)</span>
+    <span class="c">#     newcourse.save()</span>
+    <span class="c">#     currentUser = self.request.user</span>
+    <span class="c">#     newcourse.membership.add(currentUser)</span>
+    <span class="c">#     form.save_m2m()</span>
+    <span class="c">#     return super(CourseCreateView, self).form_valid(form)</span>
+</div></div>
+<div class="viewcode-block" id="CourseUpdateView"><a class="viewcode-back" href="../../core.html#core.views.CourseUpdateView">[docs]</a><span class="k">class</span> <span class="nc">CourseUpdateView</span><span class="p">(</span><span class="n">LoginRequiredMixin</span><span class="p">,</span> <span class="n">PermissionRequiredMixin</span><span class="p">,</span> <span class="n">CourseListMixin</span><span class="p">,</span> <span class="n">UpdateView</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- Course Edit Page &#39;&#39;&#39;</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">ActivityCollection</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s">&#39;collection_edit.html&#39;</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">,</span> <span class="s">&#39;nickname&#39;</span><span class="p">,</span> <span class="s">&#39;description&#39;</span><span class="p">,</span> <span class="s">&#39;accesscode&#39;</span><span class="p">,</span> <span class="s">&#39;is_active&#39;</span><span class="p">,</span><span class="s">&#39;is_public&#39;</span><span class="p">]</span>
+    <span class="n">permission_required</span> <span class="o">=</span> <span class="s">&#39;core.edit_course&#39;</span>
+    <span class="n">raise_exception</span> <span class="o">=</span> <span class="bp">True</span>
+
+<div class="viewcode-block" id="CourseUpdateView.form_valid"><a class="viewcode-back" href="../../core.html#core.views.CourseUpdateView.form_valid">[docs]</a>    <span class="k">def</span> <span class="nf">form_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="n">assign_perm</span><span class="p">(</span><span class="s">&#39;core.edit_course&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">form</span><span class="o">.</span><span class="n">instance</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CourseUpdateView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">form_valid</span><span class="p">(</span><span class="n">form</span><span class="p">)</span>
+</div></div>
+<div class="viewcode-block" id="CourseDeleteView"><a class="viewcode-back" href="../../core.html#core.views.CourseDeleteView">[docs]</a><span class="k">class</span> <span class="nc">CourseDeleteView</span><span class="p">(</span><span class="n">LoginRequiredMixin</span><span class="p">,</span> <span class="n">PermissionRequiredMixin</span><span class="p">,</span> <span class="n">CourseListMixin</span><span class="p">,</span> <span class="n">FakeDeleteMixin</span><span class="p">,</span> <span class="n">DeleteView</span><span class="p">):</span>  <span class="c">#FakeDeleteMixin, </span>
+    <span class="sd">&#39;&#39;&#39; -- Course Delete Page &#39;&#39;&#39;</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">ActivityCollection</span>
+    <span class="n">success_url</span> <span class="o">=</span> <span class="n">reverse_lazy</span><span class="p">(</span><span class="s">&#39;home&#39;</span><span class="p">)</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s">&#39;activity_delete.html&#39;</span>
+    <span class="n">permission_required</span> <span class="o">=</span> <span class="s">&#39;core.edit_course&#39;</span>
+    <span class="n">raise_exception</span> <span class="o">=</span> <span class="bp">True</span>
+</div>
+<div class="viewcode-block" id="LessonCreateView"><a class="viewcode-back" href="../../core.html#core.views.LessonCreateView">[docs]</a><span class="k">class</span> <span class="nc">LessonCreateView</span><span class="p">(</span><span class="n">LoginRequiredMixin</span><span class="p">,</span> <span class="n">CourseListMixin</span><span class="p">,</span> <span class="n">CreateView</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- Lesson Create Page &#39;&#39;&#39;</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Lesson</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s">&#39;lesson_create.html&#39;</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">,</span> <span class="s">&#39;description&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="LessonCreateView.form_valid"><a class="viewcode-back" href="../../core.html#core.views.LessonCreateView.form_valid">[docs]</a>    <span class="k">def</span> <span class="nf">form_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
+    <span class="c"># Auto set the following fields:</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">collection</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span>
+            <span class="n">ActivityCollection</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;addpk&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">LessonCreateView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">form_valid</span><span class="p">(</span><span class="n">form</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="LessonCreateView.get_success_url"><a class="viewcode-back" href="../../core.html#core.views.LessonCreateView.get_success_url">[docs]</a>    <span class="k">def</span> <span class="nf">get_success_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">get_absolute_url</span><span class="p">()</span>
+
+</div></div>
+<div class="viewcode-block" id="ActivityCreateIndexView"><a class="viewcode-back" href="../../core.html#core.views.ActivityCreateIndexView">[docs]</a><span class="k">class</span> <span class="nc">ActivityCreateIndexView</span><span class="p">(</span><span class="n">LoginRequiredMixin</span><span class="p">,</span> <span class="n">CourseListMixin</span><span class="p">,</span> <span class="n">ActivityListMixin</span><span class="p">,</span> <span class="n">DetailView</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- Activity Create Index Page: users select from a list of available activity types. &#39;&#39;&#39;</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">ActivityCollection</span>
+    <span class="n">context_object_name</span> <span class="o">=</span> <span class="s">&#39;course&#39;</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s">&quot;activity_create_index.html&quot;</span>
+
+
+<span class="c"># Used in the iframe when adding lesson on the fly</span></div>
+<div class="viewcode-block" id="LessonAddView"><a class="viewcode-back" href="../../core.html#core.views.LessonAddView">[docs]</a><span class="k">class</span> <span class="nc">LessonAddView</span><span class="p">(</span><span class="n">LessonCreateView</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- This is a simple version of Lesson Create Page used by an iframe in Activity Create/Edit Page to add lesson on the fly. &#39;&#39;&#39;</span>
+
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s">&#39;lesson_create_2.html&#39;</span>
+
+<div class="viewcode-block" id="LessonAddView.form_valid"><a class="viewcode-back" href="../../core.html#core.views.LessonAddView.form_valid">[docs]</a>    <span class="k">def</span> <span class="nf">form_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
+    <span class="c"># Auto set the following fields:</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">collection</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span>
+            <span class="n">ActivityCollection</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;addpk&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">LessonAddView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">form_valid</span><span class="p">(</span><span class="n">form</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="LessonAddView.get_success_url"><a class="viewcode-back" href="../../core.html#core.views.LessonAddView.get_success_url">[docs]</a>    <span class="k">def</span> <span class="nf">get_success_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="n">get_absolute_url</span><span class="p">()</span>
+
+<span class="c"># Save Post</span></div></div>
+<div class="viewcode-block" id="savePost"><a class="viewcode-back" href="../../core.html#core.views.savePost">[docs]</a><span class="k">def</span> <span class="nf">savePost</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- Function-based View for save a post instead of the chat server. &#39;&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">postuser</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span>
+        <span class="n">textcontent</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;text&quot;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="c"># activity to assign post to</span>
+        <span class="n">activityType</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;activity_type&quot;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">activityID</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;activity_id&quot;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="c">#  validation and save</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">textcontent</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">mess</span> <span class="o">=</span> <span class="n">Post</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">textcontent</span><span class="p">)</span>
+            <span class="n">mess</span><span class="o">.</span><span class="n">creator</span> <span class="o">=</span> <span class="n">postuser</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;parent_post&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">mess</span><span class="o">.</span><span class="n">parent_post</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;parent_post&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;audio_URL&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">mess</span><span class="o">.</span><span class="n">audio_URL</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;audio&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">mess</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="c">#  save mess with that activity</span>
+        <span class="k">if</span> <span class="n">activityType</span> <span class="o">==</span> <span class="s">&#39;discussion&#39;</span><span class="p">:</span>
+            <span class="n">activity</span> <span class="o">=</span> <span class="n">DiscussionActivity</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">activityID</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">activity</span><span class="o">.</span><span class="n">posts</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">mess</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">activityType</span> <span class="o">==</span> <span class="s">&#39;essay&#39;</span><span class="p">:</span>
+            <span class="n">essayResponse</span> <span class="o">=</span> <span class="n">EssayResponse</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span> <span class="n">activityID</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">essayResponse</span><span class="o">.</span><span class="n">posts</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">mess</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s">&quot;Post Success&quot;</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="fileUpload"><a class="viewcode-back" href="../../core.html#core.views.fileUpload">[docs]</a><span class="k">def</span> <span class="nf">fileUpload</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- Function-based View for saving a file. &#39;&#39;&#39;</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;files&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+    <span class="c"># Loop through our files in the files list</span>
+    <span class="k">for</span> <span class="n">singleFile</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">FILES</span><span class="o">.</span><span class="n">getlist</span><span class="p">(</span><span class="s">&#39;file&#39;</span><span class="p">):</span>
+        <span class="c"># Create a new entry in our database</span>
+        <span class="n">new_file</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span><span class="n">file_upload</span><span class="o">=</span><span class="n">singleFile</span><span class="p">)</span>
+        <span class="n">new_file</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="c"># Grab the file</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">new_file</span><span class="p">,</span> <span class="s">&quot;file_upload&quot;</span><span class="p">)</span>
+        <span class="c"># Save output for return as JSON</span>
+        <span class="n">response</span><span class="p">[</span><span class="s">&#39;files&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">singleFile</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s">&#39;size&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">singleFile</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
+            <span class="s">&#39;url&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">obj</span><span class="o">.</span><span class="n">url</span><span class="p">,</span>
+            <span class="c"># &#39;deleteUrl&#39;: &#39;\/file\/delete\/%s&#39; % obj.name,</span>
+            <span class="c"># &#39;deleteType&#39;: &#39;DELETE&#39;</span>
+        <span class="p">})</span>
+
+    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">response</span><span class="p">),</span> <span class="n">content_type</span><span class="o">=</span><span class="s">&#39;application/json&#39;</span><span class="p">)</span>
+
+<span class="c"># subscribe to a course:</span></div>
+<span class="nd">@login_required</span>
+<div class="viewcode-block" id="subscribeCourse"><a class="viewcode-back" href="../../core.html#core.views.subscribeCourse">[docs]</a><span class="k">def</span> <span class="nf">subscribeCourse</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">accesskey</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- Function-based view for user to subscribe a course &#39;&#39;&#39;</span>
+
+    <span class="n">courseToSubscribe</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">ActivityCollection</span><span class="p">,</span> <span class="n">accesscode</span><span class="o">=</span><span class="n">accesskey</span><span class="p">)</span>
+    <span class="n">assign_perm</span><span class="p">(</span><span class="s">&#39;core.view_course&#39;</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span> <span class="p">,</span> <span class="n">courseToSubscribe</span><span class="p">)</span>
+
+    <span class="k">return</span>  <span class="n">redirect</span><span class="p">(</span><span class="n">courseToSubscribe</span><span class="p">)</span>
+
+<span class="c"># duplicate a course:</span></div>
+<span class="nd">@login_required</span>
+<div class="viewcode-block" id="CourseCopyView"><a class="viewcode-back" href="../../core.html#core.views.CourseCopyView">[docs]</a><span class="k">def</span> <span class="nf">CourseCopyView</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">course_id</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- Function-based view for copying a course and its whole structure. &#39;&#39;&#39;</span>
+
+    <span class="c"># copy course</span>
+    <span class="n">courseToCopy</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">ActivityCollection</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">course_id</span><span class="p">)</span>
+    <span class="n">lessonsToCopy</span> <span class="o">=</span> <span class="n">courseToCopy</span><span class="o">.</span><span class="n">lesson_set</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">activitiesToCopy</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="n">courseToCopy</span><span class="o">.</span><span class="n">discussions</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span><span class="n">courseToCopy</span><span class="o">.</span><span class="n">essays</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span><span class="n">courseToCopy</span><span class="o">.</span><span class="n">overdubs</span><span class="o">.</span><span class="n">all</span><span class="p">()))</span>
+    <span class="n">courseToCopy</span><span class="o">.</span><span class="n">pk</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="c"># courseToCopy.accesscode = courseToCopy.accesscode</span>
+    <span class="n">courseToCopy</span><span class="o">.</span><span class="n">is_active</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="c"># deal with unique title</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="n">timeStamp</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">month</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;/&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">day</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;/&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">year</span><span class="p">)</span><span class="o">+</span><span class="s">&quot; &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">hour</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;:&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">minute</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;:&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">courseToCopy</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">courseToCopy</span><span class="o">.</span><span class="n">title</span><span class="o">+</span><span class="s">&quot;(&quot;</span><span class="o">+</span><span class="n">timeStamp</span><span class="o">+</span><span class="s">&quot;)&quot;</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s">&#39;copy failed when saving course title&#39;</span><span class="p">)</span> 
+    <span class="c"># deal with unique accesscode</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">courseToCopy</span><span class="o">.</span><span class="n">accesscode</span> <span class="o">=</span> <span class="n">courseToCopy</span><span class="o">.</span><span class="n">accesscode</span><span class="o">+</span><span class="s">&quot;(&quot;</span><span class="o">+</span><span class="n">timeStamp</span><span class="o">+</span><span class="s">&quot;)&quot;</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s">&#39;copy failed when saving course accesscode&#39;</span><span class="p">)</span>
+    <span class="n">courseToCopy</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">assign_perm</span><span class="p">(</span><span class="s">&#39;core.edit_course&#39;</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">courseToCopy</span><span class="p">)</span>
+    <span class="c"># copy course lessons</span>
+    <span class="k">for</span> <span class="n">lessonToCopy</span> <span class="ow">in</span> <span class="n">lessonsToCopy</span><span class="p">:</span>
+        <span class="n">lessonToCopy</span><span class="o">.</span><span class="n">pk</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">lessonToCopy</span><span class="o">.</span><span class="n">collection</span> <span class="o">=</span> <span class="n">courseToCopy</span>
+        <span class="n">lessonToCopy</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="c"># copy course activities</span>
+    <span class="k">for</span> <span class="n">activityToCopy</span> <span class="ow">in</span> <span class="n">activitiesToCopy</span><span class="p">:</span>
+        <span class="n">lessonsToAdd</span> <span class="o">=</span> <span class="n">activityToCopy</span><span class="o">.</span><span class="n">lesson</span>
+        <span class="n">activityToCopy</span><span class="o">.</span><span class="n">pk</span><span class="o">=</span><span class="bp">None</span>
+        <span class="n">activityToCopy</span><span class="o">.</span><span class="n">collection</span> <span class="o">=</span> <span class="n">courseToCopy</span>
+        <span class="n">activityToCopy</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="n">activityToCopy</span><span class="o">.</span><span class="n">posts</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">print</span> <span class="s">&quot;activity_to_copy_lesson_num_is: &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">lessonsToAdd</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+        <span class="k">print</span> <span class="n">lessonsToAdd</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">lessonsToAdd</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lessonsToAdd</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+                <span class="n">activityToCopy</span><span class="o">.</span><span class="n">lesson</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">courseToCopy</span><span class="o">.</span><span class="n">lesson_set</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span> <span class="n">title</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">title</span> <span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+    
+    <span class="k">return</span>  <span class="n">redirect</span><span class="p">(</span><span class="n">courseToCopy</span><span class="p">)</span>
+
+<span class="c"># change user object permission</span></div>
+<span class="nd">@login_required</span>
+<div class="viewcode-block" id="changePerm"><a class="viewcode-back" href="../../core.html#core.views.changePerm">[docs]</a><span class="k">def</span> <span class="nf">changePerm</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- Function-based view to perform permission control in an Activity. &#39;&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">request_user</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span>
+        <span class="n">user_name</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;object_username&quot;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">perm_user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">user_name</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="n">perm_codename</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;codename&quot;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">perm_object_type</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;object_type&quot;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">perm_object_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;object_id&quot;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">perm_operation_type</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;operation_type&quot;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="c">#  validation and change perm</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">perm_object_type</span> <span class="o">==</span> <span class="s">&#39;course&#39;</span><span class="p">:</span>
+                <span class="n">target_object</span> <span class="o">=</span> <span class="n">ActivityCollection</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">perm_object_id</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">perm_object_type</span> <span class="o">==</span> <span class="s">&#39;discussion&#39;</span><span class="p">:</span>
+                <span class="n">target_object</span> <span class="o">=</span> <span class="n">DiscussionActivity</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">perm_object_id</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">perm_object_type</span> <span class="o">==</span> <span class="s">&#39;essay&#39;</span><span class="p">:</span>
+                <span class="n">target_object</span> <span class="o">=</span> <span class="n">EssayActivity</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">perm_object_id</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">perm_object_type</span> <span class="o">==</span> <span class="s">&#39;overdub&#39;</span><span class="p">:</span>
+                <span class="n">target_object</span> <span class="o">=</span> <span class="n">OverdubActivity</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">perm_object_id</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s">&#39;wrong object type&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s">&#39;no such object&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">perm_operation_type</span> <span class="o">==</span> <span class="s">&#39;assign_perm&#39;</span><span class="p">:</span>
+            <span class="n">assign_perm</span><span class="p">(</span><span class="n">perm_codename</span><span class="p">,</span> <span class="n">perm_user</span><span class="p">,</span> <span class="n">target_object</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s">&#39;successful change&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">perm_operation_type</span> <span class="o">==</span> <span class="s">&#39;remove_perm&#39;</span><span class="p">:</span>
+            <span class="n">remove_perm</span><span class="p">(</span><span class="n">perm_codename</span><span class="p">,</span> <span class="n">perm_user</span><span class="p">,</span> <span class="n">target_object</span><span class="p">)</span> 
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s">&#39;successful change&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">perm_operation_type</span> <span class="o">==</span> <span class="s">&#39;enable_control&#39;</span><span class="p">:</span>
+            <span class="n">target_object</span><span class="o">.</span><span class="n">permission_control</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">target_object</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s">&#39;successful change&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">perm_operation_type</span> <span class="o">==</span> <span class="s">&#39;disable_control&#39;</span><span class="p">:</span>
+            <span class="n">target_object</span><span class="o">.</span><span class="n">permission_control</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">target_object</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s">&#39;successful change&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s">&#39;no change&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s">&#39;post ajax required&#39;</span><span class="p">)</span> 
+
+<span class="c"># copy activity</span></div>
+<span class="nd">@login_required</span>
+<div class="viewcode-block" id="copyActivity"><a class="viewcode-back" href="../../core.html#core.views.copyActivity">[docs]</a><span class="k">def</span> <span class="nf">copyActivity</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- Function-based view to copy an activity to some course &#39;&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">request_user</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span>
+        <span class="n">activity_object_type</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;activity_type&quot;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">activity_object_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;activity_id&quot;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">activity_copy_coursename</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;course_name&quot;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">activity_copy_courseid</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;course_id&quot;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="c">#  validation and change perm</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">course_to_attach</span> <span class="o">=</span> <span class="n">ActivityCollection</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">activity_copy_courseid</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span><span class="p">(</span><span class="s">&quot;No such course&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">activity_object_type</span> <span class="o">==</span> <span class="s">&#39;discussion&#39;</span><span class="p">:</span>
+                <span class="n">target_object</span> <span class="o">=</span> <span class="n">DiscussionActivity</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">activity_object_id</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">activity_object_type</span> <span class="o">==</span> <span class="s">&#39;essay&#39;</span><span class="p">:</span>
+                <span class="n">target_object</span> <span class="o">=</span> <span class="n">EssayActivity</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">activity_object_id</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">activity_object_type</span> <span class="o">==</span> <span class="s">&#39;overdub&#39;</span><span class="p">:</span>
+                <span class="n">target_object</span> <span class="o">=</span> <span class="n">OverdubActivity</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">activity_object_id</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s">&#39;wrong object type&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s">&#39;no such object&#39;</span><span class="p">)</span>
+        <span class="n">target_object</span><span class="o">.</span><span class="n">pk</span><span class="o">=</span><span class="bp">None</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">timeStamp</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">month</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;/&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">day</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;/&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">year</span><span class="p">)</span><span class="o">+</span><span class="s">&quot; &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">hour</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;:&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">minute</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;:&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
+        <span class="n">target_object</span><span class="o">.</span><span class="n">title</span><span class="o">=</span> <span class="n">target_object</span><span class="o">.</span><span class="n">title</span><span class="o">+</span><span class="s">&quot;(&quot;</span><span class="o">+</span><span class="n">timeStamp</span><span class="o">+</span><span class="s">&quot;)&quot;</span>
+        <span class="n">target_object</span><span class="o">.</span><span class="n">collection</span><span class="o">=</span><span class="n">course_to_attach</span>
+        <span class="n">target_object</span><span class="o">.</span><span class="n">is_active</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">target_object</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="n">target_object</span><span class="o">.</span><span class="n">posts</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">target_object</span><span class="o">.</span><span class="n">lesson</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s">&quot;success_redirect&quot;</span><span class="o">+</span><span class="n">course_to_attach</span><span class="o">.</span><span class="n">get_absolute_url</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s">&#39;post ajax required&#39;</span><span class="p">)</span> 
+
+<span class="c"># change lesson title</span></div>
+<span class="nd">@login_required</span>
+<div class="viewcode-block" id="editLessonTitle"><a class="viewcode-back" href="../../core.html#core.views.editLessonTitle">[docs]</a><span class="k">def</span> <span class="nf">editLessonTitle</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- Function-based view for editing lesson title on the fly. &#39;&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">lesson_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;pk&quot;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">new_title</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;value&quot;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">lesson_id</span>
+        <span class="k">print</span> <span class="n">new_title</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">target_lesson</span> <span class="o">=</span> <span class="n">Lesson</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">lesson_id</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">target_lesson</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">new_title</span>
+            <span class="n">target_lesson</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s">&#39;Success&#39;</span><span class="p">)</span> 
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">HttpResponseBadRequest</span><span class="p">()</span>
+
+<span class="c"># process essay draft</span></div>
+<span class="nd">@login_required</span>
+<div class="viewcode-block" id="editEssayDraft"><a class="viewcode-back" href="../../core.html#core.views.editEssayDraft">[docs]</a><span class="k">def</span> <span class="nf">editEssayDraft</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; -- Function-based view to save the edition of an Essay Draft. &#39;&#39;&#39;</span>
+ 
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">operation</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;operation&quot;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">essay_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;essay_id&quot;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">draft_title</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;draft_title&quot;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">current_user</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span>
+        <span class="c"># draft_number = request.POST.get(&quot;draft_number&quot;, &#39;&#39;)</span>
+        <span class="c"># draft_status = request.POST.get(&quot;draft_status&quot;, &#39;&#39;)</span>
+        <span class="n">draft_content</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;draft_content&quot;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="c"># print lesson_id</span>
+        <span class="n">progressing_response</span> <span class="o">=</span> <span class="n">EssayResponse</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">essay_activity__id</span><span class="o">=</span><span class="n">essay_id</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="s">&#39;in progress&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">&#39;modified&#39;</span><span class="p">,</span><span class="s">&#39;-draft_number&#39;</span><span class="p">)</span>
+        <span class="c"># There is an exiting essay response</span>
+        <span class="k">print</span> <span class="n">progressing_response</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">progressing_response</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> 
+            <span class="n">target_object</span> <span class="o">=</span> <span class="n">progressing_response</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">target_object</span><span class="o">.</span><span class="n">draft_title</span> <span class="o">=</span> <span class="n">draft_title</span>
+            <span class="n">target_object</span><span class="o">.</span><span class="n">draft</span> <span class="o">=</span> <span class="n">draft_content</span>
+            <span class="k">if</span> <span class="n">operation</span> <span class="o">==</span> <span class="s">&#39;save&#39;</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">elif</span> <span class="n">operation</span> <span class="o">==</span> <span class="s">&#39;submit&#39;</span><span class="p">:</span>
+                <span class="n">target_object</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s">&#39;submitted&#39;</span>
+            <span class="n">target_object</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s">&#39;Success&#39;</span><span class="p">)</span>
+        <span class="c"># There is not an exiting essay response</span>
+        <span class="k">elif</span> <span class="n">progressing_response</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">:</span> 
+            <span class="n">new_draft_number</span> <span class="o">=</span> <span class="n">EssayResponse</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">essay_activity__id</span><span class="o">=</span><span class="n">essay_id</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">+</span><span class="mi">1</span>
+            <span class="n">target_object</span> <span class="o">=</span> <span class="n">EssayResponse</span><span class="p">(</span><span class="n">essay_activity</span><span class="o">=</span><span class="n">get_object_or_404</span><span class="p">(</span><span class="n">EssayActivity</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">essay_id</span><span class="p">),</span> <span class="n">draft_title</span><span class="o">=</span><span class="n">draft_title</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span><span class="n">draft_number</span><span class="o">=</span><span class="n">new_draft_number</span><span class="p">,</span><span class="n">draft</span><span class="o">=</span><span class="n">draft_content</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">operation</span> <span class="o">==</span> <span class="s">&#39;save&#39;</span><span class="p">:</span>
+                <span class="n">target_object</span><span class="o">.</span><span class="n">status</span><span class="o">=</span><span class="s">&#39;in progress&#39;</span>
+            <span class="k">elif</span> <span class="n">operation</span> <span class="o">==</span> <span class="s">&#39;submit&#39;</span><span class="p">:</span>
+                <span class="n">target_object</span><span class="o">.</span><span class="n">status</span><span class="o">=</span><span class="s">&#39;submitted&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="n">target_object</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s">&#39;Success&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">HttpResponseBadRequest</span><span class="p">()</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">clt-langlabs-dev-py  documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

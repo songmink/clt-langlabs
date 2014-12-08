@@ -1,3 +1,6 @@
+"""
+Django testServer settings for cltlanglab project on Server 192.168.1.8.
+"""
 # settings/testServer.py
 
 # Example use with manage.py:

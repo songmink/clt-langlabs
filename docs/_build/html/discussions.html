@@ -1,0 +1,441 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>discussions package &mdash; clt-langlabs-dev-py  documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="clt-langlabs-dev-py  documentation" href="index.html" />
+    <link rel="up" title="API" href="API.html" />
+    <link rel="next" title="essays package" href="essays.html" />
+    <link rel="prev" title="core package" href="core.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="essays.html" title="essays package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="core.html" title="core package"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">clt-langlabs-dev-py  documentation</a> &raquo;</li>
+          <li><a href="API.html" accesskey="U">API</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="discussions-package">
+<h1>discussions package<a class="headerlink" href="#discussions-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-discussions.models">
+<span id="discussions-models"></span><h2>discussions.models<a class="headerlink" href="#module-discussions.models" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="discussions.models.DiscussionActivity">
+<em class="property">class </em><tt class="descclassname">discussions.models.</tt><tt class="descname">DiscussionActivity</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/discussions/models.html#DiscussionActivity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#discussions.models.DiscussionActivity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#core.models.AbstractActivity" title="core.models.AbstractActivity"><tt class="xref py py-class docutils literal"><span class="pre">core.models.AbstractActivity</span></tt></a></p>
+<p>&#8211; DiscussionActivity is the class for <em>Discussion</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Fields:</th><td class="field-body"><div class="first last line-block">
+<div class="line"><strong>title</strong>  &#8211; Title of activity.</div>
+<div class="line"><strong>instructions</strong>   &#8211; Instructions about this activity.</div>
+<div class="line"><strong>lesson</strong> &#8211; A lesson this activity belongs to, it could be null.</div>
+<div class="line"><strong>display_order</strong>    &#8211; Display order of activity.</div>
+<div class="line"><strong>created</strong>    &#8211; Time of creation.</div>
+<div class="line"><strong>modified</strong>    &#8211; Time of last modification.</div>
+<div class="line"><strong>is_active</strong>    &#8211; Flag for activation of activity.</div>
+<div class="line"><strong>activity_type</strong>    &#8211; Type of current activity.</div>
+<div class="line"><strong>posts</strong>    &#8211; Associated comments/posts.</div>
+<div class="line"><strong>permission_control</strong>    &#8211; Flag for permission control within an activity.</div>
+<div class="line"><strong>is_deleted</strong>    &#8211; Flag for soft deletion of current activity.</div>
+<div class="line"><strong>collection</strong>    &#8211; The course that this discussion activity belongs to.</div>
+<div class="line"><strong>read_after_post</strong>  &#8211; Flag for whether or not the student has to post their own post in order to see others&#8217; posts.</div>
+<div class="line"><strong>private_mode</strong>   &#8211; Flag for whether or not students can only see their own interaction with instructors.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Meta:</th><td class="field-body"><div class="first last line-block">
+<div class="line"><strong>abstract</strong>  &#8211; Set class to abstract</div>
+<div class="line"><strong>permissions</strong>   &#8211; Object level permission control(&#8220;view_activity&#8221; permission is checked when <em>permission_control</em> is set to true )</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-discussions.sockets">
+<span id="discussions-sockets"></span><h2>discussions.sockets<a class="headerlink" href="#module-discussions.sockets" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="discussions.sockets.ThreadNamespace">
+<em class="property">class </em><tt class="descclassname">discussions.sockets.</tt><tt class="descname">ThreadNamespace</tt><big>(</big><em>environ</em>, <em>ns_name</em>, <em>request=None</em><big>)</big><a class="reference internal" href="_modules/discussions/sockets.html#ThreadNamespace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#discussions.sockets.ThreadNamespace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">socketio.namespace.BaseNamespace</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">socketio.mixins.RoomsMixin</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">socketio.mixins.BroadcastMixin</span></tt></p>
+<p>The main class for a namespace</p>
+<dl class="method">
+<dt id="discussions.sockets.ThreadNamespace.log">
+<tt class="descname">log</tt><big>(</big><em>message</em><big>)</big><a class="reference internal" href="_modules/discussions/sockets.html#ThreadNamespace.log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#discussions.sockets.ThreadNamespace.log" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#8211; This is a log function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> &#8211; A message to be logged such as <em>connect</em>/<em>disconnect</em>/<em>nickname</em>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Log the message.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="discussions.sockets.ThreadNamespace.on_join">
+<tt class="descname">on_join</tt><big>(</big><em>roomType</em>, <em>roomNumber</em><big>)</big><a class="reference internal" href="_modules/discussions/sockets.html#ThreadNamespace.on_join"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#discussions.sockets.ThreadNamespace.on_join" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#8211; Join a chat room</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>roomType</strong> &#8211; Type of the activity such as <em>&#8216;discussion&#8217;</em>/<em>&#8216;overdub&#8217;</em>.</li>
+<li><strong>roomNumber</strong> &#8211; ID of the activity.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="discussions.sockets.ThreadNamespace.on_nickname">
+<tt class="descname">on_nickname</tt><big>(</big><em>nickname</em><big>)</big><a class="reference internal" href="_modules/discussions/sockets.html#ThreadNamespace.on_nickname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#discussions.sockets.ThreadNamespace.on_nickname" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#8211; Validate a user and broadcast this event</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nickname</strong> &#8211; username of potential user.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="discussions.sockets.ThreadNamespace.recv_disconnect">
+<tt class="descname">recv_disconnect</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/discussions/sockets.html#ThreadNamespace.recv_disconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#discussions.sockets.ThreadNamespace.recv_disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#8211; Disconnect current user.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="discussions.sockets.ThreadNamespace.on_user_message">
+<tt class="descname">on_user_message</tt><big>(</big><em>msg</em><big>)</big><a class="reference internal" href="_modules/discussions/sockets.html#ThreadNamespace.on_user_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#discussions.sockets.ThreadNamespace.on_user_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#8211; Save and boradcast a user&#8217;s message</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> &#8211; user&#8217;s message.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="discussions.sockets.ThreadNamespace.on_user_comment">
+<tt class="descname">on_user_comment</tt><big>(</big><em>msg</em><big>)</big><a class="reference internal" href="_modules/discussions/sockets.html#ThreadNamespace.on_user_comment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#discussions.sockets.ThreadNamespace.on_user_comment" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#8211; Save and boradcast a user&#8217;s comment to others&#8217; messages</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> &#8211; user&#8217;s comment.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="discussions.sockets.ThreadNamespace.postSave">
+<tt class="descname">postSave</tt><big>(</big><em>msg</em>, <em>parent_post=None</em>, <em>audio_URL=None</em>, <em>attachments=None</em>, <em>attachmentsName=None</em><big>)</big><a class="reference internal" href="_modules/discussions/sockets.html#ThreadNamespace.postSave"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#discussions.sockets.ThreadNamespace.postSave" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#8211; Save a message as <em>POST</em></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>msg</strong> &#8211; The text of a message.</li>
+<li><strong>parent_post</strong> &#8211; The parent post if it is a comment.</li>
+<li><strong>audio_URL</strong> &#8211; URL to the audio file.</li>
+<li><strong>attachments</strong> &#8211; URLs to attachments.</li>
+<li><strong>attachmentsName</strong> &#8211; Names of attachments.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="discussions.sockets.ThreadNamespace.emit_to_room_include_me">
+<tt class="descname">emit_to_room_include_me</tt><big>(</big><em>room</em>, <em>event</em>, <em>*args</em><big>)</big><a class="reference internal" href="_modules/discussions/sockets.html#ThreadNamespace.emit_to_room_include_me"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#discussions.sockets.ThreadNamespace.emit_to_room_include_me" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#8211; Send this event to all users in the room (in this particular Namespace)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>room</strong> &#8211; The room to boradcast.</li>
+<li><strong>event</strong> &#8211; The name of the event such as &#8220;eventX&#8221;.(&#8220;event X&#8221; should be listened on the client side and will be triggered if &#8220;event X&#8221; is boradcasted).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-discussions.views">
+<span id="discussions-views"></span><h2>discussions.views<a class="headerlink" href="#module-discussions.views" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="discussions.views.DiscussionDetailView">
+<em class="property">class </em><tt class="descclassname">discussions.views.</tt><tt class="descname">DiscussionDetailView</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/discussions/views.html#DiscussionDetailView"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#discussions.views.DiscussionDetailView" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#core.mixins.CourseListMixin" title="core.mixins.CourseListMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.CourseListMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.ActivityListMixin" title="core.mixins.ActivityListMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.ActivityListMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.RecorderMixin" title="core.mixins.RecorderMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.RecorderMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.UsersWithPermsMixin" title="core.mixins.UsersWithPermsMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.UsersWithPermsMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.ActivityPermsMixin" title="core.mixins.ActivityPermsMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.ActivityPermsMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.UserPostNumMixin" title="core.mixins.UserPostNumMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.UserPostNumMixin</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">django.views.generic.detail.DetailView</span></tt></p>
+<p>&#8211; Discussion Detail Page</p>
+<dl class="attribute">
+<dt id="discussions.views.DiscussionDetailView.model">
+<tt class="descname">model</tt><a class="headerlink" href="#discussions.views.DiscussionDetailView.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">DiscussionActivity</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="discussions.views.DiscussionDetailView.context_object_name">
+<tt class="descname">context_object_name</tt><em class="property"> = 'activity'</em><a class="headerlink" href="#discussions.views.DiscussionDetailView.context_object_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="discussions.views.DiscussionDetailView.template_name">
+<tt class="descname">template_name</tt><em class="property"> = 'discussion.html'</em><a class="headerlink" href="#discussions.views.DiscussionDetailView.template_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="discussions.views.DiscussionCreateView">
+<em class="property">class </em><tt class="descclassname">discussions.views.</tt><tt class="descname">DiscussionCreateView</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/discussions/views.html#DiscussionCreateView"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#discussions.views.DiscussionCreateView" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#core.mixins.CourseListMixin" title="core.mixins.CourseListMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.CourseListMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.CreateActivityMixin" title="core.mixins.CreateActivityMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.CreateActivityMixin</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">django.views.generic.edit.CreateView</span></tt></p>
+<p>&#8211; Discussion Create Page</p>
+<dl class="attribute">
+<dt id="discussions.views.DiscussionCreateView.model">
+<tt class="descname">model</tt><a class="headerlink" href="#discussions.views.DiscussionCreateView.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">DiscussionActivity</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="discussions.views.DiscussionCreateView.template_name">
+<tt class="descname">template_name</tt><em class="property"> = 'activity_create.html'</em><a class="headerlink" href="#discussions.views.DiscussionCreateView.template_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="discussions.views.DiscussionCreateView.fields">
+<tt class="descname">fields</tt><em class="property"> = ['title', 'instructions', 'lesson', 'is_active', 'read_after_post', 'private_mode']</em><a class="headerlink" href="#discussions.views.DiscussionCreateView.fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="discussions.views.DiscussionCreateView.activity_type">
+<tt class="descname">activity_type</tt><em class="property"> = 'discussion'</em><a class="headerlink" href="#discussions.views.DiscussionCreateView.activity_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="discussions.views.DiscussionCreateView.get_form">
+<tt class="descname">get_form</tt><big>(</big><em>form_class</em><big>)</big><a class="reference internal" href="_modules/discussions/views.html#DiscussionCreateView.get_form"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#discussions.views.DiscussionCreateView.get_form" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of lessons the course has into <em>&#8220;form&#8221;</em>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="discussions.views.DiscussionCreateView.form_valid">
+<tt class="descname">form_valid</tt><big>(</big><em>form</em><big>)</big><a class="reference internal" href="_modules/discussions/views.html#DiscussionCreateView.form_valid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#discussions.views.DiscussionCreateView.form_valid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="discussions.views.DiscussionUpdateView">
+<em class="property">class </em><tt class="descclassname">discussions.views.</tt><tt class="descname">DiscussionUpdateView</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/discussions/views.html#DiscussionUpdateView"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#discussions.views.DiscussionUpdateView" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#core.mixins.CourseListMixin" title="core.mixins.CourseListMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.CourseListMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.CreateActivity4UpdateMixin" title="core.mixins.CreateActivity4UpdateMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.CreateActivity4UpdateMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.ActivityPermsMixin" title="core.mixins.ActivityPermsMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.ActivityPermsMixin</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">django.views.generic.edit.UpdateView</span></tt></p>
+<p>&#8211; Discussion Edit Page</p>
+<dl class="attribute">
+<dt id="discussions.views.DiscussionUpdateView.model">
+<tt class="descname">model</tt><a class="headerlink" href="#discussions.views.DiscussionUpdateView.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">DiscussionActivity</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="discussions.views.DiscussionUpdateView.context_object_name">
+<tt class="descname">context_object_name</tt><em class="property"> = 'activity'</em><a class="headerlink" href="#discussions.views.DiscussionUpdateView.context_object_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="discussions.views.DiscussionUpdateView.template_name">
+<tt class="descname">template_name</tt><em class="property"> = 'activity_edit.html'</em><a class="headerlink" href="#discussions.views.DiscussionUpdateView.template_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="discussions.views.DiscussionUpdateView.fields">
+<tt class="descname">fields</tt><em class="property"> = ['title', 'instructions', 'lesson', 'is_active', 'read_after_post', 'private_mode']</em><a class="headerlink" href="#discussions.views.DiscussionUpdateView.fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="discussions.views.DiscussionUpdateView.activity_type">
+<tt class="descname">activity_type</tt><em class="property"> = 'discussion'</em><a class="headerlink" href="#discussions.views.DiscussionUpdateView.activity_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="discussions.views.DiscussionUpdateView.get_form">
+<tt class="descname">get_form</tt><big>(</big><em>form_class</em><big>)</big><a class="reference internal" href="_modules/discussions/views.html#DiscussionUpdateView.get_form"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#discussions.views.DiscussionUpdateView.get_form" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of lessons the course has into <em>&#8220;form&#8221;</em>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="discussions.views.DiscussionDeleteView">
+<em class="property">class </em><tt class="descclassname">discussions.views.</tt><tt class="descname">DiscussionDeleteView</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/discussions/views.html#DiscussionDeleteView"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#discussions.views.DiscussionDeleteView" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#core.mixins.CourseListMixin" title="core.mixins.CourseListMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.CourseListMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.FakeDeleteMixin" title="core.mixins.FakeDeleteMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.FakeDeleteMixin</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">django.views.generic.edit.DeleteView</span></tt></p>
+<p>&#8211; Discussion Delete Confirmation Page</p>
+<dl class="attribute">
+<dt id="discussions.views.DiscussionDeleteView.model">
+<tt class="descname">model</tt><a class="headerlink" href="#discussions.views.DiscussionDeleteView.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">DiscussionActivity</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="discussions.views.DiscussionDeleteView.template_name">
+<tt class="descname">template_name</tt><em class="property"> = 'activity_delete.html'</em><a class="headerlink" href="#discussions.views.DiscussionDeleteView.template_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="discussions.views.DiscussionDeleteView.get_success_url">
+<tt class="descname">get_success_url</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/discussions/views.html#DiscussionDeleteView.get_success_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#discussions.views.DiscussionDeleteView.get_success_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">discussions package</a><ul>
+<li><a class="reference internal" href="#module-discussions.models">discussions.models</a></li>
+<li><a class="reference internal" href="#module-discussions.sockets">discussions.sockets</a></li>
+<li><a class="reference internal" href="#module-discussions.views">discussions.views</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="core.html"
+                        title="previous chapter">core package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="essays.html"
+                        title="next chapter">essays package</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/discussions.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="essays.html" title="essays package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="core.html" title="core package"
+             >previous</a> |</li>
+        <li><a href="index.html">clt-langlabs-dev-py  documentation</a> &raquo;</li>
+          <li><a href="API.html" >API</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>
