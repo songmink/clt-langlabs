@@ -39,4 +39,5 @@ Thumbs.db
 # Project specific exclusions #
 ############
 sftp-config.json
+prod-*.py
 
