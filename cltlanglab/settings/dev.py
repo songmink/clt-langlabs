@@ -8,6 +8,7 @@ Django dev settings for cltlanglab project.
 
 from .base import *
 
+SECRET_KEY = os.environ['SECRET_KEY']
 
 DEBUG = True
 
@@ -34,9 +35,8 @@ DATABASES = {
     }
 }
 
-# HEROKU SETUP? COMMENT OUT THE ABOVE DATABASE VARIABLE AND UNCOMMENT TWO LINES BELOW.
-# This is in dev in cases where one needs to test with the heroku CLI foreman app
-
-## import dj_database_url
-## DATABASES['default'] =  dj_database_url.config()
-
+# Server side setup for Barebones Recorder
+RECORDER_MYSERVER ="http://localhost/"
+RECORDER_MYHANDLER ="phpinc/save-v7.php"
+RECORDER_MYDIRECTORY = "uploads"
+RECORDER_LICENSE = ''

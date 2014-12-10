@@ -179,7 +179,7 @@
 					<button id='sendPost' type="button" class="btn btn-default btn-xs full-width" value='{% url "save_post" %}' style='border-radius:0px 0px 0px 4px;'><span class="glyphicon glyphicon-send"></span> send</button>
 					<div class="input-group-btn">
 					<button id='uploadTrigger' type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-file"></span> upload</button>
-					<button id='recordTrigger' type="button" class="btn btn-default btn-xs" data-swfurl="{% static "swf/barebonesRecorder6-demo.swf" %}" data-recorderserver='{{recorder_myServer}}' data-recorderhandler='{{recorder_myHandler}}' data-recorderdirectory='{{recorder_myDirectory}}' data-userinfo='audio_{{ user.id}}_{{user.username}}' data-playerskin="{% static "jwplayer-skins/five.xml" %}" style='border-radius:0px 0px 4px 0px;'><span class="glyphicon glyphicon-record"></span> record</button>
+					<button id='recordTrigger' type="button" class="btn btn-default btn-xs" data-swfurl="{% static "swf/barebonesRecorder7.swf" %}" data-recorderserver='{{recorder_myServer}}' data-recorderhandler='{{recorder_myHandler}}' data-recorderdirectory='{{recorder_myDirectory}}' data-recorderlicense='{{recorder_license}}' data-userinfo='audio_{{ user.id}}_{{user.username}}' data-playerskin="{% static "jwplayer-skins/five.xml" %}" style='border-radius:0px 0px 4px 0px;'><span class="glyphicon glyphicon-record"></span> record</button>
 					</div>
 					</div>
 					</form>

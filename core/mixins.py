@@ -13,7 +13,7 @@ from core.models import ActivityCollection, AbstractActivity, Post, Lesson
 from essays.models import EssayResponse
 
 from cltlanglab.settings import base
-
+from django.conf import settings
 
 class CourseListMixin(object):
     ''' -- CourseListMixin passes a list of courses that current user has access to.  '''
@@ -227,10 +227,11 @@ class RecorderMixin(object):
         ''' :returns: context that contains recorder configuration. '''
 
         context = super(RecorderMixin, self).get_context_data(**kwargs)
-        context['recorder_myServer'] = base.recorder_myServer
-        context['recorder_myHandler'] = base.recorder_myHandler
-        context['recorder_myDirectory'] = base.recorder_myDirectory
-        print 'my server is : ' + context['recorder_myServer']
+        context['recorder_myServer'] = settings.RECORDER_MYSERVER
+        context['recorder_myHandler'] = settings.RECORDER_MYHANDLER
+        context['recorder_myDirectory'] = settings.RECORDER_MYDIRECTORY
+        context['recorder_license'] = settings.RECORDER_LICENSE
+        
         return context
 
 

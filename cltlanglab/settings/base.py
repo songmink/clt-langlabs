@@ -5,7 +5,7 @@ import os
 from unipath import Path
 
 # Secret key stored in environment variable not here.
-# SECRET_KEY = os.environ['SECRET_KEY']
+#SECRET_KEY = os.environ['SECRET_KEY']
 
 PROJECT_DIR = Path(__file__).ancestor(3)  # Points to <project root> (e.g. clt-langlabs-dev-py)
 
