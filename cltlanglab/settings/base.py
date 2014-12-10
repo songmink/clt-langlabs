@@ -5,7 +5,7 @@ import os
 from unipath import Path
 
 # Secret key stored in environment variable not here.
-# SECRET_KEY = os.environ['SECRET_KEY']
+#SECRET_KEY = os.environ['SECRET_KEY']
 
 PROJECT_DIR = Path(__file__).ancestor(3)  # Points to <project root> (e.g. clt-langlabs-dev-py)
 
@@ -23,11 +23,6 @@ STATICFILES_DIRS = (
 STATIC_URL = '/static/'
 
 TEMPLATE_DIRS = (PROJECT_DIR.child('templates'),)
-
-# Server side setup for recorder
-recorder_myServer="http://192.168.1.8/";
-recorder_myHandler="phpinc/save.php";
-recorder_myDirectory="uploads";
 
 # Application definition
 

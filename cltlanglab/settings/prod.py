@@ -4,7 +4,6 @@ Django production settings for cltlanglab project.
 # settings/prod.py
 
 from .base import *
-# import dj_database_url
 
 DEBUG = False
 
@@ -17,7 +16,7 @@ ALLOWED_HOSTS = ['*.yourhost.com']
 # (nothing needed at the moment that is not specified in base.py)
 # INSTALLED_APPS += ('someapp',)
 
-# ! DO NOT EDIT THIS ON LOCAL ENVIRONMENTS! MEANT FOR PRODUCTION (but we want it in the repo).
+# ! DO NOT EDIT THIS ON LOCAL ENVIRONMENTS! MEANT FOR PRODUCTION (but we want the structure in the repo).
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -29,5 +28,24 @@ DATABASES = {
     }
 }
 
-# HEROKU SETUP? COMMENT OUT THE ABOVE DATABASE VARIABLE AND UNCOMMENT THIS.
-## DATABASES['default'] =  dj_database_url.config()
+# Server side setup for Barebones Recorder
+RECORDER_MYSERVER =""
+RECORDER_MYHANDLER =""
+RECORDER_MYDIRECTORY = ""
+RECORDER_LICENSE = ''
+
+
+STATIC_URL = ''
+
+STATIC_ROOT = ''
+
+MEDIA_URL = ''
+
+MEDIA_ROOT = ''
+
+# for braces login configuration
+LOGIN_URL = ''
+
+LOGIN_REDIRECT_URL = ''
+
+REDIRECT_FIELD_NAME = ''

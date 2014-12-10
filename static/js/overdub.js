@@ -285,6 +285,7 @@ var recorderID = 'recorder'
 var recorderServer =  $("#recordTrigger").data('recorderserver')
 var recorderHandler = $("#recordTrigger").data('recorderhandler')
 var recorderDirectory = $("#recordTrigger").data('recorderdirectory')
+var recorderLicense = $("#recordTrigger").data('recorderlicense')
 var userinfo = $("#recordTrigger").data('userinfo')
 var swfobjectURL =  $("#recordTrigger").data('swfurl')
 
@@ -337,7 +338,8 @@ function recorderInit(){
                 barebones += "&myServer="   + recorderServer;
                 barebones += "&myHandler="  + recorderHandler;
                 barebones += "&myDirectory="+ recorderDirectory;
-                barebones += "&timeLimit="  + "30";
+                barebones += "&licensekey=" + recorderLicense;
+                barebones += "&timeLimit="  + "300";
                 barebones += "&showLink="   + "N";
                 barebones += "&hideFlash"   + "Y";
             audioName = userinfo+"_"+timestamp
