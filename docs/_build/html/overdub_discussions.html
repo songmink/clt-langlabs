@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="clt-langlabs-dev-py  documentation" href="index.html" />
-    <link rel="up" title="Architecture" href="Architecture.html" />
+    <link rel="up" title="API" href="API.html" />
     <link rel="prev" title="essays package" href="essays.html" /> 
   </head>
   <body>
@@ -41,7 +41,7 @@
           <a href="essays.html" title="essays package"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">clt-langlabs-dev-py  documentation</a> &raquo;</li>
-          <li><a href="Architecture.html" accesskey="U">Architecture</a> &raquo;</li> 
+          <li><a href="API.html" accesskey="U">API</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -52,179 +52,11 @@
             
   <div class="section" id="overdub-discussions-package">
 <h1>overdub_discussions package<a class="headerlink" href="#overdub-discussions-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-overdub_discussions.models">
-<span id="overdub-discussions-models"></span><h2>overdub_discussions.models<a class="headerlink" href="#module-overdub_discussions.models" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="overdub_discussions.models.OverdubActivity">
-<em class="property">class </em><tt class="descclassname">overdub_discussions.models.</tt><tt class="descname">OverdubActivity</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/overdub_discussions/models.html#OverdubActivity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#overdub_discussions.models.OverdubActivity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#core.models.AbstractActivity" title="core.models.AbstractActivity"><tt class="xref py py-class docutils literal"><span class="pre">core.models.AbstractActivity</span></tt></a></p>
-<p>&#8211; OverdubActivity is the class for <em>Overdub</em>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Fields:</th><td class="field-body"><div class="first last line-block">
-<div class="line"><strong>title</strong>  &#8211; Title of activity.</div>
-<div class="line"><strong>instructions</strong>   &#8211; Instructions about this activity.</div>
-<div class="line"><strong>lesson</strong> &#8211; A lesson this activity belongs to, it could be null.</div>
-<div class="line"><strong>display_order</strong>    &#8211; Display order of activity.</div>
-<div class="line"><strong>created</strong>    &#8211; Time of creation.</div>
-<div class="line"><strong>modified</strong>    &#8211; Time of last modification.</div>
-<div class="line"><strong>is_active</strong>    &#8211; Flag for activation of activity.</div>
-<div class="line"><strong>activity_type</strong>    &#8211; Type of current activity.</div>
-<div class="line"><strong>posts</strong>    &#8211; Associated comments/posts.</div>
-<div class="line"><strong>permission_control</strong>    &#8211; Flag for permission control within an activity.</div>
-<div class="line"><strong>is_deleted</strong>    &#8211; Flag for soft deletion of current activity.</div>
-<div class="line"><strong>collection</strong>    &#8211; The course that this discussion activity belongs to.</div>
-<div class="line"><strong>media</strong>  &#8211; URL to the media file (an URL to a file on server or Youtube media URL).</div>
-<div class="line"><strong>read_after_post</strong>  &#8211; Flag for whether or not the student has to post their own post in order to see others&#8217; posts.</div>
-<div class="line"><strong>private_mode</strong>   &#8211; Flag for whether or not students can only see their own interaction with instructors.</div>
+<div class="section" id="overdub-discussions-models">
+<h2>overdub_discussions.models<a class="headerlink" href="#overdub-discussions-models" title="Permalink to this headline">¶</a></h2>
 </div>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Meta:</th><td class="field-body"><div class="first last line-block">
-<div class="line"><strong>abstract</strong>  &#8211; Set class to abstract</div>
-<div class="line"><strong>permissions</strong>   &#8211; Object level permission control(&#8220;view_activity&#8221; permission is checked when <em>permission_control</em> is set to true )</div>
-</div>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</div>
-<div class="section" id="module-overdub_discussions.views">
-<span id="overdub-discussions-views"></span><h2>overdub_discussions.views<a class="headerlink" href="#module-overdub_discussions.views" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="overdub_discussions.views.OverdubDetailView">
-<em class="property">class </em><tt class="descclassname">overdub_discussions.views.</tt><tt class="descname">OverdubDetailView</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/overdub_discussions/views.html#OverdubDetailView"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#overdub_discussions.views.OverdubDetailView" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#core.mixins.CourseListMixin" title="core.mixins.CourseListMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.CourseListMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.ActivityListMixin" title="core.mixins.ActivityListMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.ActivityListMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.RecorderMixin" title="core.mixins.RecorderMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.RecorderMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.UsersWithPermsMixin" title="core.mixins.UsersWithPermsMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.UsersWithPermsMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.ActivityPermsMixin" title="core.mixins.ActivityPermsMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.ActivityPermsMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.UserPostNumMixin" title="core.mixins.UserPostNumMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.UserPostNumMixin</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">django.views.generic.detail.DetailView</span></tt></p>
-<p>&#8211; Overdub Detail Page</p>
-<dl class="attribute">
-<dt id="overdub_discussions.views.OverdubDetailView.model">
-<tt class="descname">model</tt><a class="headerlink" href="#overdub_discussions.views.OverdubDetailView.model" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">OverdubActivity</span></tt></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="overdub_discussions.views.OverdubDetailView.context_object_name">
-<tt class="descname">context_object_name</tt><em class="property"> = 'activity'</em><a class="headerlink" href="#overdub_discussions.views.OverdubDetailView.context_object_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="overdub_discussions.views.OverdubDetailView.template_name">
-<tt class="descname">template_name</tt><em class="property"> = 'overdub.html'</em><a class="headerlink" href="#overdub_discussions.views.OverdubDetailView.template_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="overdub_discussions.views.OverdubCreateView">
-<em class="property">class </em><tt class="descclassname">overdub_discussions.views.</tt><tt class="descname">OverdubCreateView</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/overdub_discussions/views.html#OverdubCreateView"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#overdub_discussions.views.OverdubCreateView" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#core.mixins.CourseListMixin" title="core.mixins.CourseListMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.CourseListMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.CreateActivityMixin" title="core.mixins.CreateActivityMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.CreateActivityMixin</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">django.views.generic.edit.CreateView</span></tt></p>
-<p>&#8211; Overdub Create Page</p>
-<dl class="attribute">
-<dt id="overdub_discussions.views.OverdubCreateView.model">
-<tt class="descname">model</tt><a class="headerlink" href="#overdub_discussions.views.OverdubCreateView.model" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">OverdubActivity</span></tt></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="overdub_discussions.views.OverdubCreateView.template_name">
-<tt class="descname">template_name</tt><em class="property"> = 'activity_create.html'</em><a class="headerlink" href="#overdub_discussions.views.OverdubCreateView.template_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="overdub_discussions.views.OverdubCreateView.fields">
-<tt class="descname">fields</tt><em class="property"> = ['title', 'instructions', 'media', 'lesson', 'is_active', 'read_after_post', 'private_mode']</em><a class="headerlink" href="#overdub_discussions.views.OverdubCreateView.fields" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="overdub_discussions.views.OverdubCreateView.activity_type">
-<tt class="descname">activity_type</tt><em class="property"> = 'overdub'</em><a class="headerlink" href="#overdub_discussions.views.OverdubCreateView.activity_type" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="overdub_discussions.views.OverdubCreateView.get_form">
-<tt class="descname">get_form</tt><big>(</big><em>form_class</em><big>)</big><a class="reference internal" href="_modules/overdub_discussions/views.html#OverdubCreateView.get_form"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#overdub_discussions.views.OverdubCreateView.get_form" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="overdub_discussions.views.OverdubCreateView.form_valid">
-<tt class="descname">form_valid</tt><big>(</big><em>form</em><big>)</big><a class="reference internal" href="_modules/overdub_discussions/views.html#OverdubCreateView.form_valid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#overdub_discussions.views.OverdubCreateView.form_valid" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="overdub_discussions.views.OverdubUpdateView">
-<em class="property">class </em><tt class="descclassname">overdub_discussions.views.</tt><tt class="descname">OverdubUpdateView</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/overdub_discussions/views.html#OverdubUpdateView"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#overdub_discussions.views.OverdubUpdateView" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#core.mixins.CourseListMixin" title="core.mixins.CourseListMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.CourseListMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.CreateActivity4UpdateMixin" title="core.mixins.CreateActivity4UpdateMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.CreateActivity4UpdateMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.ActivityPermsMixin" title="core.mixins.ActivityPermsMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.ActivityPermsMixin</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">django.views.generic.edit.UpdateView</span></tt></p>
-<p>&#8211; Overdub Edit Page</p>
-<dl class="attribute">
-<dt id="overdub_discussions.views.OverdubUpdateView.model">
-<tt class="descname">model</tt><a class="headerlink" href="#overdub_discussions.views.OverdubUpdateView.model" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">OverdubActivity</span></tt></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="overdub_discussions.views.OverdubUpdateView.context_object_name">
-<tt class="descname">context_object_name</tt><em class="property"> = 'activity'</em><a class="headerlink" href="#overdub_discussions.views.OverdubUpdateView.context_object_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="overdub_discussions.views.OverdubUpdateView.template_name">
-<tt class="descname">template_name</tt><em class="property"> = 'activity_edit.html'</em><a class="headerlink" href="#overdub_discussions.views.OverdubUpdateView.template_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="overdub_discussions.views.OverdubUpdateView.fields">
-<tt class="descname">fields</tt><em class="property"> = ['title', 'instructions', 'media', 'lesson', 'is_active', 'read_after_post', 'private_mode']</em><a class="headerlink" href="#overdub_discussions.views.OverdubUpdateView.fields" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="overdub_discussions.views.OverdubUpdateView.activity_type">
-<tt class="descname">activity_type</tt><em class="property"> = 'overdub'</em><a class="headerlink" href="#overdub_discussions.views.OverdubUpdateView.activity_type" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="overdub_discussions.views.OverdubUpdateView.get_form">
-<tt class="descname">get_form</tt><big>(</big><em>form_class</em><big>)</big><a class="reference internal" href="_modules/overdub_discussions/views.html#OverdubUpdateView.get_form"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#overdub_discussions.views.OverdubUpdateView.get_form" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="overdub_discussions.views.OverdubUpdateView.form_valid">
-<tt class="descname">form_valid</tt><big>(</big><em>form</em><big>)</big><a class="reference internal" href="_modules/overdub_discussions/views.html#OverdubUpdateView.form_valid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#overdub_discussions.views.OverdubUpdateView.form_valid" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>&#8220;Media&#8221;</em> is assigned to an external URL if it&#8217;s filled, otherwise it points to the uploaded file.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="overdub_discussions.views.OverdubDeleteView">
-<em class="property">class </em><tt class="descclassname">overdub_discussions.views.</tt><tt class="descname">OverdubDeleteView</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/overdub_discussions/views.html#OverdubDeleteView"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#overdub_discussions.views.OverdubDeleteView" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#core.mixins.CourseListMixin" title="core.mixins.CourseListMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.CourseListMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.FakeDeleteMixin" title="core.mixins.FakeDeleteMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.FakeDeleteMixin</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">django.views.generic.edit.DeleteView</span></tt></p>
-<p>&#8211; Overdub Delete Confirmation Page</p>
-<dl class="attribute">
-<dt id="overdub_discussions.views.OverdubDeleteView.model">
-<tt class="descname">model</tt><a class="headerlink" href="#overdub_discussions.views.OverdubDeleteView.model" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">OverdubActivity</span></tt></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="overdub_discussions.views.OverdubDeleteView.template_name">
-<tt class="descname">template_name</tt><em class="property"> = 'activity_delete.html'</em><a class="headerlink" href="#overdub_discussions.views.OverdubDeleteView.template_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="section" id="overdub-discussions-views">
+<h2>overdub_discussions.views<a class="headerlink" href="#overdub-discussions-views" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -237,8 +69,8 @@
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">overdub_discussions package</a><ul>
-<li><a class="reference internal" href="#module-overdub_discussions.models">overdub_discussions.models</a></li>
-<li><a class="reference internal" href="#module-overdub_discussions.views">overdub_discussions.views</a></li>
+<li><a class="reference internal" href="#overdub-discussions-models">overdub_discussions.models</a></li>
+<li><a class="reference internal" href="#overdub-discussions-views">overdub_discussions.views</a></li>
 </ul>
 </li>
 </ul>
@@ -281,7 +113,7 @@
           <a href="essays.html" title="essays package"
              >previous</a> |</li>
         <li><a href="index.html">clt-langlabs-dev-py  documentation</a> &raquo;</li>
-          <li><a href="Architecture.html" >Architecture</a> &raquo;</li> 
+          <li><a href="API.html" >API</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
