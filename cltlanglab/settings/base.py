@@ -24,11 +24,6 @@ STATIC_URL = '/static/'
 
 TEMPLATE_DIRS = (PROJECT_DIR.child('templates'),)
 
-# Server side setup for recorder
-recorder_myServer="http://192.168.1.8/";
-recorder_myHandler="phpinc/save.php";
-recorder_myDirectory="uploads";
-
 # Application definition
 
 INSTALLED_APPS = (
@@ -62,7 +57,7 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'cltlanglab.urls'
 
-WSGI_APPLICATION = 'cltlanglab.wsgi.application'
+WSGI_APPLICATION = 'cltlanglab.prod-wsgi.application'
 
 LANGUAGE_CODE = 'en-us'
 
