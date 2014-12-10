@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="clt-langlabs-dev-py  documentation" href="index.html" />
-    <link rel="up" title="Architecture" href="Architecture.html" />
+    <link rel="up" title="API" href="API.html" />
     <link rel="next" title="overdub_discussions package" href="overdub_discussions.html" />
     <link rel="prev" title="discussions package" href="discussions.html" /> 
   </head>
@@ -45,7 +45,7 @@
           <a href="discussions.html" title="discussions package"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">clt-langlabs-dev-py  documentation</a> &raquo;</li>
-          <li><a href="Architecture.html" accesskey="U">Architecture</a> &raquo;</li> 
+          <li><a href="API.html" accesskey="U">API</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -56,238 +56,11 @@
             
   <div class="section" id="essays-package">
 <h1>essays package<a class="headerlink" href="#essays-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-essays.models">
-<span id="essays-models"></span><h2>essays.models<a class="headerlink" href="#module-essays.models" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="essays.models.EssayActivity">
-<em class="property">class </em><tt class="descclassname">essays.models.</tt><tt class="descname">EssayActivity</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/essays/models.html#EssayActivity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#essays.models.EssayActivity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#core.models.AbstractActivity" title="core.models.AbstractActivity"><tt class="xref py py-class docutils literal"><span class="pre">core.models.AbstractActivity</span></tt></a></p>
-<p>&#8211; EssayActivity is the class for <em>Essay</em>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Fields:</th><td class="field-body"><div class="first last line-block">
-<div class="line"><strong>title</strong>  &#8211; Title of activity.</div>
-<div class="line"><strong>instructions</strong>   &#8211; Instructions about this activity.</div>
-<div class="line"><strong>lesson</strong> &#8211; A lesson this activity belongs to, it could be null.</div>
-<div class="line"><strong>display_order</strong>    &#8211; Display order of activity.</div>
-<div class="line"><strong>created</strong>    &#8211; Time of creation.</div>
-<div class="line"><strong>modified</strong>    &#8211; Time of last modification.</div>
-<div class="line"><strong>is_active</strong>    &#8211; Flag for activation of activity.</div>
-<div class="line"><strong>activity_type</strong>    &#8211; Type of current activity.</div>
-<div class="line"><strong>posts</strong>    &#8211; Associated comments/posts.</div>
-<div class="line"><strong>permission_control</strong>    &#8211; Flag for permission control within an activity.</div>
-<div class="line"><strong>is_deleted</strong>    &#8211; Flag for soft deletion of current activity.</div>
-<div class="line"><strong>collection</strong>    &#8211; The course that this discussion activity belongs to.</div>
-<div class="line"><strong>required_revisions</strong>  &#8211; Number of required revisions in an essay assignment</div>
+<div class="section" id="essays-models">
+<h2>essays.models<a class="headerlink" href="#essays-models" title="Permalink to this headline">¶</a></h2>
 </div>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Meta:</th><td class="field-body"><div class="first last line-block">
-<div class="line"><strong>abstract</strong>  &#8211; Set class to abstract</div>
-<div class="line"><strong>permissions</strong>   &#8211; Object level permission control(&#8220;view_activity&#8221; permission is checked when <em>permission_control</em> is set to true )</div>
-</div>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="class">
-<dt id="essays.models.EssayResponse">
-<em class="property">class </em><tt class="descclassname">essays.models.</tt><tt class="descname">EssayResponse</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/essays/models.html#EssayResponse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#essays.models.EssayResponse" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">django.db.models.base.Model</span></tt></p>
-<p>&#8211; EssayResponse is the class for <em>Essay Draft</em>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Fields:</th><td class="field-body"><div class="first last line-block">
-<div class="line"><strong>essay_activity</strong>  &#8211; The essay activity that the draft belongs to.</div>
-<div class="line"><strong>draft_title</strong>  &#8211; Title of draft.</div>
-<div class="line"><strong>user</strong>  &#8211; User of the draft.</div>
-<div class="line"><strong>draft_number</strong>  &#8211; Draft number of this draft.</div>
-<div class="line"><strong>status</strong>  &#8211; Status of the draft(it starts from &#8220;in progress&#8221; then become &#8220;submitted&#8221; and later become &#8220;graded&#8221;).</div>
-<div class="line"><strong>modified</strong>  &#8211; Time of last modification.</div>
-<div class="line"><strong>draft</strong>  &#8211; Content of the draft.</div>
-<div class="line"><strong>review</strong>  &#8211; The review of the draft by an Instructor.</div>
-<div class="line"><strong>reviewed_by</strong>  &#8211; An instructor that reviews the draft.</div>
-<div class="line"><strong>flagged</strong>  &#8211; Flag for inappropriate contents.</div>
-<div class="line"><strong>posts</strong>  &#8211; Comments of a draft.</div>
-</div>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</div>
-<div class="section" id="module-essays.views">
-<span id="essays-views"></span><h2>essays.views<a class="headerlink" href="#module-essays.views" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="essays.views.EssayDetailView">
-<em class="property">class </em><tt class="descclassname">essays.views.</tt><tt class="descname">EssayDetailView</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/essays/views.html#EssayDetailView"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#essays.views.EssayDetailView" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#core.mixins.CourseListMixin" title="core.mixins.CourseListMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.CourseListMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.ActivityListMixin" title="core.mixins.ActivityListMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.ActivityListMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.EssayResponseListMixin" title="core.mixins.EssayResponseListMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.EssayResponseListMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.UsersWithPermsMixin" title="core.mixins.UsersWithPermsMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.UsersWithPermsMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.ActivityPermsMixin" title="core.mixins.ActivityPermsMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.ActivityPermsMixin</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">django.views.generic.detail.DetailView</span></tt></p>
-<p>&#8211; Essay Detail Page</p>
-<dl class="attribute">
-<dt id="essays.views.EssayDetailView.model">
-<tt class="descname">model</tt><a class="headerlink" href="#essays.views.EssayDetailView.model" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">EssayActivity</span></tt></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="essays.views.EssayDetailView.context_object_name">
-<tt class="descname">context_object_name</tt><em class="property"> = 'activity'</em><a class="headerlink" href="#essays.views.EssayDetailView.context_object_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="essays.views.EssayDetailView.template_name">
-<tt class="descname">template_name</tt><em class="property"> = 'essay.html'</em><a class="headerlink" href="#essays.views.EssayDetailView.template_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="essays.views.EssayUpdateView">
-<em class="property">class </em><tt class="descclassname">essays.views.</tt><tt class="descname">EssayUpdateView</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/essays/views.html#EssayUpdateView"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#essays.views.EssayUpdateView" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#core.mixins.CourseListMixin" title="core.mixins.CourseListMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.CourseListMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.CreateActivity4UpdateMixin" title="core.mixins.CreateActivity4UpdateMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.CreateActivity4UpdateMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.ActivityPermsMixin" title="core.mixins.ActivityPermsMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.ActivityPermsMixin</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">django.views.generic.edit.UpdateView</span></tt></p>
-<p>&#8211; Essay Edit Page</p>
-<dl class="attribute">
-<dt id="essays.views.EssayUpdateView.model">
-<tt class="descname">model</tt><a class="headerlink" href="#essays.views.EssayUpdateView.model" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">EssayActivity</span></tt></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="essays.views.EssayUpdateView.context_object_name">
-<tt class="descname">context_object_name</tt><em class="property"> = 'activity'</em><a class="headerlink" href="#essays.views.EssayUpdateView.context_object_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="essays.views.EssayUpdateView.template_name">
-<tt class="descname">template_name</tt><em class="property"> = 'activity_edit.html'</em><a class="headerlink" href="#essays.views.EssayUpdateView.template_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="essays.views.EssayUpdateView.fields">
-<tt class="descname">fields</tt><em class="property"> = ['title', 'instructions', 'lesson', 'is_active', 'required_revisions']</em><a class="headerlink" href="#essays.views.EssayUpdateView.fields" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="essays.views.EssayUpdateView.activity_type">
-<tt class="descname">activity_type</tt><em class="property"> = 'essay'</em><a class="headerlink" href="#essays.views.EssayUpdateView.activity_type" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="essays.views.EssayUpdateView.get_form">
-<tt class="descname">get_form</tt><big>(</big><em>form_class</em><big>)</big><a class="reference internal" href="_modules/essays/views.html#EssayUpdateView.get_form"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#essays.views.EssayUpdateView.get_form" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of lessons the course has into <em>&#8220;form&#8221;</em>.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="essays.views.EssayCreateView">
-<em class="property">class </em><tt class="descclassname">essays.views.</tt><tt class="descname">EssayCreateView</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/essays/views.html#EssayCreateView"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#essays.views.EssayCreateView" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#core.mixins.CourseListMixin" title="core.mixins.CourseListMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.CourseListMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.CreateActivityMixin" title="core.mixins.CreateActivityMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.CreateActivityMixin</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">django.views.generic.edit.CreateView</span></tt></p>
-<p>&#8211; Essay Create Page</p>
-<dl class="attribute">
-<dt id="essays.views.EssayCreateView.model">
-<tt class="descname">model</tt><a class="headerlink" href="#essays.views.EssayCreateView.model" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">EssayActivity</span></tt></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="essays.views.EssayCreateView.template_name">
-<tt class="descname">template_name</tt><em class="property"> = 'activity_create.html'</em><a class="headerlink" href="#essays.views.EssayCreateView.template_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="essays.views.EssayCreateView.fields">
-<tt class="descname">fields</tt><em class="property"> = ['title', 'instructions', 'lesson', 'is_active', 'required_revisions']</em><a class="headerlink" href="#essays.views.EssayCreateView.fields" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="essays.views.EssayCreateView.activity_type">
-<tt class="descname">activity_type</tt><em class="property"> = 'essay'</em><a class="headerlink" href="#essays.views.EssayCreateView.activity_type" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="essays.views.EssayCreateView.get_form">
-<tt class="descname">get_form</tt><big>(</big><em>form_class</em><big>)</big><a class="reference internal" href="_modules/essays/views.html#EssayCreateView.get_form"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#essays.views.EssayCreateView.get_form" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="essays.views.EssayCreateView.form_valid">
-<tt class="descname">form_valid</tt><big>(</big><em>form</em><big>)</big><a class="reference internal" href="_modules/essays/views.html#EssayCreateView.form_valid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#essays.views.EssayCreateView.form_valid" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="essays.views.EssayDeleteView">
-<em class="property">class </em><tt class="descclassname">essays.views.</tt><tt class="descname">EssayDeleteView</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/essays/views.html#EssayDeleteView"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#essays.views.EssayDeleteView" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#core.mixins.CourseListMixin" title="core.mixins.CourseListMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.CourseListMixin</span></tt></a>, <a class="reference internal" href="core.html#core.mixins.FakeDeleteMixin" title="core.mixins.FakeDeleteMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.FakeDeleteMixin</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">django.views.generic.edit.DeleteView</span></tt></p>
-<p>&#8211; Essay Delete Confirmation Page</p>
-<dl class="attribute">
-<dt id="essays.views.EssayDeleteView.model">
-<tt class="descname">model</tt><a class="headerlink" href="#essays.views.EssayDeleteView.model" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">EssayActivity</span></tt></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="essays.views.EssayDeleteView.template_name">
-<tt class="descname">template_name</tt><em class="property"> = 'activity_delete.html'</em><a class="headerlink" href="#essays.views.EssayDeleteView.template_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="essays.views.EssayResponseUpdateView">
-<em class="property">class </em><tt class="descclassname">essays.views.</tt><tt class="descname">EssayResponseUpdateView</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/essays/views.html#EssayResponseUpdateView"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#essays.views.EssayResponseUpdateView" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#core.mixins.CourseListMixin" title="core.mixins.CourseListMixin"><tt class="xref py py-class docutils literal"><span class="pre">core.mixins.CourseListMixin</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">django.views.generic.edit.UpdateView</span></tt></p>
-<p>&#8211; Essay Review Page</p>
-<dl class="attribute">
-<dt id="essays.views.EssayResponseUpdateView.model">
-<tt class="descname">model</tt><a class="headerlink" href="#essays.views.EssayResponseUpdateView.model" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">EssayResponse</span></tt></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="essays.views.EssayResponseUpdateView.context_object_name">
-<tt class="descname">context_object_name</tt><em class="property"> = 'response'</em><a class="headerlink" href="#essays.views.EssayResponseUpdateView.context_object_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="essays.views.EssayResponseUpdateView.template_name">
-<tt class="descname">template_name</tt><em class="property"> = 'essay_grade.html'</em><a class="headerlink" href="#essays.views.EssayResponseUpdateView.template_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="essays.views.EssayResponseUpdateView.fields">
-<tt class="descname">fields</tt><em class="property"> = ['draft', 'review', 'flagged']</em><a class="headerlink" href="#essays.views.EssayResponseUpdateView.fields" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="essays.views.EssayResponseUpdateView.form_valid">
-<tt class="descname">form_valid</tt><big>(</big><em>form</em><big>)</big><a class="reference internal" href="_modules/essays/views.html#EssayResponseUpdateView.form_valid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#essays.views.EssayResponseUpdateView.form_valid" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="essays.views.EssayResponseUpdateView.get_success_url">
-<tt class="descname">get_success_url</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/essays/views.html#EssayResponseUpdateView.get_success_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#essays.views.EssayResponseUpdateView.get_success_url" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="section" id="essays-views">
+<h2>essays.views<a class="headerlink" href="#essays-views" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -300,8 +73,8 @@
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">essays package</a><ul>
-<li><a class="reference internal" href="#module-essays.models">essays.models</a></li>
-<li><a class="reference internal" href="#module-essays.views">essays.views</a></li>
+<li><a class="reference internal" href="#essays-models">essays.models</a></li>
+<li><a class="reference internal" href="#essays-views">essays.views</a></li>
 </ul>
 </li>
 </ul>
@@ -350,7 +123,7 @@
           <a href="discussions.html" title="discussions package"
              >previous</a> |</li>
         <li><a href="index.html">clt-langlabs-dev-py  documentation</a> &raquo;</li>
-          <li><a href="Architecture.html" >Architecture</a> &raquo;</li> 
+          <li><a href="API.html" >API</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
