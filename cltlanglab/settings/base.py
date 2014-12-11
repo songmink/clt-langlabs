@@ -57,7 +57,7 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'cltlanglab.urls'
 
-WSGI_APPLICATION = 'cltlanglab.wsgi.application'
+WSGI_APPLICATION = 'cltlanglab.prod-wsgi.application'
 
 LANGUAGE_CODE = 'en-us'
 
