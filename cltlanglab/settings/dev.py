@@ -36,7 +36,7 @@ DATABASES = {
 }
 
 # gevent.socket.io server settings (ssl not used in development)
-SYNCSERVER_HOST = 'localhost'
+CHAT_SERVER_HOST = 'localhost'
 
 # Server side setup for Barebones Recorder
 RECORDER_MYSERVER ="http://localhost/"

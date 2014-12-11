@@ -29,7 +29,7 @@ DATABASES = {
 }
 
 # gevent.socket.io server settings
-SYNCSERVER_HOST = ''
+CHAT_SERVER_HOST = ''
 SSL_KEY = ''
 SSL_CERT = ''
 

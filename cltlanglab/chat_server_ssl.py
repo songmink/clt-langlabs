@@ -21,7 +21,7 @@ monkey.patch_all()
 PORT = 8001
 
 from django.conf import settings
-host = settings.SYNCSERVER_HOST
+host = settings.CHAT_SERVER_HOST
 key = settings.SSL_KEY
 cert = settings.SSL_CERT 
 

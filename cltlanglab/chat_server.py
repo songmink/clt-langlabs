@@ -21,7 +21,7 @@ monkey.patch_all()
 PORT = 8001
 
 from django.conf import settings
-host = settings.SYNCSERVER_HOST
+host = settings.CHAT_SERVER_HOST
 
 # Connect to django db
 connections['default'].allow_thread_sharing = True
