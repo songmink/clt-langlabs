@@ -20,6 +20,7 @@ django.setup()
 monkey.patch_all()
 PORT = 8001
 
+print os.environ['DJANGO_SETTINGS_MODULE']
 
 # Connect to django db
 connections['default'].allow_thread_sharing = True
