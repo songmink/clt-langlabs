@@ -35,6 +35,9 @@ DATABASES = {
     }
 }
 
+# gevent.socket.io server settings (ssl not used in development)
+SYNCSERVER_HOST = 'localhost'
+
 # Server side setup for Barebones Recorder
 RECORDER_MYSERVER ="http://localhost/"
 RECORDER_MYHANDLER ="phpinc/save-v7.php"

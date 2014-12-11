@@ -28,6 +28,11 @@ DATABASES = {
     }
 }
 
+# gevent.socket.io server settings
+SYNCSERVER_HOST = ''
+SSL_KEY = ''
+SSL_CERT = ''
+
 # Server side setup for Barebones Recorder
 RECORDER_MYSERVER =""
 RECORDER_MYHANDLER =""
