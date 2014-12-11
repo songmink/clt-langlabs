@@ -19,7 +19,10 @@ from django.db import connections
 django.setup()
 monkey.patch_all()
 PORT = 8001
-
+from django.conf import settings
+host = settings.SYNCSERVER_HOST
+key = settings.SSL_KEY
+cert = settings.SSL_CERT 
 
 # Connect to django db
 connections['default'].allow_thread_sharing = True
@@ -27,6 +30,6 @@ connections['default'].allow_thread_sharing = True
 application = get_wsgi_application()
 
 if __name__ == '__main__':
-    print 'Listening on http://localhost:%s and on port 8001 (flash policy server)' % PORT
-    SocketIOServer(('localhost', PORT), application, resource="socket.io").serve_forever()
+    print 'Listening on port  %s (no SSL)' % PORT
+    SocketIOServer((host, PORT), application, resource="socket.io").serve_forever()
 
