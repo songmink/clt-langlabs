@@ -1,9 +1,9 @@
 
 // Record Flag: check if user has unuploaded recording before sending
-var recordingFlag = false
+var recordingFlag = false;
 $(document).ready(function(){
     // Information of user
-    var userinfo = $("#recordTrigger").data('userinfo')
+    var userinfo = $("#recordTrigger").data('userinfo');
 
     //  Toggle for comments from posts
 	$( "#posts" ).on( "click", ".chatlist", function(e) {

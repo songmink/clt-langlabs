@@ -1,7 +1,8 @@
 // socket.io specific code
 
 // connect to name space
-var socket = io.connect("http://localhost:8001/discussionsPosts");
+var connectstr = $('#connectingDIV').data('protocol')+"://"+$('#connectingDIV').data('host') + ":" + $('#connectingDIV').data('port');
+var socket = io.connect(connectstr + "/discussionsPosts");
 
 // "read after post" check
 if( ($('#activity_title').data('userpostnum')===0  &&  $('#activity_title').data('readafterpost')=='True') && $('#activity_title').data('userisinstructor')===false){

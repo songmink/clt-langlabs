@@ -234,6 +234,19 @@ class RecorderMixin(object):
         
         return context
 
+class ChatServerMixin(object):
+    ''' -- ChatServerMixin assembles configuration info for gevent-based chat server. '''
+
+    def get_context_data(self, **kwargs):
+        ''' :returns: context that contains chatserver configuration settings. '''
+
+        context = super(ChatServerMixin, self).get_context_data(**kwargs)
+        context['chatserver_protocol'] = settings.CHAT_SERVER_PROTOCOL
+        context['chatserver_host'] = settings.CHAT_SERVER_HOST
+        context['chatserver_port'] = settings.CHAT_SERVER_PORT
+        
+        return context
+
 
 class EssayResponseListMixin(object):
     ''' -- EssayResponseListMixin is used in Essay Detail View to provide information about essay drafts and reviews. '''

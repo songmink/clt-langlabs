@@ -36,7 +36,9 @@ DATABASES = {
 }
 
 # gevent.socket.io server settings (ssl not used in development)
+CHAT_SERVER_PROTOCOL = 'http'
 CHAT_SERVER_HOST = 'localhost'
+CHAT_SERVER_PORT = '8001'
 
 # Server side setup for Barebones Recorder
 RECORDER_MYSERVER ="http://localhost/"
