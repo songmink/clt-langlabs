@@ -57,16 +57,32 @@ The file *save.php* and related directories also have to be created in your serv
 Run Development Server
 ----------------------
 
-Two server need to be run::
 
+Two server need to be run using **screen**::
+	
+	# This is to start a new screen session
+	$ screen -s
     # This is the chat server that run on localhost:8001 
-	$ python cltlanglab/run.py
+	$ python cltlanglab/chat_server.py
+	# Then press ctrl+a+d to detach from current screen
 
 And the django development server::
 
+	# This is to start a new screen session
+	$ screen -s
+	# python development server run on localhost:8000
 	$ python manage.py runserver localhost:8000 --settings=cltlanglab.settings.dev
+	# Then press ctrl+a+d to detach from current screen
 
 The web app can be visited through http://localhost:8000
+
+To get back to any one of the two screen above::
+
+	# This is to list all screen sessions
+	$ screen -ls
+	# To session with session name or number
+	$ screen -r <name>
+
 
 
 
