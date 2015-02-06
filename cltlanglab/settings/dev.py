@@ -45,3 +45,7 @@ RECORDER_MYSERVER ="http://localhost/"
 RECORDER_MYHANDLER ="phpinc/save-v7.php"
 RECORDER_MYDIRECTORY = "uploads"
 RECORDER_LICENSE = ''
+
+CAS_SERVER_URL = 'https://cas-test.its.hawaii.edu/cas/'
+CAS_REDIRECT_URL = '/'
+CAS_VERSION = '1'
