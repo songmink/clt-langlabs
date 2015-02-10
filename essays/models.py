@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 from core.models import ActivityCollection, AbstractActivity, Post
 
@@ -29,7 +30,10 @@ class EssayActivity(AbstractActivity):
     '''
     collection = models.ForeignKey(
         ActivityCollection, blank=True, null=True, on_delete=models.SET_NULL, related_name='essays')
-    required_revisions = models.IntegerField()
+    required_revisions = models.IntegerField(validators=[
+        MinValueValidator(1),
+        MaxValueValidator(50),         
+    ])
 
 
 class EssayResponse(models.Model):
