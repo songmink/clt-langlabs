@@ -22,10 +22,10 @@
 	<small><small><a class="text-muted activity_admin_togg" style='text-decoration:none; cursor: pointer;'><i class="fa fa-user"></i></a></small></small>
 	<small><small><a class="text-muted activity_copy_togg" style='text-decoration:none;cursor:pointer;' ><i class="fa fa-files-o"></i></a></small></small>
 	{% else %}
-        {% if activity.permission_control %}
-        	<small><small><a class="text-muted activity_members_togg" style='text-decoration:none; cursor: pointer;'><i class="fa fa-users"></i></a></small></small>
-        {% endif %}
-        <!-- draftbook and discussion toggle -->
+          {% if activity.permission_control %}
+              	<small><small><a class="text-muted activity_members_togg" style='text-decoration:none; cursor: pointer;'><i class="fa fa-users"></i></a></small></small>
+          {% endif %}
+          <!-- draftbook and discussion toggle -->
 		<div class="btn-group pull-right essaySectionToggle" data-toggle="buttons">
 		  <label class="btn btn-info btn-sm sectionToggle active text-muted">
 		    <input type="radio" name="options" id="option1" autocomplete="off" value='essay_draftbook' checked> <p class="lead" style='margin-bottom:0px;'><i class="fa fa-pencil" ></i>  Draftbook</p>
@@ -118,6 +118,7 @@
         </div>
 	    {% endif %}
 	{% endif %}
+
 <!-- Essay application starts here -->
 <div class='row'>
     {% if "edit_course" not in course_perms %}
@@ -128,7 +129,7 @@
 			<input type="text" class="form-control" id="draft_title" value='{% if  progressing_essay_response %}{{progressing_essay_response.draft_title}}{% else %}draft title{% endif %}' style='border-radius:4px 4px 0px 0px;'>
 			<textarea id='essayTextarea' style="height:410px;padding: 5px;overflow:auto;">{{progressing_essay_response.draft|safe}}</textarea>
 		</form>
-		{% if graded_essay_responses.count == submitted_essay_responses.count %}
+		{% if graded_essay_responses.count == submitted_essay_responses.count and graded_essay_responses.count < activity.required_revisions %}
 		<!-- all drafts are graded -->
 		<button id='draftSaveBtn' type="button" class="btn btn-default btn-sm pull-left draftEditBtn" style='width:50%;border-radius:0px 0px 0px 4px;' data-ajaxurl="{% url 'edit_essay_draft' %}" data-operation="save" data-essayid="{{activity.id}}">
 		  <i class="fa fa-floppy-o"></i> SAVE
@@ -186,7 +187,7 @@
 		<br>
 		</div>
 	</div>
-	{% endif %}
+        {% endif %}
 	<!-- Essay Discussion Section -->
 	<div id='essay_discussion' class='col-xs-10 col-xs-offset-1' data-ajaxurl='{% url "save_post" %}' data-activityid='{{activity.id}}' data-activitytype='{{ activity.activity_type }}' {% if "edit_course" not in course_perms %} style='display:none;' {% endif %}>
 		<div id="essay_discussion2">
