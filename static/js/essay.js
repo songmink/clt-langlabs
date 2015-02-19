@@ -156,7 +156,7 @@ $(document).ready(function(){
   // toggle between the drafts of different users
   if($(".userResponseToggle")){
       $( ".userResponseToggle" ).on( "click",function(event) {
-        // console.log($(this).data('userdraft'))
+        console.log($(this).data('userdraft'))
         var tempShow = $(this).data('userdraft')
         if($("#"+tempShow).size()>0){
           $(".allUserResponses").each(function(){
@@ -311,12 +311,12 @@ function sendComment(ajax_URL, activitytype, activityid, commentContent, csrftok
       // alert( );
       // console.log('/activitytype: '+activitytype+'/activityid: '+ activityid+ '/text: '+commentContent)
       // console.log("Essay Comment: " + msg )
-      if(msg == 'Post Success'){
+      ////if(msg == 'Post Success'){
           // window.location.href = msg.slice(16)
           // console.log("Post Success and need to manually reload page")
 
-          $( "#essay_discussion" ).load( window.location.href+" #essay_discussion2");
-      }
+          $( "#essay_discussion" ).load( window.location.href+"");
+      ////}
       
     })
     .fail(function( jqXHR, textStatus) {

@@ -52,7 +52,7 @@ class OverdubCreateView(CourseListMixin, CreateActivityMixin, CreateView):
             collection=get_object_or_404(ActivityCollection, pk=self.kwargs['pk']))
         form.fields['media'].label = "Video URL (e.g. http://youtu.be/DJ9zIuFoQ5o)"
         # form.fields['upload_video'].label = "or Upload a Video"
-        form.fields.insert(3,'upload_video',forms.FileField(required = False,label='or Upload a Video'))
+        form.fields['upload_video'] = forms.FileField(required = False,label='or Upload a Video')
         # form.fields['upload_video'] = forms.FileField(required = False,label='or Upload a Video')
         # do something like:  form.fields['uploaded_video']=forms.CharField(label = "What is your favorite color?",max_length = 80,required = True)
         return form
@@ -88,7 +88,7 @@ class OverdubUpdateView(CourseListMixin, CreateActivity4UpdateMixin, ActivityPer
         form.fields['lesson'].queryset = Lesson.objects.filter(
             collection=get_object_or_404(ActivityCollection, pk=self.object.collection.id))
         form.fields['media'].label = "Video URL (e.g. http://youtu.be/DJ9zIuFoQ5o)"
-        form.fields.insert(3,'upload_video',forms.FileField(required = False,label='or Upload a Video'))
+        form.fields['upload_video'] = forms.FileField(required = False,label='or Upload a Video')
 
         return form
     
