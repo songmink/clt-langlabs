@@ -366,7 +366,7 @@ function recorderInit(){
                     // console.log("case 2")
                     break;
                 case 15:
-                    // console.log("upload complete")
+                    console.log("upload complete")
                     var attFile='<span class="attachedAudio" style="cursor:pointer;"><a class="audioLink text-muted" href='+ recorderServer+recorderDirectory+"/"+audioName+".mp3"+'  ><i class="icon-file-alt"></i> <span class="audioName">'+audioName+".mp3"+'</span></a> <small> <i class="icon-remove removeIcon" style="color:grey; opacity:0.01;"></i></small></span>'
                     $('#inputAttachments').append(attFile)
                     $( "#recordTrigger" ).trigger( "click" );

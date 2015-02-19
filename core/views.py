@@ -397,6 +397,7 @@ def editEssayDraft(request):
             if operation == 'save':
                 pass
             elif operation == 'submit':
+                # check this does not go over # of required_revisions
                 target_object.status = 'submitted'
             target_object.save()
             return HttpResponse('Success')
@@ -407,6 +408,7 @@ def editEssayDraft(request):
             if operation == 'save':
                 target_object.status='in progress'
             elif operation == 'submit':
+                # check this does not go over # of required_revisions
                 target_object.status='submitted'
             else:
                 pass

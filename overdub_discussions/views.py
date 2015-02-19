@@ -53,6 +53,7 @@ class OverdubCreateView(CourseListMixin, CreateActivityMixin, CreateView):
         form.fields['media'].label = "Video URL (e.g. http://youtu.be/DJ9zIuFoQ5o)"
         # form.fields['upload_video'].label = "or Upload a Video"
         form.fields['upload_video'] = forms.FileField(required = False,label='or Upload a Video')
+
         # form.fields['upload_video'] = forms.FileField(required = False,label='or Upload a Video')
         # do something like:  form.fields['uploaded_video']=forms.CharField(label = "What is your favorite color?",max_length = 80,required = True)
         return form

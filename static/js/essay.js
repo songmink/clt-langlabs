@@ -280,11 +280,8 @@ function ajaxEditEssayDraft(ajax_URL, operation, essay_id, draft_title, draft_co
       // console.log('/operation: '+operation+'/essay_id: '+ essay_id+ '/draft_title: '+draft_title+'/draft_content: '+draft_content)
       // console.log("New Essay Response Edited: " + msg )
       if(msg=='Success' && operation=='submit'){
-        // clean up existing contents
-        $("#draft_title").val('')
-        tinymce.get('essayTextarea').setContent("")
-        $( "#submittedDrafts" ).load( window.location.href+" #submittedDrafts2");
-        $( "#essay_discussion" ).load( window.location.href+" #essay_discussion2");
+        // reload page: we need to update submitted_essay_responses.count
+        window.location.reload(true);
       }
       
     })
