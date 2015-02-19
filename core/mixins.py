@@ -82,21 +82,9 @@ class UsersWithPermsMixin(object):
         anyperm = get_users_with_perms(
             self.get_object().collection, attach_perms=True, with_superusers=False)
         result = User.objects.filter(is_superuser=True).all()
-        print 'super users are:'
-        print result
         for user, perms in anyperm.iteritems():
-            print permission
-            print perms
-            print result
             if permission in perms:
-                print 'old result is:'
-                print result
                 result = chain(result, User.objects.filter(username=user))
-                print User.objects.filter(username=user)
-                print 'yes and new result is'
-                print list(result)
-            else:
-                print 'no'
 
         result = list(result)
 
@@ -123,7 +111,6 @@ class ActivityPermsMixin(object):
         '''  :returns: "Permission Denied" page if user is a not an Instrctor and the course is not active or is deleted. '''
 
         obj = super(ActivityPermsMixin, self).get_object(queryset)
-        print obj
         if ((not self.request.user.has_perm("core.edit_course", obj.collection)) and (not obj.collection.is_active)) or (obj.is_deleted):
             raise PermissionDenied()
         return obj
@@ -157,15 +144,12 @@ class ActivityListMixin(object):
         # Activities associated with lessons...
         for i in nodes:
             for eachActivity in i:
-                print eachActivity.lesson.count()
                 if eachActivity.lesson.count() != 0:
                     acts_navi.append(eachActivity)
                     for j in eachActivity.lesson.all():
                         tempActivity = deepcopy(eachActivity)
                         tempActivity.activity_to_lesson = j
                         acts.append(tempActivity)
-                        print tempActivity
-                        print tempActivity.activity_to_lesson
 
         # Orphans - Activities NOT associated with lessons
         orphan_num = 0
@@ -179,8 +163,6 @@ class ActivityListMixin(object):
         acts.sort(key=lambda x: x.activity_to_lesson.title, reverse=False)
         acts.sort(
             key=lambda x: x.activity_to_lesson.display_order, reverse=False)
-        for i in acts:
-            print i.title + ' || ' + i.activity_to_lesson.title + '||' + str(i.activity_to_lesson.id)
 
         context['course'] = course
         context['activity_list_course'] = acts

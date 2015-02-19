@@ -257,8 +257,6 @@ def CourseCopyView(request, course_id):
         activityToCopy.collection = courseToCopy
         activityToCopy.save()
         activityToCopy.posts.clear()
-        print "activity_to_copy_lesson_num_is: "+str(lessonsToAdd.count())
-        print lessonsToAdd.all()
         if lessonsToAdd.count() != 0:
             for l in lessonsToAdd.all():
                 activityToCopy.lesson.add(courseToCopy.lesson_set.filter( title = l.title )[0])
@@ -363,8 +361,6 @@ def editLessonTitle(request):
     if request.method == 'POST':
         lesson_id = request.POST.get("pk", '')
         new_title = request.POST.get("value", '')
-        print lesson_id
-        print new_title
         try:
             target_lesson = Lesson.objects.filter(id=lesson_id)[0]
             target_lesson.title = new_title
@@ -386,10 +382,8 @@ def editEssayDraft(request):
         # draft_number = request.POST.get("draft_number", '')
         # draft_status = request.POST.get("draft_status", '')
         draft_content = request.POST.get("draft_content", '')
-        # print lesson_id
         progressing_response = EssayResponse.objects.filter(user=request.user, essay_activity__id=essay_id, status='in progress').order_by('modified','-draft_number')
         # There is an exiting essay response
-        print progressing_response.count()
         if progressing_response.count() == 1: 
             target_object = progressing_response[0]
             target_object.draft_title = draft_title
