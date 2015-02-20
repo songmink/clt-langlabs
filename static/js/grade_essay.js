@@ -22,13 +22,11 @@ $( document ).ready(function() {
   }
 
   $('.questionMark').mouseenter(function(e) {
-  // console.log('mouseenter')
      $(this).tooltip('show')
      $(this).addClass('fa-question-circle')
      $(this).removeClass('fa-question')
   })
   .mouseleave(function(e) {
-    // console.log('mouseleave')
      $(this).tooltip('hide')
      $(this).removeClass('fa-question-circle')
      $(this).addClass('fa-question')

@@ -13,7 +13,6 @@ $(document).ready(function(){
           var permission = $(this).closest('div').data('codename')
           var username = $(this).closest('div.admin_row').data('username')
           var changeFlag = ajaxChangePermission(ajax_URL, username, permission, 'course', course_id, 'remove_perm', csrftoken)
-          // console.log("changeSuccess is : "+ changeFlag)
 
           // make ajax call to change permission
           if(changeFlag){
@@ -24,7 +23,6 @@ $(document).ready(function(){
           var permission = $(this).closest('div').data('codename')
           var username = $(this).closest('div.admin_row').data('username')
           var changeFlag = ajaxChangePermission(ajax_URL, username, permission, 'course', course_id, 'assign_perm', csrftoken)
-          // console.log("changeSuccess is : "+changeFlag)
 
           // make ajax call to change permission 
           if(changeFlag){
@@ -74,8 +72,6 @@ function ajaxChangePermission(ajax_URL, username, code_name, objecttype, objecti
     })
     .done(function( msg) {
       // alert( );
-      // console.log(' codename: '+ code_name+'/object_type: '+objecttype+'/object_id: '+ objectid+ '/operation_type: '+operationType)
-      // console.log("Permission Changed: " + msg )
       if(msg=="successful change"){
         changeSuccess = true
       }else{
@@ -85,9 +81,7 @@ function ajaxChangePermission(ajax_URL, username, code_name, objecttype, objecti
     })
     .fail(function( jqXHR, textStatus) {
       // alert( "Request failed: " + textStatus );
-      // console.log("Request failed: " + textStatus)
       changeSuccess = false
     });
-    // console.log(changeSuccess)
     return changeSuccess
 }

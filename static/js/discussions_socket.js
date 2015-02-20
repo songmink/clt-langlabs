@@ -35,7 +35,6 @@ socket.on('connect', function () {
                 $('#connectingDIV').removeClass('show').addClass('hidden');
                 $('#connectedDIV').removeClass('hidden').addClass('show');
                 clear();
-                // console.log("user is added to discussion")
             }else{
                 $('#sysMessage').html("<i class='fa fa-frown-o fa-5x'></i> Server Error, please contact site admin for assistance");
             }
@@ -43,11 +42,9 @@ socket.on('connect', function () {
     });
 
     socket.on('announcement', function (msg) {
-        // console.log("announcement: "+msg)
     });
 
     socket.on('nicknames', function (nicknames) {
-        // console.log('nicknames: '+nicknames)
     });
 
     // receive broadcast message
@@ -57,16 +54,13 @@ socket.on('connect', function () {
     socket.on('cmt_to_room', comment);
 
     socket.on('reconnect', function () {
-        // console.log("reconnect: "+"reconnected to the server")
     });
 
     socket.on('reconnecting', function () {
-        // console.log('reconnecting: '+'attempting to reconnect the server')
     });
 
     socket.on('error', function (e) {
         var temp = e ? e : 'A unknown error occurred';
-        // console.log('error: '+ temp);
     });
 
 

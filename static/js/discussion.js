@@ -10,7 +10,6 @@ $(document).ready(function(){
         if($(e.target).is('.fileLink')){
             return;}
         if($(e.target).is('.attachDIV')){
-            // console.log($(e.target))
             return;}
 		$(this).next().find('.comment').slideToggle( "fast" );
 	});
@@ -31,11 +30,9 @@ $(document).ready(function(){
 
 
   $('.private_public_label').mouseenter(function(e) {
-  // console.log('mouseenter')
      $(this).tooltip('show')
   })
   .mouseleave(function(e) {
-    // console.log('mouseleave')
      $(this).tooltip('hide')
   });
 
@@ -74,8 +71,6 @@ $(document).ready(function(){
            if(toggleFlag == 0){
               toggleFlag=1
               recordingFlag = false
-              // console.log('executed')
-              // console.log(recordingFlag)
            }else{
               recorderInit()
               toggleFlag=0
@@ -109,7 +104,6 @@ $(document).ready(function(){
 	        done: function (e, data) {
 	            $.each(data.result.files, function (index, file) {
 	                // $('<p/>').text(file.name).appendTo('#files');
-	                // console.log(file)
 	                var attFile='<span class="attachedFile" style="cursor:pointer;"><a class="fileLink text-muted" href='+ file.url +'  ><i class="icon-file-alt"></i> <span class="fileName">'+file.name+'</span></a> <small> <i class="icon-remove removeIcon" style="color:grey; opacity:0.01;"></i></small></span>'
 	                $('#inputAttachments').append(attFile)
 	            });
@@ -142,7 +136,6 @@ $(document).ready(function(){
           var permission = $(this).closest('div').data('codename')
           var username = $(this).closest('div.admin_row').data('username')
           var changeFlag = ajaxChangePermission(ajax_URL, username, permission, 'discussion', activity_id, 'remove_perm', csrftoken)
-          // console.log("changeSuccess is : "+ changeFlag)
           // make ajax call to change permission
           if(changeFlag){
               $(this).removeClass('fa-toggle-on text-primary')
@@ -151,9 +144,7 @@ $(document).ready(function(){
       }else{
           var permission = $(this).closest('div').data('codename')
           var username = $(this).closest('div.admin_row').data('username')
-          // console.log(permission)
           var changeFlag = ajaxChangePermission(ajax_URL, username, permission, 'discussion', activity_id, 'assign_perm', csrftoken)
-          // console.log("changeSuccess is : "+changeFlag)
           // make ajax call to change permission 
           if(changeFlag){
             $(this).removeClass('fa-toggle-off text-muted')
@@ -168,7 +159,6 @@ $(document).ready(function(){
           var permission = 'no_permission'
           var username = 'no user'
           var changeFlag = ajaxChangePermission(ajax_URL, username, permission, 'discussion', activity_id, 'disable_control', csrftoken)
-          // console.log("changeSuccess is : "+ changeFlag)
           // make ajax call to change permission
           if(changeFlag){
               $(this).removeClass('fa-toggle-on text-primary')
@@ -177,9 +167,7 @@ $(document).ready(function(){
       }else{
           var permission = "no_permission"
           var username = "no user"
-          // console.log(permission)
           var changeFlag = ajaxChangePermission(ajax_URL, username, permission, 'discussion', activity_id, 'enable_control', csrftoken)
-          // console.log("changeSuccess is : "+changeFlag)
           // make ajax call to change permission 
           if(changeFlag){
             $(this).removeClass('fa-toggle-off text-muted')
@@ -363,7 +351,6 @@ function recorderInit(){
                     break;
                 case 2:
                     recordingFlag = true;  //there is recording
-                    // console.log("case 2")
                     break;
                 case 15:
                     console.log("upload complete")
@@ -404,8 +391,6 @@ function ajaxChangePermission(ajax_URL, username, code_name, objecttype, objecti
     })
     .done(function( msg) {
       // alert( );
-      // console.log(' codename: '+ code_name+'/object_type: '+objecttype+'/object_id: '+ objectid+ '/operation_type: '+operationType)
-      // console.log("Permission Changed: " + msg )
       if(msg=="successful change"){
         changeSuccess = true
       }else{
@@ -415,10 +400,8 @@ function ajaxChangePermission(ajax_URL, username, code_name, objecttype, objecti
     })
     .fail(function( jqXHR, textStatus) {
       // alert( "Request failed: " + textStatus );
-      // console.log("Request failed: " + textStatus)
       changeSuccess = false
     });
-    // console.log(changeSuccess)
     return changeSuccess
 }
 
@@ -435,15 +418,12 @@ function ajaxCopyActivity(ajax_URL, activitytype, activityid, coursename, course
     })
     .done(function( msg) {
       // alert( );
-      // console.log('/activitytype: '+activitytype+'/activityid: '+ activityid+ '/coursename: '+coursename+'/courseid: '+courseid)
-      // console.log("Course Copied: " + msg )
       if(msg.indexOf("success_redirect")!=-1){
           window.location.href = msg.slice(16)
       }
       
     })
     .fail(function( jqXHR, textStatus) {
-      // console.log("Request failed: " + textStatus)
     });
 
 }

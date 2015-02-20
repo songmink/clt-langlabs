@@ -28,22 +28,18 @@ $(document).ready(function(){
 
 			    if (event.keyCode == 38) {
 	                event.preventDefault();
-	                // console.log(currentMouseOverObject)
 	                if(currentMouseOverObject){
 
 	                }else{
-	                	// console.log("1")
 	                	currentMouseOverObject = $("#autoComplete").children().first()
 		               	currentMouseOverObject.addClass("autoSelected")
 	                	return false
 	                }
 			    	if(currentMouseOverObject.prev().size()!=0){
-			    		// console.log("2")
 			    		currentMouseOverObject.removeClass('autoSelected')
 			    		currentMouseOverObject.prev().addClass('autoSelected')
 			    		currentMouseOverObject = currentMouseOverObject.prev()
 			    	}else{
-			    		// console.log("3")
 			    		currentMouseOverObject.removeClass('autoSelected')
 		            	currentMouseOverObject = $("#autoComplete").children().last()
 	                	currentMouseOverObject.addClass("autoSelected")
@@ -53,22 +49,18 @@ $(document).ready(function(){
 
 			    if (event.keyCode == 40) {
 			    	event.preventDefault();
-			    	// console.log(currentMouseOverObject)
 	                if(currentMouseOverObject){
 
 	                }else{
-	                	// console.log("4")
 	                	currentMouseOverObject = $("#autoComplete").children().first()
 	                	currentMouseOverObject.addClass("autoSelected")
 	                	return false
 	                }
 			    	if(currentMouseOverObject.next().size()!=0){
-			    		// console.log("5")
 			    		currentMouseOverObject.removeClass('autoSelected')
 			    		currentMouseOverObject.next().addClass('autoSelected')
 			    		currentMouseOverObject = currentMouseOverObject.next()
 			    	}else{
-			    		// console.log("6")
 			    		currentMouseOverObject.removeClass('autoSelected')
 		            	currentMouseOverObject = $("#autoComplete").children().first()
 	                	currentMouseOverObject.addClass("autoSelected")
@@ -96,7 +88,6 @@ $(document).ready(function(){
 				
 			} 
 		});
-		// console.log(keywords().stringify())
 
 		// automatically check input and show auto complete
 	    previousSearchInput = $("#searchInput").val();
@@ -121,9 +112,7 @@ $(document).ready(function(){
 
 		    	}else{
 			    	previousSearchInput = $("#searchInput").val()
-			    	// console.log("updated")
 			    	var resultString =""
-			    	// console.log(keywords([{course_name:{like:$("#searchInput").val()}},{instructors:{like:$("#searchInput").val()}}]).stringify())
 			    	keywords({keyword:{like:$("#searchInput").val()}}).each(function(record, recordnumber){
 			    		var tempStr = '<a class="list-group-item autoKey">'+record['keyword']+'</a>'
 			    		$("#autoComplete").append(tempStr)
@@ -150,7 +139,6 @@ $(document).ready(function(){
 		    	$("#searchResult").children().remove()
 		    	var searchKey = $("#searchInput").val()
 		    	var resultString =""
-		    	// console.log(courses([{course_name:{like:$("#searchInput").val()}},{instructors:{like:$("#searchInput").val()}}]).stringify())
 		    	var resultCourses = courses([{course_name:{like:$("#searchInput").val()}},{instructors:{like:$("#searchInput").val()}}])
 
 		    	$("#searchInput").val("")
