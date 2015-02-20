@@ -1,11 +1,55 @@
-<!-- root.html -->
-{% extends "base.html" %}
+<!-- landing.html -->
 {% load staticfiles %}
 
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<!-- Google Font -->
+		<link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,300' rel='stylesheet' type='text/css'>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>CLT Language Labs</title>
 
-{% block contentwrap %}
+		<!-- Bootstrap -->
+		<link href="{% static "bootstrap/dist/css/bootstrap.min.css" %}" rel="stylesheet">
 
-<h2 class="page-header">Language Labs @ The Center for Language and Technology</h2>
+		<!-- The Bootstrap template named "Starter Template barebones " -->
+		<link href="{% static "css/dashboard.css" %}" rel="stylesheet">
+		<style type="text/css">
+			body {
+				font-family: 'Roboto', sans-serif;
+				background: rgba(222,184,125, white);
+			}
+			.title {
+				color: black;
+				font-weight: 300;
+			}
+		</style>
+	</head>
+	<body>
+	 	<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-12 text-center">
+					<div class="lead title" style="font-size: 3em;">
+						Language Labs @ The Center for Language & Technology
+					</div>
+				</div>
+				
+				<div class="col-md-12">
+					<div class="btn-group btn-group-justified center-block" style="width: 100px;">
+						<a href="{% url 'home' %}" class="btn btn-success">Get Started</a>
+					</div>
+				</div>
+				<p>&nbsp;</p>
+				<div class="col-md-12">
+					<div class="center-block text-center">University of Hawaii username and password required.</div>
+				</div>
 
+				<div class="col-md-12">
+					<div class="center-block text-center">Welcome</div>
+				</div>
 
-{% endblock contentwrap %}
+			</div>
+		</div>
+	</body>

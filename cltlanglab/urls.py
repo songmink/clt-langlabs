@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.conf.urls.static import static
 admin.autodiscover()
 
-from core.views import HomeView, CourseListView, CourseIndexView, CourseCreateView, CourseUpdateView, CourseDeleteView, CourseCopyView, ActivityCreateIndexView, LessonCreateView, LessonAddView, savePost, fileUpload, subscribeCourse, changePerm, copyActivity, editLessonTitle, editEssayDraft
+from core.views import IndexView, HomeView, CourseListView, CourseIndexView, CourseCreateView, CourseUpdateView, CourseDeleteView, CourseCopyView, ActivityCreateIndexView, LessonCreateView, LessonAddView, savePost, fileUpload, subscribeCourse, changePerm, copyActivity, editLessonTitle, editEssayDraft, uhcaslogout
 from discussions.views import DiscussionCreateView, DiscussionDetailView, DiscussionUpdateView, DiscussionDeleteView
 from essays.views import EssayCreateView, EssayDetailView, EssayUpdateView, EssayDeleteView, EssayResponseUpdateView
 from overdub_discussions.views import OverdubCreateView, OverdubDetailView, OverdubUpdateView, OverdubDeleteView
@@ -53,9 +53,10 @@ urlpatterns = patterns('',
     # url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
     
     url(r'^accounts/login/$', 'django_cas.views.login', name='login'),
-    url(r'^accounts/logout/$', 'django_cas.views.logout', name='logout'),
+    url(r'^accounts/logout/$', uhcaslogout, name='logout'),
 
     url(r'^crossdomain.xml$','flashpolicies.views.simple',{'domains': ['*']}),    
-    url(r'^$', HomeView.as_view(), name='home'),    
+    url(r'^home/$', HomeView.as_view(), name='home'), 
+    url(r'^$', IndexView.as_view(), name='landing'),    
 
 )+ static(base.MEDIA_URL, document_root=base.MEDIA_ROOT)
