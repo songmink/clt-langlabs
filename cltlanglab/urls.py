@@ -52,8 +52,8 @@ urlpatterns = patterns('',
     # url(r'^accounts/login/$', 'django.contrib.auth.views.login', name='login'),
     # url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
     
-    url(r'^accounts/login/$', 'django_cas_ng.views.login', name='login'),
-    url(r'^accounts/logout/$', 'django_cas_ng.views.logout', name='logout'),
+    url(r'^accounts/login/$', 'django_cas.views.login', name='login'),
+    url(r'^accounts/logout/$', 'django_cas.views.logout', name='logout'),
 
     url(r'^crossdomain.xml$','flashpolicies.views.simple',{'domains': ['*']}),    
     url(r'^$', HomeView.as_view(), name='home'),    
