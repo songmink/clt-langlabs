@@ -51,7 +51,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',    
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_cas.middleware.CASMiddleware',   
 )
 
 ROOT_URLCONF = 'cltlanglab.urls'
@@ -79,7 +80,7 @@ REDIRECT_FIELD_NAME = 'home'
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'guardian.backends.ObjectPermissionBackend',
-    'django_cas_ng.backends.CASBackend',
+    'django_cas.backends.CASBackend',
 )
 
 ANONYMOUS_USER_ID = -1
