@@ -73,6 +73,7 @@ USE_TZ = True
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 LOGIN_URL = '/accounts/login/'
+LOGOUT_URL = '/accounts/logout'
 
 LOGIN_REDIRECT_URL = '/'
 

@@ -47,5 +47,7 @@ RECORDER_MYDIRECTORY = "uploads"
 RECORDER_LICENSE = ''
 
 CAS_SERVER_URL = 'https://cas-test.its.hawaii.edu/cas/'
-CAS_REDIRECT_URL = '/'
+CAS_IGNORE_REFERER = True
+CAS_REDIRECT_URL = 'http://localhost:8000/'
 CAS_VERSION = '1'
+CAS_LOGOUT_COMPLETELY = True

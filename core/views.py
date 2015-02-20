@@ -1,28 +1,29 @@
 # core/views.py
 import json
 from datetime import datetime
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from urllib import urlencode
+from urlparse import urljoin
+from django.conf import settings
 
-from braces.views import LoginRequiredMixin, CsrfExemptMixin
+from braces.views import LoginRequiredMixin
 from guardian.shortcuts import assign_perm, remove_perm
 from guardian.mixins import PermissionRequiredMixin
 
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
 from django.views.generic import DetailView, CreateView
-from django.views.generic.edit import FormView, UpdateView, DeleteView
-from django.views.decorators.csrf import csrf_exempt
+from django.views.generic.edit import UpdateView, DeleteView
 from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import PermissionDenied
 from itertools import chain
-from datetime import datetime
 
 from core.mixins import CourseListMixin, ActivityListMixin, UsersWithPermsMixin, FakeDeleteMixin
 
-from .models import AbstractActivity, ActivityCollection, Lesson, Post, Document
+from .models import ActivityCollection, Lesson, Post, Document
 
 from discussions.models import DiscussionActivity
 from essays.models import EssayActivity, EssayResponse
@@ -30,7 +31,19 @@ from overdub_discussions.models import OverdubActivity
 
 
 class IndexView(TemplateView):
+    ''' -- Landing page of cltlanglabs '''
     template_name = 'index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(IndexView, self).get_context_data(**kwargs)
+        mood = datetime.now().time().second/60.0              
+        if mood > .80:
+            context['moodtext'] = 'white'
+        else:
+            context['moodtext'] = 'black'
+
+        context['moodlight'] = '%.2f' % (mood)
+        return context  
 
 
 class HomeView(LoginRequiredMixin, CourseListMixin, TemplateView):
@@ -411,6 +424,14 @@ def editEssayDraft(request):
         else:
             return HttpResponseBadRequest()
 
-
+def uhcaslogout(request):
+    from django.contrib.auth import logout
+    logout(request)
+    logouturl = urljoin(settings.CAS_SERVER_URL, 'logout')
+    protocol = ('http://', 'https://')[request.is_secure()]
+    host = request.get_host()
+    logouturl += '?' + urlencode({'service': protocol + host })
+    
+    return HttpResponseRedirect(logouturl)
 
 
