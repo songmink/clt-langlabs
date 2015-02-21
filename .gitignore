@@ -42,4 +42,5 @@ Thumbs.db
 ############
 sftp-config.json
 prod-*.py
+_build/
 

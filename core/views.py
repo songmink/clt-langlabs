@@ -227,7 +227,10 @@ def fileUpload(request):
 def subscribeCourse(request, accesskey):
     ''' -- Function-based view for user to subscribe a course '''
 
-    courseToSubscribe = get_object_or_404(ActivityCollection, accesscode=accesskey)
+    courseToSubscribe = get_object_or_404(ActivityCollection, 
+        accesscode=accesskey,
+        is_deleted=False,
+    )
     assign_perm('core.view_course', request.user , courseToSubscribe)
 
     return  redirect(courseToSubscribe)
