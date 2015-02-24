@@ -82,7 +82,7 @@ REDIRECT_FIELD_NAME = 'home'
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'guardian.backends.ObjectPermissionBackend',
-    'django_cas.backends.CASBackend',
+    #'django_cas.backends.CASBackend',
 )
 
 ANONYMOUS_USER_ID = -1
