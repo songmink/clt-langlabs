@@ -53,7 +53,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-    'django_cas.middleware.CASMiddleware',   
+    # 'django_cas.middleware.CASMiddleware',   
 )
 
 ROOT_URLCONF = 'cltlanglab.urls'
@@ -77,7 +77,7 @@ LOGOUT_URL = '/accounts/logout'
 
 LOGIN_REDIRECT_URL = '/'
 
-REDIRECT_FIELD_NAME = 'home'
+# REDIRECT_FIELD_NAME = 'home'
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
