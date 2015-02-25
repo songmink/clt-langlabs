@@ -10,6 +10,8 @@ from .base import *
 
 SECRET_KEY = os.environ['SECRET_KEY']
 
+MIDDLEWARE_CLASSES += ('django_cas.middleware.CASMiddleware',)
+
 DEBUG = True
 
 TEMPLATE_DEBUG = True
@@ -46,3 +48,8 @@ RECORDER_MYHANDLER ="phpinc/save-v7.php"
 RECORDER_MYDIRECTORY = "uploads"
 RECORDER_LICENSE = ''
 
+CAS_SERVER_URL = 'https://cas-test.its.hawaii.edu/cas/'
+CAS_IGNORE_REFERER = True
+CAS_REDIRECT_URL = 'http://localhost:8000/'
+CAS_VERSION = '1'
+CAS_LOGOUT_COMPLETELY = True
