@@ -18,9 +18,10 @@ from django.db import connections
 # The setup command implicitly uses os.environ['DJANGO_SETTINGS_MODULE']
 django.setup()
 monkey.patch_all()
-PORT = 8001
+
 
 from django.conf import settings
+PORT = settings.CHAT_SERVER_PORT
 host = settings.CHAT_SERVER_HOST
 key = settings.SSL_KEY
 cert = settings.SSL_CERT 

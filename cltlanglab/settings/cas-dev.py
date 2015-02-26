@@ -12,6 +12,8 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 MIDDLEWARE_CLASSES += ('django_cas.middleware.CASMiddleware',)
 
+AUTHENTICATION_BACKENDS += ('django_cas.backends.CASBackend',)
+
 DEBUG = True
 
 TEMPLATE_DEBUG = True
