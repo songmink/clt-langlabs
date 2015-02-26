@@ -16,6 +16,8 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
+ROOT_URLCONF = 'cltlanglab.cas-urls'
+
 # Added by Hao
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
