@@ -267,8 +267,11 @@
 			            <hr style='border-top:1px solid #C5C5C5; margin-top:0px;margin-bottom:0px;'>
 			  		  	<div class='lead' style='margin-bottom:10px;'>
 								Reviews from <i>{{ response.reviewed_by }} :</i> &nbsp;
-				    	</div>
+				    	        </div>
+
 					    {{response.review|safe}}
+ <div style='height:2.0em;'><span>&nbsp;</span><span class='text-danger pull-right' style=""><i class="fa fa-gavel"></i><a href="{% url 'grade_essay' response.id %}" style='text-decoration:none;' class='text-danger'> Edit Review</a></span></div>
+
 					    {% else %}
 					    <div style='height:2.0em;'><span>&nbsp;</span><span class='text-danger pull-right' style=""><i class="fa fa-gavel"></i><a href="{% url 'grade_essay' response.id %}" style='text-decoration:none;' class='text-danger'> Grade Essay</a></span></div> 
 					    {% endif %}
