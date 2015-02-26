@@ -75,9 +75,9 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 LOGIN_URL = '/accounts/login/'
 LOGOUT_URL = '/accounts/logout'
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/home'
 
-# REDIRECT_FIELD_NAME = 'home'
+REDIRECT_FIELD_NAME = 'home'
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',

@@ -12,9 +12,13 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 MIDDLEWARE_CLASSES += ('django_cas.middleware.CASMiddleware',)
 
+AUTHENTICATION_BACKENDS += ('django_cas.backends.CASBackend',)
+
 DEBUG = True
 
 TEMPLATE_DEBUG = True
+
+ROOT_URLCONF = 'cltlanglab.cas-urls'
 
 # Added by Hao
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
