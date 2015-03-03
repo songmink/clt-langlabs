@@ -111,9 +111,23 @@ class ActivityPermsMixin(object):
         '''  :returns: "Permission Denied" page if user is a not an Instrctor and the course is not active or is deleted. '''
 
         obj = super(ActivityPermsMixin, self).get_object(queryset)
-        if ((not self.request.user.has_perm("core.edit_course", obj.collection)) and (not obj.collection.is_active)) or (obj.is_deleted):
-            raise PermissionDenied()
+        # if course is inactive or deleted and user is nor instructor raise 403
+        if not obj.collection.is_active or obj.collection.is_deleted:
+            if not self.request.user.has_perm("core.edit_course", obj.collection):
+                raise PermissionDenied()
+
+        # if activity is inactive or deleted and user is not instructor raise 403
+        if not obj.is_active or obj.is_deleted:
+            if not self.request.user.has_perm("core.edit_course", obj.collection):
+                raise PermissionDenied()
+
+        # if activity membership is on check user for activity permission
+        if obj.permission_control == True:
+            if not self.request.user.has_perm("view_activity", obj):
+                raise PermissionDenied()
+                
         return obj
+
 
 
 class ActivityListMixin(object):
