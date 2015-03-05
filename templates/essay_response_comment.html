@@ -1,0 +1,19 @@
+
+<li class="left clearfix commentlist">
+
+    {% if post.creator not in private_users or post.creator.is_superuser %}
+        <span><i class="fa fa-graduation-cap fa-fw fa-2x pull-left text-muted" style='font-size:2.1em;'></i></span>
+    {% else %}
+        <span><i class="fa fa-user fa-fw fa-2x pull-left text-muted" style='font-size:2.1em;'></i></span>
+    {% endif %}
+
+    <div class="chat-body clearfix">
+        <div class="header">
+            <strong class="primary-font">{{ post.creator|capfirst }}</strong> <small class="pull-right text-muted">
+            <span class="glyphicon glyphicon-time"></span>{{ post.created }}</small>
+        </div>
+        <p>
+            {{ post.text|safe }}
+        </p>
+    </div>
+</li>

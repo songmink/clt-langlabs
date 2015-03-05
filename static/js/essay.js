@@ -282,21 +282,15 @@ function sendComment(ajax_URL, activitytype, activityid, commentContent, csrftok
       },
       data: { activity_type: activitytype, activity_id: activityid, text: commentContent}
     })
-    .done(function( msg) {
-      // alert( );
-      ////if(msg == 'Post Success'){
-          // window.location.href = msg.slice(16)
-
-          $( "#essay_discussion" ).load( window.location.href+"");
-      ////}
-      
+    .done(function(new_comment) {
+       var draft_comments = "#draft_comments" + activityid + " li";
+       var comment_form_position = $(draft_comments).length - 1;    
+       $(draft_comments).eq(comment_form_position).before(new_comment);
     })
     .fail(function( jqXHR, textStatus) {
     });
 
 }
-
-
 
 
 

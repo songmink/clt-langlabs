@@ -19,6 +19,7 @@ from django.views.generic import DetailView, CreateView
 from django.views.generic.edit import UpdateView, DeleteView
 from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import PermissionDenied
+from django.shortcuts import render_to_response
 from itertools import chain
 
 from core.mixins import CourseListMixin, ActivityListMixin, UsersWithPermsMixin, FakeDeleteMixin
@@ -180,6 +181,7 @@ def savePost(request):
         # activity to assign post to
         activityType = request.POST.get("activity_type", '')
         activityID = request.POST.get("activity_id", '')
+        print activityID
         #  validation and save
         if len(textcontent) > 0:
             mess = Post(text=textcontent)
@@ -196,6 +198,12 @@ def savePost(request):
         if activityType == 'essay':
             essayResponse = EssayResponse.objects.filter(id= activityID)[0]
             essayResponse.posts.add(mess)
+            private_users = []
+            context = {
+                "post": mess,
+                "private_users": private_users,
+            }
+            return render_to_response('essay_response_comment.html', context)
 
     return HttpResponse("Post Success")
 
