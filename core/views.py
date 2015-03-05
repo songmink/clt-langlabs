@@ -181,7 +181,6 @@ def savePost(request):
         # activity to assign post to
         activityType = request.POST.get("activity_type", '')
         activityID = request.POST.get("activity_id", '')
-        print activityID
         #  validation and save
         if len(textcontent) > 0:
             mess = Post(text=textcontent)
@@ -198,7 +197,7 @@ def savePost(request):
         if activityType == 'essay':
             essayResponse = EssayResponse.objects.filter(id= activityID)[0]
             essayResponse.posts.add(mess)
-            private_users = []
+            private_users = essayResponse.essay_activity.collection.get_private_users()
             context = {
                 "post": mess,
                 "private_users": private_users,

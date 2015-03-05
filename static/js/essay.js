@@ -286,6 +286,7 @@ function sendComment(ajax_URL, activitytype, activityid, commentContent, csrftok
        var draft_comments = "#draft_comments" + activityid + " li";
        var comment_form_position = $(draft_comments).length - 1;    
        $(draft_comments).eq(comment_form_position).before(new_comment);
+       $('textarea').val('');
     })
     .fail(function( jqXHR, textStatus) {
     });
