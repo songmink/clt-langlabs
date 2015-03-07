@@ -7,12 +7,12 @@ from django.forms import ModelChoiceField
 from django.core.urlresolvers import reverse_lazy
 
 from core.models import ActivityCollection, AbstractActivity, Post, Lesson
-from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, RecorderMixin, CreateActivity4UpdateMixin, UsersWithPermsMixin, ActivityPermsMixin, UserPostNumMixin, FakeDeleteMixin, ChatServerMixin
+from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, RecorderMixin, CreateActivity4UpdateMixin, UsersWithPermsMixin, ActivityEditPermissionMixin, ActivityViewPermissionMixin, UserPostNumMixin, FakeDeleteMixin, ChatServerMixin
 
 from .models import DiscussionActivity
 
 
-class DiscussionDetailView(CourseListMixin, ActivityListMixin, ChatServerMixin, RecorderMixin, UsersWithPermsMixin, ActivityPermsMixin, UserPostNumMixin, DetailView):
+class DiscussionDetailView(ActivityViewPermissionMixin, CourseListMixin, ActivityListMixin, ChatServerMixin, RecorderMixin, UsersWithPermsMixin, UserPostNumMixin, DetailView):
     ''' -- Discussion Detail Page '''
 
     model = DiscussionActivity
@@ -45,7 +45,7 @@ class DiscussionCreateView(CourseListMixin, CreateActivityMixin, CreateView):
         form.instance.activity_type = self.activity_type
         return super(DiscussionCreateView, self).form_valid(form)
 
-class DiscussionUpdateView(CourseListMixin, CreateActivity4UpdateMixin, ActivityPermsMixin, UpdateView):
+class DiscussionUpdateView(ActivityEditPermissionMixin, CourseListMixin, CreateActivity4UpdateMixin, UpdateView):
     ''' -- Discussion Edit Page '''
 
     model=DiscussionActivity
@@ -64,7 +64,7 @@ class DiscussionUpdateView(CourseListMixin, CreateActivity4UpdateMixin, Activity
             collection=get_object_or_404(ActivityCollection, pk=self.object.collection.id))
         return form
 
-class DiscussionDeleteView(CourseListMixin, FakeDeleteMixin, DeleteView):
+class DiscussionDeleteView(ActivityEditPermissionMixin, CourseListMixin, FakeDeleteMixin, DeleteView):
     ''' -- Discussion Delete Confirmation Page '''
 
     model = DiscussionActivity

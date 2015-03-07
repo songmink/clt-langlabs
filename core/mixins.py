@@ -104,30 +104,48 @@ class UserPostNumMixin(object):
         return context
 
 
-class ActivityPermsMixin(object):
-    ''' -- ActivityPermsMixin checks current user's permission of certain course and provide screening. '''
+class ActivityEditPermissionMixin(object):
+    ''' -- ActivityEditPermissionMixin checks current user's permission to update or delete an activity in a course, and provides screening. '''
+    
+    def get_object(self, queryset=None):
+        '''  :returns: "Permission Denied" page if user is a not an Instructor of the course. '''
+
+        obj = super(ActivityEditPermissionMixin, self).get_object(queryset)
+        if not self.request.user.has_perm("core.edit_course", obj.collection):
+            raise PermissionDenied()
+        return obj
+
+
+class ActivityViewPermissionMixin(object):
+    ''' -- ActivityViewPermissionMixin checks current user's permission to view an activity, and provides screening. '''
 
     def get_object(self, queryset=None):
-        '''  :returns: "Permission Denied" page if user is a not an Instrctor and the course is not active or is deleted. '''
+        obj = super(ActivityViewPermissionMixin, self).get_object(queryset)
+        '''  :returns: "Permission Denied" page if the course/activity is inactive OR deleted AND the user is not an instructor, OR if user is not a member of the course, OR if svtivity membership is on AND the user is not a member. '''
 
-        obj = super(ActivityPermsMixin, self).get_object(queryset)
-        # if course is inactive or deleted and user is nor instructor raise 403
+ 
+        # if course is inactive or deleted and user doesn't have edit_course
+        # perm, then raise 403
         if not obj.collection.is_active or obj.collection.is_deleted:
             if not self.request.user.has_perm("core.edit_course", obj.collection):
                 raise PermissionDenied()
 
-        # if activity is inactive or deleted and user is not instructor raise 403
+        # if activity is inactive or deleted and user doesn't have edit_course
+        # perm, then raise 403
         if not obj.is_active or obj.is_deleted:
             if not self.request.user.has_perm("core.edit_course", obj.collection):
                 raise PermissionDenied()
 
-        # if activity membership is on check user for activity permission
+        # if activity membership is on, check if user can view_activity. Otherwise
+        # just check if user can course_view.
         if obj.permission_control == True:
             if not self.request.user.has_perm("view_activity", obj):
                 raise PermissionDenied()
-                
-        return obj
+        else:
+            if not self.request.user.has_perm("view_course", obj.collection):
+                raise PermissionDenied()
 
+        return obj
 
 
 class ActivityListMixin(object):

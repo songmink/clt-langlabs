@@ -5,18 +5,18 @@ from django.views.generic.edit import FormView, UpdateView, DeleteView
 from django.core.urlresolvers import reverse_lazy
 
 from core.models import ActivityCollection, AbstractActivity, Post, Lesson
-from core.mixins import CourseListMixin, ActivityListMixin, EssayResponseListMixin, CreateActivityMixin, CreateActivity4UpdateMixin, UsersWithPermsMixin, ActivityPermsMixin, FakeDeleteMixin
+from core.mixins import CourseListMixin, ActivityListMixin, EssayResponseListMixin, CreateActivityMixin, CreateActivity4UpdateMixin, UsersWithPermsMixin, FakeDeleteMixin, ActivityEditPermissionMixin, ActivityViewPermissionMixin
 from .models import EssayActivity, EssayResponse
 
 
-class EssayDetailView(CourseListMixin, ActivityListMixin, EssayResponseListMixin, UsersWithPermsMixin, ActivityPermsMixin, DetailView):
+class EssayDetailView(ActivityViewPermissionMixin, CourseListMixin, ActivityListMixin, EssayResponseListMixin, UsersWithPermsMixin, DetailView):
     ''' -- Essay Detail Page '''
 
     model = EssayActivity
     context_object_name = 'activity'
     template_name = 'essay.html'
 
-class EssayUpdateView(CourseListMixin, CreateActivity4UpdateMixin, ActivityPermsMixin, UpdateView):
+class EssayUpdateView(ActivityEditPermissionMixin, CourseListMixin, CreateActivity4UpdateMixin, UpdateView):
     ''' -- Essay Edit Page '''
 
     model=EssayActivity
@@ -35,7 +35,7 @@ class EssayUpdateView(CourseListMixin, CreateActivity4UpdateMixin, ActivityPerms
             collection=get_object_or_404(ActivityCollection, pk=self.object.collection.id))
         return form
 
-class EssayCreateView(CourseListMixin, CreateActivityMixin, CreateView):
+class EssayCreateView(ActivityEditPermissionMixin, CourseListMixin, CreateActivityMixin, CreateView):
     " -- Essay Create Page "
 
     model = EssayActivity
@@ -58,7 +58,7 @@ class EssayCreateView(CourseListMixin, CreateActivityMixin, CreateView):
         form.instance.activity_type = self.activity_type
         return super(EssayCreateView, self).form_valid(form)
 
-class EssayDeleteView(CourseListMixin, FakeDeleteMixin, DeleteView):
+class EssayDeleteView(ActivityEditPermissionMixin, CourseListMixin, FakeDeleteMixin, DeleteView):
     ''' -- Essay Delete Confirmation Page '''
 
     model = EssayActivity

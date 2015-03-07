@@ -7,7 +7,7 @@ from django import forms
 from django.core.urlresolvers import reverse_lazy
 
 from core.models import ActivityCollection, AbstractActivity, Post, Lesson, Document
-from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, RecorderMixin, CreateActivity4UpdateMixin, UsersWithPermsMixin, ActivityPermsMixin, UserPostNumMixin, FakeDeleteMixin, ChatServerMixin
+from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, RecorderMixin, CreateActivity4UpdateMixin, UsersWithPermsMixin, ActivityEditPermissionMixin, ActivityViewPermissionMixin, UserPostNumMixin, FakeDeleteMixin, ChatServerMixin
 from .models import OverdubActivity
 
 
@@ -28,7 +28,7 @@ from .models import OverdubActivity
 
 
 
-class OverdubDetailView(CourseListMixin, ActivityListMixin, ChatServerMixin, RecorderMixin, UsersWithPermsMixin, ActivityPermsMixin, UserPostNumMixin, DetailView):
+class OverdubDetailView(ActivityViewPermissionMixin, CourseListMixin, ActivityListMixin, ChatServerMixin, RecorderMixin, UsersWithPermsMixin, UserPostNumMixin, DetailView):
     ''' -- Overdub Detail Page '''
 
     model = OverdubActivity
@@ -73,7 +73,7 @@ class OverdubCreateView(CourseListMixin, CreateActivityMixin, CreateView):
 
         return super(OverdubCreateView, self).form_valid(form)
 
-class OverdubUpdateView(CourseListMixin, CreateActivity4UpdateMixin, ActivityPermsMixin, UpdateView):
+class OverdubUpdateView(ActivityEditPermissionMixin, CourseListMixin, CreateActivity4UpdateMixin, UpdateView):
     ''' -- Overdub Edit Page '''
 
     model= OverdubActivity
@@ -106,7 +106,7 @@ class OverdubUpdateView(CourseListMixin, CreateActivity4UpdateMixin, ActivityPer
 
         return super(OverdubUpdateView, self).form_valid(form)
 
-class OverdubDeleteView(CourseListMixin, FakeDeleteMixin, DeleteView):
+class OverdubDeleteView(ActivityEditPermissionMixin, CourseListMixin, FakeDeleteMixin, DeleteView):
     ''' -- Overdub Delete Confirmation Page '''
 
     model = OverdubActivity
