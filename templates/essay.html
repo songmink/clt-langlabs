@@ -198,12 +198,23 @@
 		<div  class='well well-sm' style='border:0px;'>
 		<span>Jump to User: </span>
 			{% for SingleUser, Permissions in object_course_users.items %}
-			   {% if  not SingleUser.is_superuser %}
-					{% get_obj_perms SingleUser for activity as "activity_temp_perms" %}
-   		            	{% if "view_activity" in activity_temp_perms and SingleUser not in private_users %}
-		            	&nbsp;<span class="label label-default userResponseToggle" style='cursor:pointer;' data-userdraft='user_{{SingleUser}}'>{{SingleUser}}</span>
-		            	{% endif %} 
-			   {% endif %}
+			    {% if  not SingleUser.is_superuser %}
+
+                                <!-- if activity perm control -->
+			        {% get_obj_perms SingleUser for activity as "activity_temp_perms" %}
+                                {% if activity.permission_control %}
+                                   <!-- print if in private users -->
+   		            	    {% if "view_activity" in activity_temp_perms and SingleUser not in private_users %}
+		                        &nbsp;<span class="label label-default userResponseToggle" style='cursor:pointer;' data-userdraft='user_{{SingleUser}}'>{{SingleUser}}</span>
+		            	    {% endif %} 
+                                <!-- else -->
+                                {% else %}
+                                    <!-- just print -->
+		                    &nbsp;<span class="label label-default userResponseToggle" style='cursor:pointer;' data-userdraft='user_{{SingleUser}}'>{{SingleUser}}</span>
+
+                                {% endif %}
+
+			    {% endif %}
 			{% endfor %}
 			&nbsp;<span class="label label-default userResponseAllToggle" style='cursor:pointer;'>show all</span>
         </div>
