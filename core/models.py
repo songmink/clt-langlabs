@@ -116,6 +116,7 @@ class Post(models.Model):
     creator = models.ForeignKey(User)
     parent_post = models.ForeignKey('self', blank=True, null=True)
     audio_URL = models.URLField(max_length=200, blank=True, null=True)
+    is_deleted = models.BooleanField(default=False, blank=True)
 
     def get_absolute_url(self):
         ''' :returns: Absolute URL of a. '''
