@@ -196,7 +196,35 @@ $(document).ready(function(){
 
     })
 
+  // Delete comment
+  $('#posts').on('click', 'button', function() { // something like that
+     // prevent default? on click expands thread
+     var ajax_url = $('#posts').data('ajaxurl');
+     var post_id = $(this).closest('li').data('postid');
+
+     deleteComment(ajax_url, post_id, csrftoken);
+  })
+
+
 });
+
+function deleteComment(ajaxurl, postid, csrftoken){
+   alert('yo');
+   $.ajax({
+      type:       'POST',
+      url:        ajax_url,
+      async:      false,
+      beforeSend: function(xhr){
+         xhr.setRequestHeader('X-CSRFToken', csrftoken)
+      },
+      data: {ajax_url:ajaxurl, post_id:postid}      
+   })
+   .done(function(){
+      // remove list item from page
+   })
+   .fail(function(){jqXHR, textStatus})
+}
+
 
 function rteInit()
     {

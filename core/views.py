@@ -9,20 +9,20 @@ from urllib import urlencode
 from urlparse import urljoin
 from django.conf import settings
 
-from braces.views import LoginRequiredMixin
+from braces.views import LoginRequiredMixin, CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin
 from guardian.shortcuts import assign_perm, remove_perm
 from guardian.mixins import PermissionRequiredMixin
 
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
-from django.views.generic import DetailView, CreateView
+from django.views.generic import DetailView, CreateView, View
 from django.views.generic.edit import UpdateView, DeleteView
 from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render_to_response
 from itertools import chain
 
-from core.mixins import CourseListMixin, ActivityListMixin, UsersWithPermsMixin, FakeDeleteMixin
+from core.mixins import CourseListMixin, ActivityListMixin, UsersWithPermsMixin, FakeDeleteMixin, DeletePostMixin
 
 from .models import ActivityCollection, Lesson, Post, Document
 
@@ -165,11 +165,34 @@ class LessonAddView(LessonCreateView):
     def form_valid(self, form):
     # Auto set the following fields:
         form.instance.collection = get_object_or_404(
-            ActivityCollection, pk=self.kwargs['addpk'])
+            ActivityCollection, pk=self.kwargs['addpk'])
         return super(LessonAddView, self).form_valid(form)
 
     def get_success_url(self):
         return self.object.collection.get_absolute_url()
+
+
+
+
+class PostDeleteView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, DeletePostMixin, View):
+    ''' '''
+
+    def post_ajax(self, request, *args, **kwargs):
+        ''' blah blah blah good documentation '''
+    
+        post_id = request.post_id
+        post = Post.objects.get(pk=post_id)
+        print post
+    
+        # delete any children posts if it is a parent post
+        if not post.parent_post:
+            child_posts = Post.objects.filter(parent_post=post_id)
+            for child_post in child_posts:
+                child_post.delete()
+
+        post.delete()
+        return HttpResponse("Post Success")
+
 
 # Save Post
 def savePost(request):
@@ -442,5 +465,4 @@ def uhcaslogout(request):
     logouturl += '?' + urlencode({'service': protocol + host })
     
     return HttpResponseRedirect(logouturl)
-
 

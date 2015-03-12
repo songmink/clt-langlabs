@@ -180,7 +180,7 @@
 				<div id='CLTREC_container'><div id='CLTREC'></div></div>
 				<!-- ************************************************ -->
 				<br>
-             	<div id='posts'>
+             	<div id='posts' data-ajaxurl='{% url "delete_post" %}'>
 
              		 {% if user_post_num != 0 or not activity.read_after_post or user.is_superuser or user in private_users %}
 	                 <ul id='posts2' class="chat">
@@ -205,6 +205,8 @@
 		                                <p>
 											{{ post.text|safe }}
 		                                </p>
+                                                <!-- if user owns post show -->
+                                                    <button>Delete</button>
 
 		                                <!-- get attachments from fat Post Model -->
 		                                {% if post.get_documents %}

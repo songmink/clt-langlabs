@@ -49,6 +49,17 @@ class FakeDeleteMixin(object):
         return HttpResponseRedirect(self.get_success_url())
 
 
+class DeletePostMixin(object):
+    ''' -- '''
+
+    def delete(self):
+        ''' '''
+
+        post = super(Post, self)
+        post.is_deleted = True
+        post.save()
+ 
+
 class UsersWithPermsMixin(object):
     ''' -- UsersWithPermsMixin provides user list with permission in Course Detail View and Activity Detail View.  '''
 
