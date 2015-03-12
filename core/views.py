@@ -22,7 +22,7 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import render_to_response
 from itertools import chain
 
-from core.mixins import CourseListMixin, ActivityListMixin, UsersWithPermsMixin, FakeDeleteMixin, DeletePostMixin
+from core.mixins import CourseListMixin, ActivityListMixin, UsersWithPermsMixin, FakeDeleteMixin 
 
 from .models import ActivityCollection, Lesson, Post, Document
 
@@ -174,24 +174,27 @@ class LessonAddView(LessonCreateView):
 
 
 
-class PostDeleteView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, DeletePostMixin, View):
+class PostDeleteView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, View):
     ''' '''
 
     def post_ajax(self, request, *args, **kwargs):
         ''' blah blah blah good documentation '''
     
-        post_id = request.post_id
+        post_id = request.POST.get("post_id")
         post = Post.objects.get(pk=post_id)
-        print post
+        json_result = [post.id]
     
         # delete any children posts if it is a parent post
         if not post.parent_post:
             child_posts = Post.objects.filter(parent_post=post_id)
             for child_post in child_posts:
-                child_post.delete()
+                json_result.append(child_post.id)
+                child_post.is_deleted = True
+                child_post.save()
 
-        post.delete()
-        return HttpResponse("Post Success")
+        post.is_deleted = True
+        post.save()
+        return self.render_json_response({"list_items":json_result})
 
 
 # Save Post

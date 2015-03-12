@@ -209,18 +209,22 @@ $(document).ready(function(){
 });
 
 function deleteComment(ajaxurl, postid, csrftoken){
-   alert('yo');
    $.ajax({
+      url:        ajaxurl,
       type:       'POST',
-      url:        ajax_url,
       async:      false,
       beforeSend: function(xhr){
          xhr.setRequestHeader('X-CSRFToken', csrftoken)
       },
       data: {ajax_url:ajaxurl, post_id:postid}      
    })
-   .done(function(){
-      // remove list item from page
+   .done(function(result){
+      // remove list item(s) from page
+      for (var i in result.list_items){
+         console.log(result.list_items[i])
+         $("#"+result.list_items[i]).remove();
+      }
+      $("#textarea"+postid).remove();
    })
    .fail(function(){jqXHR, textStatus})
 }
