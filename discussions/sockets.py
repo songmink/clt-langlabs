@@ -64,7 +64,7 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         """
 
         self.log('Connected nickname is: {0}'.format(nickname))
-        self.nicknames.append(nickname)
+	self.nicknames.append(nickname)
         self.socket.session['nickname'] = nickname
         try:
             self.socket.session['DjangoUser']= User.objects.get(username=nickname)
@@ -110,12 +110,14 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         :param msg: user's comment.
         """
         # save to Post model as a comment
-        self.log('User comment: {0}'.format(msg["cmt"]))
         savedMessage=self.postSave(msg["cmt"], parent_post=msg["parentID"])
-        thisID = savedMessage.id
         # respond to js part and append the message in the html
         if savedMessage:
+            if savedMessage.parent_post.is_deleted:
+                savedMessage.is_deleted = True
+            thisID = savedMessage.id
             responseMessage = {"fromMessage":self.socket.session['nickname'], "message":msg, "createTime": str(savedMessage.created.strftime("%B %d, %Y, %I:%M %p")), "msgID":thisID, "parentPost": msg["parentID"]}
+            self.log('User comment: {0}'.format(msg["cmt"]))
             self.emit_to_room_include_me(self.room, 'cmt_to_room', json.dumps(responseMessage))
             return True
         else:

@@ -199,8 +199,8 @@ $(document).ready(function(){
   // Delete comment
   $('#posts').on('click', 'button', function() { // something like that
      // prevent default? on click expands thread
-     var ajax_url = $('#posts').data('ajaxurl');
-     var post_id = $(this).closest('li').data('postid');
+     ajax_url = $('#posts').data('ajaxurl');
+     post_id = $(this).closest('li').data('postid');
 
      deleteComment(ajax_url, post_id, csrftoken);
   })
@@ -218,13 +218,8 @@ function deleteComment(ajaxurl, postid, csrftoken){
       },
       data: {ajax_url:ajaxurl, post_id:postid}      
    })
-   .done(function(result){
-      // remove list item(s) from page
-      for (var i in result.list_items){
-         console.log(result.list_items[i])
-         $("#"+result.list_items[i]).remove();
-      }
-      $("#textarea"+postid).remove();
+   .done(function(response){
+      $("#"+postid).remove();
    })
    .fail(function(){jqXHR, textStatus})
 }
