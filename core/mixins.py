@@ -262,6 +262,18 @@ class ChatServerMixin(object):
         return context
 
 
+class PostsListMixin(object):
+    ''' --PostsListMixin used to filter non-deleted activity posts. '''
+
+    def get_context_data(self, **kwargs):
+        ''' :returns: context that contains activity posts. '''
+       
+        context = super(PostsListMixin, self).get_context_data(**kwargs)
+        context['posts'] = self.get_object().posts.filter(is_deleted=False)
+        
+        return context
+
+
 class EssayResponseListMixin(object):
     ''' -- EssayResponseListMixin is used in Essay Detail View to provide information about essay drafts and reviews. '''
 

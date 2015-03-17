@@ -184,7 +184,7 @@
 
              		 {% if user_post_num != 0 or not activity.read_after_post or user.is_superuser or user in private_users %}
 	                 <ul id='posts2' class="chat">
-	                 	{% for post in activity.posts.all reversed%}
+	                 	{% for post in posts reversed%}
 	                        
 	                        {% if not activity.private_mode or user in private_users or post.creator in private_users or post.creator == user %}
 	                        {% if not post.parent_post %}
@@ -206,7 +206,9 @@
 											{{ post.text|safe }}
 		                                </p>
                                                 <!-- if user owns post show -->
-                                                    <button>Delete</button>
+                                                                {% if post.creator == user %}
+                                                                    <button>Delete</button>
+                                                                {% endif %}
 
 		                                <!-- get attachments from fat Post Model -->
 		                                {% if post.get_documents %}
@@ -235,7 +237,7 @@
 		                        <!-- Comment Section for posts -->
 		                        <div>
 		                            <ul class="comment">
-				                 	{% for post2 in activity.posts.all reversed%}
+				                 	{% for post2 in posts reversed%}
 				                 	    {% if user in private_users or post2.creator in private_users or post2.creator == user %}
 				                 	    {% if post2.parent_post == post %}
 				                        <li id="{{ post2.id }}" class="left clearfix commentlist" data-postid={{post2.id}}>
@@ -254,6 +256,10 @@
 				                                <p>
 													{{ post2.text|safe }}
 				                                </p>
+                                                                <!-- if user owns post show -->
+                                                                {% if post2.creator == user %}
+                                                                    <button>Delete</button>
+                                                                {% endif %}
 				                            </div>
 				                        </li>
 				                        {% endif %}
