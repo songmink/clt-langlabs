@@ -308,7 +308,7 @@ var TAFFY, exports, T;
 
                 // get the value from the record
                 var
-                  mvalue   = this[i],
+                  mvalue   = String(this[i]),
                   eqeq     = '==',
                   bangeq   = '!=',
                   eqeqeq   = '===',

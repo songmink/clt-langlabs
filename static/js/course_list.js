@@ -139,7 +139,7 @@ $(document).ready(function(){
 		    	$("#searchResult").children().remove()
 		    	var searchKey = $("#searchInput").val()
 		    	var resultString =""
-		    	var resultCourses = courses([{course_name:{like:$("#searchInput").val()}},{instructors:{like:$("#searchInput").val()}}])
+		    	var resultCourses = courses([{course_name:{likenocase:$("#searchInput").val()}},{instructors:{likenocase:$("#searchInput").val()}}])
 
 		    	$("#searchInput").val("")
 		    	var selectedCourseNames=resultCourses.select("course_name") 
