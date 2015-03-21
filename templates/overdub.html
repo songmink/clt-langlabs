@@ -49,9 +49,9 @@
     var private_users="{{private_users|safe}}"
     var current_user ="{{user}}"
     if(private_users.search('<User: '+current_user+'>') != -1){
-    	var thumbNail_comment='<li class="left clearfix commentlist"><span><i class="fa fa-graduation-cap fa-2x pull-left fa-fw text-muted text-center" style="font-size:2.1em; margin-right:0.2em;"></i></span><div class="chat-body clearfix" style="margin-left: 46px;"><textarea class="form-control" rows="2"></textarea></div></li>'
+        var thumbNail_comment='<li class="left clearfix commentlist"><span><i class="fa fa-graduation-cap fa-2x pull-left fa-fw text-muted text-center" style="font-size:2.1em; margin-right:0.2em;"></i></span><div class="chat-body clearfix" style="margin-left: 46px;"><textarea class="form-control" rows="2"></textarea></div></li>'
     }else{
-    	var thumbNail_comment='<li class="left clearfix commentlist"><span><i class="fa fa-user fa-2x pull-left fa-fw text-muted text-center" style="font-size:2.1em; margin-right:0.2em;"></i></span><div class="chat-body clearfix" style="margin-left: 46px;"><textarea class="form-control" rows="2"></textarea></div></li>'
+        var thumbNail_comment='<li class="left clearfix commentlist"><span><i class="fa fa-user fa-2x pull-left fa-fw text-muted text-center" style="font-size:2.1em; margin-right:0.2em;"></i></span><div class="chat-body clearfix" style="margin-left: 46px;"><textarea class="form-control" rows="2"></textarea></div></li>'
     }
     </script>
 
@@ -208,9 +208,9 @@
 		                        <!-- Other's posts -->
 		                        <li class="left clearfix chatlist" data-postid={{post.id}}>
 								{% if post.creator in private_users or post.creator.is_superuser %}
-								<span><i class="fa fa-graduation-cap fa-2x pull-left fa-border text-muted" style='font-size:2.5em;'></i></span>
+								<span><i class="fa fa-graduation-cap fa-fw fa-2x pull-left text-muted" style='font-size:2.1em; vertical-align:middle;'></i></span>
 								{% else %}
-								<span><i class="fa fa-user fa-2x pull-left fa-border text-muted" style='font-size:2.5em;'></i></span>
+								<span><i class="fa fa-user fa-fw fa-2x pull-left text-muted" style='font-size:2.1em; vertical-align:middle'></i></span>
 								{% endif %}
 		                            <div class="chat-body clearfix">
 		                                <div class="header">
@@ -263,11 +263,13 @@
 				                 	    {% if user in private_users or post2.creator in private_users or post2.creator == user %}
 				                 	    {% if post2.parent_post == post %}
 				                        <li class="left clearfix commentlist" data-postid={{post2.id}}>
-				                        	{% if post2.creator in private_users or post2.creator.is_superuser %}
-											<span><i class="fa fa-graduation-cap fa-2x pull-left fa-fw text-muted" style='font-size:2.5em;'></i></span>
-											{% else %}
-											<span><i class="fa fa-user fa-2x pull-left fa-fw text-muted" style='font-size:2.5em;'></i></span>
-											{% endif %}
+
+                                                                                        {% if post2.creator in private_users or post2.creator.is_superuser %}
+                                                                                        <span><i class="fa fa-graduation-cap fa-fw fa-2x pull-left text-muted" style='font-size:2.1em;'></i></span>
+                                                                                        {% else %}
+                                                                                        <span><i class="fa fa-user fa-fw fa-2x pull-left text-muted" style='font-size:2.1em;'></i></span>
+                                                                                        {% endif %}
+
 				                            <div class="chat-body clearfix">
 				                                <div class="header">
 				                                    <strong class="primary-font">{{ post2.creator|capfirst }}</strong> <small class="pull-right text-muted">
@@ -281,21 +283,25 @@
 				                        {% endif %}
 				                        {% endif %}
 			                        {% endfor %}
-										{% if user in private_users or post.creator.is_superuser %}
-										<li class="left clearfix commentlist">
-										<span><i class="fa fa-graduation-cap fa-2x pull-left fa-fw text-muted text-center" style='font-size:2.2em; margin-right:0.2em;'></i></span>
-			                            <div class="chat-body clearfix" style='margin-left: 46px;'>
-											<textarea class="form-control" rows="2"></textarea>
-			                            </div>
-			                            </li>
-										{% else %}
-										<li class="left clearfix commentlist">
-										<span><i class="fa fa-user fa-2x pull-left fa-fw text-muted text-center" style='font-size:2.3em; margin-right:0.2em;'></i></span>
-			                            <div class="chat-body clearfix" style='margin-left: 46px;'>
-											<textarea class="form-control" rows="2"></textarea>
-			                            </div>
-			                            </li>
-										{% endif %}
+
+
+
+                                                                                        {% if user in private_users or post.creator.is_superuser %}
+                                                                                        <li class="left clearfix commentlist">
+                                                                                        <span><i class="fa fa-graduation-cap fa-fw fa-2x pull-left text-muted text-center" style='font-size:2.1em; margin-right:0.2em;'></i></span>
+                                                            <div class="chat-body clearfix" style='margin-left: 46px;'>
+                                                                                                <textarea class="form-control" rows="2"></textarea>
+                                                            </div>
+                                                            </li>
+                                                                                        {% else %}
+                                                                                        <li class="left clearfix commentlist">
+                                                                                        <span><i class="fa fa-user fa-fw fa-2x pull-left text-muted text-center" style='font-size:2.1em; margin-right:0.2em;'></i></span>
+                                                            <div class="chat-body clearfix" style='margin-left: 46px;'>
+                                                                                                <textarea class="form-control" rows="2"></textarea>
+                                                            </div>
+                                                            </li>
+                                                                                        {% endif %}
+
 				                    </ul>
 
 				                </div>
