@@ -197,8 +197,7 @@ $(document).ready(function(){
     })
 
   // Delete comment
-  $('#posts').on('click', 'button', function() { // something like that
-     // prevent default? on click expands thread
+  $('#posts').on('click', '.removePost', function() {
      ajax_url = $('#posts').data('ajaxurl');
      post_id = $(this).closest('li').data('postid');
 
@@ -221,7 +220,8 @@ function deleteComment(ajaxurl, postid, csrftoken){
    .done(function(response){
       $("#"+postid).remove();
    })
-   .fail(function(){jqXHR, textStatus})
+   .fail(function(jqXHR, textStatus){
+   });
 }
 
 

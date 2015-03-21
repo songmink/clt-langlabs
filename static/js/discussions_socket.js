@@ -135,7 +135,7 @@ socket.on('connect', function () {
             msg = mess.message;
             created = mess.createTime;
             msgID = mess.msgID;
-            var tempAttachments, deleteButton;
+            var tempAttachments, deleteIcon;
             if(msg.attaches.length>0) {
                 tempAttachments ='<p class="attachDIV well " style="padding:8px;margin-bottom:0px;border-radius:0px;border:0px;background-color:#F8F8F8;">';
                 for(var i=0; i<msg.attaches.length;i++) {
@@ -146,9 +146,9 @@ socket.on('connect', function () {
                 tempAttachments='';
             }
             if(from == user){
-                deleteButton = '<button>Delete</button>';
+                deleteIcon = ' <small><a class="text-muted removePost" style="text-decoration:none;cursor:pointer;" ><i class="fa fa-remove text-danger"></i></a></small>';
             } else {
-                deleteButton = '';
+                deleteIcon = '';
             }
             // temporarily add audio to links below the message
             if(msg.audioURL) tempAttachments+='<div id="'+msg.audioURL.slice(0,-4)+'" class="audioDiv"></div>';
@@ -160,7 +160,7 @@ socket.on('connect', function () {
                 } else {
                     thumbNail = '<span><i class="fa fa-user fa-2x pull-left fa-fw text-muted" style="font-size:2.1em;"></i></span>';
                 }
-            var temp = '<div id='+msgID+'><li class="left clearfix chatlist" data-postid='+msgID+'>'+thumbNail+'<div class="chat-body clearfix"><div class="header"><strong class="primary-font">'+from.substr(0,1).toUpperCase()+from.substr(1)+'</strong> <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span>'+created+'</small></div><p>'+msg.msg+deleteButton+tempAttachments+'</div></li><div><ul class="comment">'+thumbNail_comment+'</ul></div></div> ' ;
+            var temp = '<div id="'+msgID+'"><li class="left clearfix chatlist" data-postid='+msgID+'>'+thumbNail+'<div class="chat-body clearfix"><div class="header"><strong class="primary-font">'+from.substr(0,1).toUpperCase()+from.substr(1)+'</strong> <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span>'+created+deleteIcon+'</small></div><p>'+msg.msg+tempAttachments+'</div></li><div><ul class="comment">'+thumbNail_comment+'</ul></div></div> ' ;
             $( "#posts2" ).prepend(temp);
             if(msg.audioURL){
                 jwplayer(msg.audioURL.slice(0,-4)).setup({
@@ -193,11 +193,11 @@ socket.on('connect', function () {
                     thumbNail = '<span><i class="fa fa-user fa-2x pull-left fa-fw text-muted" style="font-size:2.1em;"></i></span>';
                 }
             if(from == user){
-                deleteButton = '<button>Delete</button>';
+                deleteIcon = ' <small><a class="text-muted removePost" style="text-decoration:none;cursor:pointer;" ><i class="fa fa-remove text-danger"></i></a></small>';
             } else {
-                deleteButton = '';
+                deleteIcon = '';
             }
-            var temp =  '<li id='+msgID+' class="left clearfix commentlist" data-postid='+msgID+'>'+thumbNail+'<div class="chat-body clearfix"><div class="header"><strong class="primary-font">'+from.substr(0,1).toUpperCase()+from.substr(1)+'</strong> <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span>'+created+'</small></div><p>'+msg.cmt+deleteButton+'</div></li>';
+            var temp =  '<li id="'+msgID+'" class="left clearfix commentlist" data-postid='+msgID+'>'+thumbNail+'<div class="chat-body clearfix"><div class="header"><strong class="primary-font">'+from.substr(0,1).toUpperCase()+from.substr(1)+'</strong> <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span>'+created+deleteIcon+'</small></div><p>'+msg.cmt+'</div></li>';
             pp.prepend(temp);
         }
     }

@@ -191,8 +191,34 @@ $(document).ready(function(){
 
     })
 
+    // Delete comment
+    $('#posts').on('click', '.removePost', function() {
+       ajax_url = $('#posts').data('ajaxurl');
+       post_id = $(this).closest('li').data('postid');
+
+       deleteComment(ajax_url, post_id, csrftoken);
+    })
 
 });
+
+
+function deleteComment(ajaxurl, postid, csrftoken){
+   $.ajax({
+      url:        ajaxurl,
+      type:       'POST',
+      async:      false,
+      beforeSend: function(xhr){
+         xhr.setRequestHeader('X-CSRFToken', csrftoken)
+      },
+      data: {ajax_url:ajaxurl, post_id:postid}
+   })
+   .done(function(response){
+      $("#"+postid).remove();
+   })
+   .fail(function(jqXHR, textStatus){
+   });
+}
+
 
 function rteInit()
     {
