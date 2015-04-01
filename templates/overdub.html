@@ -218,7 +218,7 @@
                                                     <strong class="primary-font">{{ post.creator|capfirst }}</strong>
                                                     <small class="pull-right text-muted">
                                                         <span class="glyphicon glyphicon-time"></span>{{ post.created }}
-                                                        {% if post.creator == user %}
+                                                        {% if post.creator == user or user in private_users %}
                                                             <small><a class="text-muted removePost" style='text-decoration:none;cursor:pointer;' >
                                                                <i class="fa fa-remove text-danger"></i></a></small>
                                                         {% endif %}
@@ -281,7 +281,7 @@
                                                                     <small class="pull-right text-muted">
                                                                         <span class="glyphicon glyphicon-time"></span>
                                                                                     {{ post2.created }}
-                                                                        {% if post.creator == user %}
+                                                                        {% if post2.creator == user or user in private_users %}
                                                                         <small><a class="text-muted removePost" style='text-decoration:none;cursor:pointer;'>
                                                                            <i class="fa fa-remove text-danger"></i></a></small>
                                                                         {% endif %}
