@@ -115,6 +115,14 @@ $(document).ready(function(){
          sendComment( ajaxURL,activityType, activityID, content, csrftoken)
       }
   });
+
+  // Delete comments
+  $( "#essay_discussion").on( "click", ".removePost", function() {
+      var ajax_url = $("#essay_responses").data("ajaxurl");
+      var post_id = $(this).closest("li").data("postid");
+      deleteComment(ajax_url, post_id, csrftoken);
+  });
+
   // toggle with draft version
   $( "#essay_discussion" ).on( "click", '.draftToggle',function(event) {
     event.preventDefault();
@@ -293,5 +301,22 @@ function sendComment(ajax_URL, activitytype, activityid, commentContent, csrftok
 
 }
 
+// Deletes a comment
+function deleteComment(ajaxurl, postid, csrftoken){
+   $.ajax({
+      url:        ajaxurl,
+      type:       'POST',
+      async:      false,
+      beforeSend: function(xhr){
+         xhr.setRequestHeader('X-CSRFToken', csrftoken)
+      },
+      data: {ajax_url:ajaxurl, post_id:postid}
+   })
+   .done(function(response){
+      $("#"+postid).remove();
+   })
+   .fail(function(jqXHR, textStatus){
+   });
+}
 
 

@@ -63,8 +63,6 @@ socket.on('connect', function () {
         var temp = e ? e : 'A unknown error occurred';
     });
 
-
-
     function clear () {
         $('#postTextarea').val('');
     }
@@ -116,7 +114,7 @@ socket.on('connect', function () {
             if ( event.which == 13 && $(this).val !== "" ) {
                event.preventDefault();
                // comment($('#activityUSER').val(), $(this).val(), $(this).closest(".comment"))
-               socket.emit('user comment',{cmt : $(this).val(),parentID: $(this).closest(".comment").parent().prev().data('postid')});
+               rv = socket.emit('user comment',{cmt : $(this).val(),parentID: $(this).closest(".comment").parent().prev().data('postid')});
                //clear the input
                $(this).val('');
             }
@@ -131,12 +129,14 @@ socket.on('connect', function () {
     // receive message and generate the content to web page
     function message (message) {
         if( read_after_post_lock === false) {
+            user = $('#activityUSER').val()
+            user_is_instructor = $('#activity_title').data('userisinstructor');
             var mess=eval ("(" + message + ")");
             from = mess.fromMessage;
             msg = mess.message;
             created = mess.createTime;
             msgID = mess.msgID;
-            var tempAttachments;
+            var tempAttachments, deleteIcon;
             if(msg.attaches.length>0) {
                 tempAttachments ='<p class="attachDIV well " style="padding:8px;margin-bottom:0px;border-radius:0px;border:0px;background-color:#F8F8F8;">';
                 for(var i=0; i<msg.attaches.length;i++) {
@@ -146,17 +146,22 @@ socket.on('connect', function () {
             } else {
                 tempAttachments='';
             }
+            if(from == user || user_is_instructor){
+                deleteIcon = ' <small><a class="text-muted removePost" style="text-decoration:none;cursor:pointer;" ><i class="fa fa-remove text-danger"></i></a></small>';
+            } else {
+                deleteIcon = '';
+            }
             // temporarily add audio to links below the message
             if(msg.audioURL) tempAttachments+='<div id="'+msg.audioURL.slice(0,-4)+'" class="audioDiv"></div>';
-            // if(msg.audioURL) tempAttachments+='<p class="attachDIV well " style="padding:8px;">'+'<span><a class="fileLink text-muted" href="'+recorderServer+recorderDirectory+"/"+msg.audioURL+'"  > <i class="icon-file-alt"></i> '+msg.audioURL+'</a></span>'+'</p>'
             
             var thumbNail;
-            if(private_users.search('<User: '+from+'>') != -1){
-                    thumbNail = '<span><i class="fa fa-graduation-cap fa-2x pull-left fa-fw text-muted" style="font-size:2.1em;"></i></span>';
-                } else {
-                    thumbNail = '<span><i class="fa fa-user fa-2x pull-left fa-fw text-muted" style="font-size:2.1em;"></i></span>';
-                }
-            var temp = '<li class="left clearfix chatlist" data-postid='+msgID+'>'+thumbNail+'<div class="chat-body clearfix"><div class="header"><strong class="primary-font">'+from.substr(0,1).toUpperCase()+from.substr(1)+'</strong> <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span>'+created+'</small></div><p>'+msg.msg+'</p>'+tempAttachments+'</div></li><div><ul class="comment">'+thumbNail_comment+'</ul></div> ' ;
+            //if(private_users.search('<User: '+from+'>') != -1){
+            if(user_is_instructor){
+                thumbNail = '<span><i class="fa fa-graduation-cap fa-2x pull-left fa-fw text-muted" style="font-size:2.1em;"></i></span>';
+            } else {
+                thumbNail = '<span><i class="fa fa-user fa-2x pull-left fa-fw text-muted" style="font-size:2.1em;"></i></span>';
+            }
+            var temp = '<div id="'+msgID+'"><li class="left clearfix chatlist" data-postid='+msgID+'>'+thumbNail+'<div class="chat-body clearfix"><div class="header"><strong class="primary-font">'+from.substr(0,1).toUpperCase()+from.substr(1)+'</strong> <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span>'+created+deleteIcon+'</small></div><p>'+msg.msg+tempAttachments+'</div></li><div><ul class="comment">'+thumbNail_comment+'</ul></div></div> ' ;
             $( "#posts2" ).prepend(temp);
             if(msg.audioURL){
                 jwplayer(msg.audioURL.slice(0,-4)).setup({
@@ -173,6 +178,8 @@ socket.on('connect', function () {
     // receive the comment and show them on web page
     function comment (message) {
         if( read_after_post_lock === false) {
+            user = $('#activityUSER').val()
+            user_is_instructor = $('#activity_title').data('userisinstructor');
             var mess=eval ("(" + message + ")");
             from = mess.fromMessage;
             msg = mess.message;
@@ -187,7 +194,12 @@ socket.on('connect', function () {
                 }else{
                     thumbNail = '<span><i class="fa fa-user fa-2x pull-left fa-fw text-muted" style="font-size:2.1em;"></i></span>';
                 }
-            var temp =  '<li class="left clearfix commentlist" data-postid='+msgID+'>'+thumbNail+'<div class="chat-body clearfix"><div class="header"><strong class="primary-font">'+from.substr(0,1).toUpperCase()+from.substr(1)+'</strong> <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span>'+created+'</small></div><p>'+msg.cmt+'</p></div></li>';
+            if(from == user || user_is_instructor){
+                deleteIcon = ' <small><a class="text-muted removePost" style="text-decoration:none;cursor:pointer;" ><i class="fa fa-remove text-danger"></i></a></small>';
+            } else {
+                deleteIcon = '';
+            }
+            var temp =  '<li id="'+msgID+'" class="left clearfix commentlist" data-postid='+msgID+'>'+thumbNail+'<div class="chat-body clearfix"><div class="header"><strong class="primary-font">'+from.substr(0,1).toUpperCase()+from.substr(1)+'</strong> <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span>'+created+deleteIcon+'</small></div><p>'+msg.cmt+'</div></li>';
             pp.prepend(temp);
         }
     }

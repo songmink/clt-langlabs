@@ -4,13 +4,14 @@ from __future__ import unicode_literals
 from django.db import models, migrations
 import django.db.models.deletion
 from django.conf import settings
+import django.core.validators
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('core', '__first__'),
+        ('core', '0001_initial'),
     ]
 
     operations = [
@@ -27,7 +28,7 @@ class Migration(migrations.Migration):
                 ('activity_type', models.CharField(default=b'discussion', max_length=100, choices=[(b'discussion', b'Discussion Activity'), (b'essay', b'Essay Activity'), (b'overdub', b'Overdub Media Activity')])),
                 ('permission_control', models.BooleanField(default=False)),
                 ('is_deleted', models.BooleanField(default=False)),
-                ('required_revisions', models.IntegerField()),
+                ('required_revisions', models.IntegerField(validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(50)])),
                 ('collection', models.ForeignKey(related_name='essays', on_delete=django.db.models.deletion.SET_NULL, blank=True, to='core.ActivityCollection', null=True)),
                 ('lesson', models.ManyToManyField(to='core.Lesson', null=True, blank=True)),
                 ('posts', models.ManyToManyField(to='core.Post', null=True, blank=True)),

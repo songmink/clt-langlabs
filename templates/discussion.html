@@ -180,16 +180,17 @@
 				<div id='CLTREC_container'><div id='CLTREC'></div></div>
 				<!-- ************************************************ -->
 				<br>
-             	<div id='posts'>
+             	<div id='posts' data-ajaxurl='{% url "delete_post" %}'>
 
              		 {% if user_post_num != 0 or not activity.read_after_post or user.is_superuser or user in private_users %}
 	                 <ul id='posts2' class="chat">
-	                 	{% for post in activity.posts.all reversed%}
+	                 	{% for post in posts reversed%}
 	                        
 	                        {% if not activity.private_mode or user in private_users or post.creator in private_users or post.creator == user %}
 	                        {% if not post.parent_post %}
 
 		                        <!-- Other's posts -->
+                                        <div id={{ post.id }}>
 		                        <li class="left clearfix chatlist" data-postid={{post.id}}>
 
 								{% if post.creator in private_users or post.creator.is_superuser %}
@@ -199,8 +200,16 @@
 								{% endif %}
 		                            <div class="chat-body clearfix">
 		                                <div class="header">
-		                                    <strong class="primary-font">{{ post.creator|capfirst }}</strong> <small class="pull-right text-muted">
-		                                        <span class="glyphicon glyphicon-time"></span>{{ post.created }}</small>
+		                                    <strong class="primary-font">{{ post.creator|capfirst }}</strong> 
+                                                    <small class="pull-right text-muted">
+		                                        <span class="glyphicon glyphicon-time"></span>{{ post.created }}
+                                                        {% if post.creator == user or user in private_users %}
+                                                            <small><a class="text-muted removePost" style='text-decoration:none;cursor:pointer;' >
+                                                               <i class="fa fa-remove text-danger"></i></a></small>
+                                                        {% endif %}
+
+
+                                                    </small>
 		                                </div>
 		                                <p>
 											{{ post.text|safe }}
@@ -233,10 +242,10 @@
 		                        <!-- Comment Section for posts -->
 		                        <div>
 		                            <ul class="comment">
-				                 	{% for post2 in activity.posts.all reversed%}
+				                 	{% for post2 in posts reversed%}
 				                 	    {% if user in private_users or post2.creator in private_users or post2.creator == user %}
 				                 	    {% if post2.parent_post == post %}
-				                        <li class="left clearfix commentlist" data-postid={{post2.id}}>
+				                        <li id="{{ post2.id }}" class="left clearfix commentlist" data-postid={{post2.id}}>
 
 											{% if post2.creator in private_users or post2.creator.is_superuser %}
 											<span><i class="fa fa-graduation-cap fa-fw fa-2x pull-left text-muted" style='font-size:2.1em;'></i></span>
@@ -246,8 +255,15 @@
 
 				                            <div class="chat-body clearfix">
 				                                <div class="header">
-				                                    <strong class="primary-font">{{ post2.creator|capfirst }}</strong> <small class="pull-right text-muted">
-				                                        <span class="glyphicon glyphicon-time"></span>{{ post2.created }}</small>
+				                                    <strong class="primary-font">{{ post2.creator|capfirst }}</strong> 
+                                                                    <small class="pull-right text-muted">
+				                                        <span class="glyphicon glyphicon-time"></span>
+                                                                                    {{ post2.created }}
+                                                                        {% if post2.creator == user or user in private_users %}
+                                                                        <small><a class="text-muted removePost" style='text-decoration:none;cursor:pointer;'>
+                                                                           <i class="fa fa-remove text-danger"></i></a></small>
+                                                                        {% endif %}
+                                                                    </small>
 				                                </div>
 				                                <p>
 													{{ post2.text|safe }}
@@ -275,7 +291,7 @@
 											{% endif %}
 				                    </ul>
 
-				                </div>
+				                </div></div>
 		                        <!--End of Comment Section-->
 
 	                        {% endif %}

@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
-from guardian.shortcuts import get_objects_for_user, get_users_with_perms
+from guardian.shortcuts import get_objects_for_user, get_users_with_perms, get_perms
 from itertools import chain
 from operator import attrgetter
 from copy import deepcopy
@@ -68,6 +68,7 @@ class UsersWithPermsMixin(object):
             result = User.objects.filter(is_superuser=True).all()
             for user, perms in anyperm.iteritems():
                 if 'edit_course' in perms:
+                    print user
                     result = chain(result, User.objects.filter(username=user))
             result = list(result)
             context['private_users'] = result
@@ -142,7 +143,7 @@ class ActivityViewPermissionMixin(object):
             if not self.request.user.has_perm("view_activity", obj):
                 raise PermissionDenied()
         else:
-            if not self.request.user.has_perm("view_course", obj.collection):
+            if not get_perms(self.request.user, obj.collection):
                 raise PermissionDenied()
 
         return obj
@@ -258,6 +259,18 @@ class ChatServerMixin(object):
         context['chatserver_protocol'] = settings.CHAT_SERVER_PROTOCOL
         context['chatserver_host'] = settings.CHAT_SERVER_HOST
         context['chatserver_port'] = settings.CHAT_SERVER_PORT
+        
+        return context
+
+
+class PostsListMixin(object):
+    ''' --PostsListMixin used to filter non-deleted activity posts. '''
+
+    def get_context_data(self, **kwargs):
+        ''' :returns: context that contains activity posts. '''
+       
+        context = super(PostsListMixin, self).get_context_data(**kwargs)
+        context['posts'] = self.get_object().posts.filter(is_deleted=False)
         
         return context
 

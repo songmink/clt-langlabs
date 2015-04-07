@@ -219,6 +219,7 @@
 			&nbsp;<span class="label label-default userResponseAllToggle" style='cursor:pointer;'>show all</span>
         </div>
 
+       <div id="essay_responses" data-ajaxurl="{% url 'delete_post' %}">
 		{% regroup all_essay_responses by user as response_list %}
 
 			{% for responses in response_list %}
@@ -281,7 +282,7 @@
 				    	        </div>
 
 					    {{response.review|safe}}
- <div style='height:2.0em;'><span>&nbsp;</span><span class='text-danger pull-right' style=""><i class="fa fa-gavel"></i><a href="{% url 'grade_essay' response.id %}" style='text-decoration:none;' class='text-danger'> Edit Review</a></span></div>
+ <div style='height:2.0em;'><span>&nbsp;</span><span class='text-danger pull-right' style=""><i class="fa fa-wrench"></i><a href="{% url 'grade_essay' response.id %}" style='text-decoration:none;' class='text-danger'> Edit Review</a></span></div>
 
 					    {% else %}
 					    <div style='height:2.0em;'><span>&nbsp;</span><span class='text-danger pull-right' style=""><i class="fa fa-gavel"></i><a href="{% url 'grade_essay' response.id %}" style='text-decoration:none;' class='text-danger'> Grade Essay</a></span></div> 
@@ -310,7 +311,8 @@
 
                         <ul id="draft_comments{{ response.id }}"  style='list-style-type: none;padding:0; margin:0;' data-responseid="{{response.id}}">
     						{% for post in response.posts.all %}
-	                        <li class="left clearfix commentlist">
+                                                {% if not post.is_deleted %}
+	                        <li id="{{ post.id }}" class="left clearfix commentlist" data-postid="{{ post.id }}">
 
 								{% if post.creator in private_users or post.creator.is_superuser %}
 								<span><i class="fa fa-graduation-cap fa-fw fa-2x pull-left text-muted" style='font-size:2.1em;'></i></span>
@@ -320,14 +322,22 @@
 
 	                            <div class="chat-body clearfix">
 	                                <div class="header">
-	                                    <strong class="primary-font">{{ post.creator|capfirst }}</strong> <small class="pull-right text-muted">
-	                                        <span class="glyphicon glyphicon-time"></span>{{ post.created }}</small>
+	                                    <strong class="primary-font">{{ post.creator|capfirst }}</strong> 
+                                            <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span>
+                                                                                {{ post.created }}
+                                                {% if post.creator == user or user in private_users %}
+                                                <small><a class="text-muted removePost" style='text-decoration:none;cursor:pointer;' >
+                                                    <i class="fa fa-remove text-danger"></i></a></small>
+                                                {% endif %}
+
+                                            </small>
 	                                </div>
 	                                <p>
 										{{ post.text|safe }}
 	                                </p>
 	                            </div>
 	                        </li>
+                                {% endif %}
 	                        {% endfor %}
 	                        {% if user in private_users or post.creator.is_superuser %}
 								<li class="left clearfix commentlist">
@@ -354,6 +364,7 @@
              </div>
 
 			{% endfor %}
+        </div>
 		
 	</div>
 </div>

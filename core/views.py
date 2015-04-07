@@ -9,20 +9,20 @@ from urllib import urlencode
 from urlparse import urljoin
 from django.conf import settings
 
-from braces.views import LoginRequiredMixin
+from braces.views import LoginRequiredMixin, CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin
 from guardian.shortcuts import assign_perm, remove_perm
 from guardian.mixins import PermissionRequiredMixin
 
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
-from django.views.generic import DetailView, CreateView
+from django.views.generic import DetailView, CreateView, View
 from django.views.generic.edit import UpdateView, DeleteView
 from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render_to_response
 from itertools import chain
 
-from core.mixins import CourseListMixin, ActivityListMixin, UsersWithPermsMixin, FakeDeleteMixin
+from core.mixins import CourseListMixin, ActivityListMixin, UsersWithPermsMixin, FakeDeleteMixin 
 
 from .models import ActivityCollection, Lesson, Post, Document
 
@@ -96,6 +96,10 @@ class CourseCreateView(LoginRequiredMixin, CourseListMixin, CreateView):
     template_name = 'collection_create.html'
     fields = ['title', 'nickname', 'description', 'accesscode', 'is_active','is_public']
 
+    def dispatch(self, *args, **kwargs):
+        # do not let anyone create a course at the moment
+        raise PermissionDenied();
+
     def form_valid(self, form):
         form.save()
         assign_perm('core.edit_course', self.request.user, form.instance)
@@ -165,11 +169,35 @@ class LessonAddView(LessonCreateView):
     def form_valid(self, form):
     # Auto set the following fields:
         form.instance.collection = get_object_or_404(
-            ActivityCollection, pk=self.kwargs['addpk'])
+            ActivityCollection, pk=self.kwargs['addpk'])
         return super(LessonAddView, self).form_valid(form)
 
     def get_success_url(self):
         return self.object.collection.get_absolute_url()
+
+
+
+
+class PostDeleteView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, View):
+    ''' -- Class based view which handles post deletions '''
+
+    def post_ajax(self, request, *args, **kwargs):
+        '''  '''
+    
+        post_id = request.POST.get("post_id")
+        post = Post.objects.get(pk=post_id)
+        post.is_deleted = True
+        post.save()
+    
+        # delete any children posts if it is a parent post
+        if not post.parent_post:
+            child_posts = Post.objects.filter(parent_post=post_id)
+            for child_post in child_posts:
+                child_post.is_deleted = True
+                child_post.save()
+
+        return self.render_json_response("Post success")
+
 
 # Save Post
 def savePost(request):
@@ -442,5 +470,4 @@ def uhcaslogout(request):
     logouturl += '?' + urlencode({'service': protocol + host })
     
     return HttpResponseRedirect(logouturl)
-
 

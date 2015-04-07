@@ -64,7 +64,7 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         """
 
         self.log('Connected nickname is: {0}'.format(nickname))
-        self.nicknames.append(nickname)
+	self.nicknames.append(nickname)
         self.socket.session['nickname'] = nickname
         try:
             self.socket.session['DjangoUser']= User.objects.get(username=nickname)
@@ -98,7 +98,17 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         savedMessage=self.postSave(msg["msg"], attachments = msg["attaches"], attachmentsName = msg["attachesName"], audio_URL=msg["audioURL"])
         thisID = savedMessage.id
         if savedMessage:
-            responseMessage = {"fromMessage":self.socket.session['nickname'], "message":msg, "createTime":str(savedMessage.created.strftime("%B %d, %Y, %I:%M %p")), "msgID":thisID}
+            create_time = str(savedMessage.created.strftime("%B %d, %Y, %I:%M %p"))
+            if "PM" in create_time:
+                create_time = create_time.replace("PM", "p.m.")
+            else:
+                create_time = create_time.replace("AM", "a.m.")
+            responseMessage = {
+                "fromMessage": self.socket.session['nickname'],
+                "message": msg, 
+                "createTime": create_time, 
+                "msgID": thisID
+            }
             self.emit_to_room_include_me(self.room, 'msg_to_room', json.dumps(responseMessage))
             return True
         else:
@@ -110,12 +120,26 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         :param msg: user's comment.
         """
         # save to Post model as a comment
-        self.log('User comment: {0}'.format(msg["cmt"]))
         savedMessage=self.postSave(msg["cmt"], parent_post=msg["parentID"])
-        thisID = savedMessage.id
         # respond to js part and append the message in the html
         if savedMessage:
-            responseMessage = {"fromMessage":self.socket.session['nickname'], "message":msg, "createTime": str(savedMessage.created.strftime("%B %d, %Y, %I:%M %p")), "msgID":thisID, "parentPost": msg["parentID"]}
+            if savedMessage.parent_post.is_deleted:
+                savedMessage.is_deleted = True
+                savedMessage.save()
+            thisID = savedMessage.id
+            create_time = str(savedMessage.created.strftime("%B %d, %Y, %I:%M %p"))
+            if "PM" in create_time:
+                create_time = create_time.replace("PM", "p.m.")
+            else:
+                create_time = create_time.replace("AM", "a.m.")
+            responseMessage = {
+                "fromMessage": self.socket.session['nickname'], 
+                "message": msg, 
+                "createTime": create_time, 
+                "msgID": thisID, 
+                "parentPost": msg["parentID"]
+            }
+            self.log('User comment: {0}'.format(msg["cmt"]))
             self.emit_to_room_include_me(self.room, 'cmt_to_room', json.dumps(responseMessage))
             return True
         else:
