@@ -1,0 +1,79 @@
+
+{% if activity_type == "essay" %}
+<li id="{{ post.id }}" class="left clearfix commentlist" data-postid="{{ post.id }}">
+    {% include 'post_subtemplate.html' with comment=post %}
+</li>
+{% else %}
+
+{% if not post.parent_post %}
+<div id={{ post.id }}>
+    <li class="left clearfix chatlist" data-postid={{post.id}}>
+
+        {% include 'post_subtemplate.html' with comment=post %}
+
+            <!-- get attachments from fat Post Model -->
+            {% if post.get_documents %}
+            <p class="attachDIV well" style="padding:8px;margin-bottom:0px;border-radius:0px;border:0px;background-color:#F8F8F8;">
+                {% for document in post.get_documents %}
+                <span><a class="fileLink text-muted" href="{{ document.accessURL }}"  ><i class="icon-file-alt"></i> {{ document }} </a></span>
+                {% endfor %}
+            </p>
+            {% endif %}
+
+            <!-- audio files -->
+            {% if post.audio_URL %}
+            {% load staticfiles %}
+            <div id="{{post.audio_URL|cut:"."}}" class='audioDiv'></div>
+            <script>
+                jwplayer("{{post.audio_URL|cut:"."}}").setup({
+                    file: "{{recorder_myServer}}{{recorder_myDirectory}}/{{post.audio_URL}}",
+                    width: "100%",
+                    skin: "{% static "jwplayer-skins/five.xml" %}",
+                    height: 30
+                });
+                {% if activity_type == "overdub" %}
+                jwplayer(msg.audioURL.slice(0,-4)).onPlay(function(){
+                    jwplayer("overdubVideo").play(true)
+                })
+                .onPause(function(){
+                    jwplayer("overdubVideo").pause(true)
+                })
+                .onComplete(function(){
+                    jwplayer("overdubVideo").stop(true)
+                    initialPause = 1
+                    jwplayer("overdubVideo").play(true)
+                });
+                {% endif %}
+            </script>
+            {% endif %}
+    </li>
+    <!-- comment section for post -->
+    <div>
+        <ul class="comment">
+            {% if posts %}
+                {% for post2 in posts reversed%}
+                    {% if user in private_users or post2.creator in private_users or post2.creator == user %}
+                        {% if post2.parent_post == post %}
+                            <li id="{{ post2.id }}" class="left clearfix commentlist" data-postid={{post2.id}}>
+                                {% include 'post_subtemplate.html' with comment=post2 %}
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
+            <li class="left clearfix commentlist">
+                {% include 'textarea_template.html' %}
+            </li>
+        </ul>
+    </div>
+    <!-- end of comment section -->
+</div>
+
+{% else %}
+<li id="{{ post.id }}" class="left clearfix commentlist" data-postid="{{post.id}}">
+    {% include 'post_subtemplate.html' with comment=post %}
+</li>
+{% endif %}
+{% endif %}
+

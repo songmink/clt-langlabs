@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.conf.urls.static import static
 admin.autodiscover()
 
-from core.views import IndexView, HomeView, CourseListView, CourseIndexView, CourseCreateView, CourseUpdateView, CourseDeleteView, CourseCopyView, ActivityCreateIndexView, LessonCreateView, LessonAddView, PostDeleteView, savePost, fileUpload, subscribeCourse, changePerm, copyActivity, editLessonTitle, editEssayDraft, uhcaslogout
+from core.views import IndexView, HomeView, CourseListView, CourseIndexView, CourseCreateView, CourseUpdateView, CourseDeleteView, CourseCopyView, ActivityCreateIndexView, LessonCreateView, LessonAddView, PostDeleteView, PostSaveView, savePost, fileUpload, subscribeCourse, changePerm, copyActivity, editLessonTitle, editEssayDraft, uhcaslogout
 from discussions.views import DiscussionCreateView, DiscussionDetailView, DiscussionUpdateView, DiscussionDeleteView
 from essays.views import EssayCreateView, EssayDetailView, EssayUpdateView, EssayDeleteView, EssayResponseUpdateView
 from overdub_discussions.views import OverdubCreateView, OverdubDetailView, OverdubUpdateView, OverdubDeleteView
@@ -38,7 +38,7 @@ urlpatterns = patterns('',
     url(r'^overdub/edit/(?P<pk>\d+)$', OverdubUpdateView.as_view(), name='edit_overdub'),
     url(r'^overdub/delete/(?P<pk>\d+)$', OverdubDeleteView.as_view(), name='delete_overdub'),
     url(r'^searchcourse/$', CourseListView.as_view(), name='course_list'),
-    url(r'^post/save/$',savePost, name='save_post'),
+    url(r'^post/save/$',PostSaveView.as_view(), name='save_post'),
     url(r'^post/delete/$', PostDeleteView.as_view(), name='delete_post'),
     url(r'^upload/$', fileUpload, name='file_upload'),
     url(r'^subscribe/(\w+)/$', subscribeCourse, name='subscribe_course'),

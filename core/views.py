@@ -20,6 +20,8 @@ from django.views.generic.edit import UpdateView, DeleteView
 from django.core.urlresolvers import reverse_lazy
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render_to_response
+from django.template import RequestContext
+from django.template.loader import render_to_string
 from itertools import chain
 
 from core.mixins import CourseListMixin, ActivityListMixin, UsersWithPermsMixin, FakeDeleteMixin 
@@ -176,14 +178,10 @@ class LessonAddView(LessonCreateView):
         return self.object.collection.get_absolute_url()
 
 
-
-
 class PostDeleteView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, View):
     ''' -- Class based view which handles post deletions '''
 
     def post_ajax(self, request, *args, **kwargs):
-        '''  '''
-    
         post_id = request.POST.get("post_id")
         post = Post.objects.get(pk=post_id)
         post.is_deleted = True
@@ -197,6 +195,61 @@ class PostDeleteView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, View
                 child_post.save()
 
         return self.render_json_response("Post success")
+
+
+class PostSaveView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, View):
+    ''' -- '''
+
+    def post_ajax(self, request, *args, **kwargs):
+        activity_type = request.POST.get('activity_type', '')
+        activity_id = request.POST.get('activity_id', '')
+        post = self.create_post(request)
+        if activity_type == 'discussion':
+            activity = DiscussionActivity.objects.get(pk=activity_id)
+            activity.posts.add(post)
+            private_users = activity.collection.get_private_users()
+        if activity_type == 'overdub':
+            activity = OverdubActivity.objects.get(pk=activity_id)
+            activity.posts.add(post)
+            private_users = activity.collection.get_private_users()
+        if activity_type == 'essay':
+            essay_response = EssayResponse.objects.get(pk=activity_id)
+            essay_response.posts.add(post)
+            private_users = essay_response.essay_activity.collection.get_private_users()
+
+        context = {
+            "post": post,
+            "private_users": private_users,
+            "activity_type": activity_type,   
+        }
+        rendered_string = render_to_string("post_template.html",
+                                  context,
+                                  context_instance=RequestContext(request))
+        return self.render_json_response(rendered_string) 
+
+    @staticmethod
+    def create_post(request):
+        parent_post = request.POST.get('parent_post', '')
+        audio_URL = request.POST.get('audioURL', '')
+        attachments = request.POST.get('attachments', '')
+        post_creator = request.user
+        text = request.POST.get('text', '')
+        if len(text) > 0:
+            post = Post(text=text)
+            post.creator = post_creator
+        if parent_post:
+            post.parent_post = parent_post
+        if audio_URL:
+            post.audio_URL = audio_URL
+        if post:
+            post.save()
+            if attachments:
+                for attachment in attachments:
+                    document = Document.objects.get(accessURL=attachment)
+                    document.content_object = post
+                    document.save()
+
+        return post
 
 
 # Save Post

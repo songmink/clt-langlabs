@@ -180,126 +180,23 @@
 				<div id='CLTREC_container'><div id='CLTREC'></div></div>
 				<!-- ************************************************ -->
 				<br>
-             	<div id='posts' data-ajaxurl='{% url "delete_post" %}'>
 
-             		 {% if user_post_num != 0 or not activity.read_after_post or user.is_superuser or user in private_users %}
-	                 <ul id='posts2' class="chat">
-	                 	{% for post in posts reversed%}
-	                        
-	                        {% if not activity.private_mode or user in private_users or post.creator in private_users or post.creator == user %}
-	                        {% if not post.parent_post %}
-
-		                        <!-- Other's posts -->
-                                        <div id={{ post.id }}>
-		                        <li class="left clearfix chatlist" data-postid={{post.id}}>
-
-								{% if post.creator in private_users or post.creator.is_superuser %}
-								<span><i class="fa fa-graduation-cap fa-fw fa-2x pull-left text-muted" style='font-size:2.1em; vertical-align: middle;'></i></span>
-								{% else %}
-								<span ><i class="fa fa-user fa-fw fa-2x pull-left text-muted" style='font-size:2.1em; vertical-align:middle;'></i></span>
-								{% endif %}
-		                            <div class="chat-body clearfix">
-		                                <div class="header">
-		                                    <strong class="primary-font">{{ post.creator|capfirst }}</strong> 
-                                                    <small class="pull-right text-muted">
-		                                        <span class="glyphicon glyphicon-time"></span>{{ post.created }}
-                                                        {% if post.creator == user or user in private_users %}
-                                                            <small><a class="text-muted removePost" style='text-decoration:none;cursor:pointer;' >
-                                                               <i class="fa fa-remove text-danger"></i></a></small>
-                                                        {% endif %}
+                    <div id='posts' data-ajaxurl='{% url "delete_post" %}'>
+                        {% if user_post_num != 0 or not activity.read_after_post or user.is_superuser or user in private_users %}
+                            <ul id='posts2' class="chat">
+                                {% for post in posts reversed%}
+                                    {% if not activity.private_mode or user in private_users or post.creator in private_users or post.creator == user %}
+                                        {% if not post.parent_post %}
+	                                    <!-- Other's posts -->
+                                            {% include 'post_template.html' with ativity_type=activity.activity_type %}
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
 
 
-                                                    </small>
-		                                </div>
-		                                <p>
-											{{ post.text|safe }}
-		                                </p>
-
-		                                <!-- get attachments from fat Post Model -->
-		                                {% if post.get_documents %}
-		                                <p class="attachDIV well " style="padding:8px;margin-bottom:0px;border-radius:0px;border:0px;background-color:#F8F8F8;">
-
-		                                	{% for document in post.get_documents %}
-		                                	<span><a class="fileLink text-muted" href="{{ document.accessURL }}"  ><i class="icon-file-alt"></i> {{ document }} </a></span>
-		                                	{% endfor %}
-
-		                                </p>
-										{% endif %}	
-                                        <!-- audio files -->
-											{% if post.audio_URL %}
-										    <div id="{{post.audio_URL|cut:"."}}" class='audioDiv'></div>
-										    <script>
-												jwplayer("{{post.audio_URL|cut:"."}}").setup({
-												        file: "{{recorder_myServer}}{{recorder_myDirectory}}/{{post.audio_URL}}",
-												        width: "100%",
-												        skin: "{% static "jwplayer-skins/five.xml" %}",
-												        height: 30
-												    });
-											</script> 
-											{% endif %}
-		                            </div>
-		                        </li>
-		                        <!-- Comment Section for posts -->
-		                        <div>
-		                            <ul class="comment">
-				                 	{% for post2 in posts reversed%}
-				                 	    {% if user in private_users or post2.creator in private_users or post2.creator == user %}
-				                 	    {% if post2.parent_post == post %}
-				                        <li id="{{ post2.id }}" class="left clearfix commentlist" data-postid={{post2.id}}>
-
-											{% if post2.creator in private_users or post2.creator.is_superuser %}
-											<span><i class="fa fa-graduation-cap fa-fw fa-2x pull-left text-muted" style='font-size:2.1em;'></i></span>
-											{% else %}
-											<span><i class="fa fa-user fa-fw fa-2x pull-left text-muted" style='font-size:2.1em;'></i></span>
-											{% endif %}
-
-				                            <div class="chat-body clearfix">
-				                                <div class="header">
-				                                    <strong class="primary-font">{{ post2.creator|capfirst }}</strong> 
-                                                                    <small class="pull-right text-muted">
-				                                        <span class="glyphicon glyphicon-time"></span>
-                                                                                    {{ post2.created }}
-                                                                        {% if post2.creator == user or user in private_users %}
-                                                                        <small><a class="text-muted removePost" style='text-decoration:none;cursor:pointer;'>
-                                                                           <i class="fa fa-remove text-danger"></i></a></small>
-                                                                        {% endif %}
-                                                                    </small>
-				                                </div>
-				                                <p>
-													{{ post2.text|safe }}
-				                                </p>
-				                            </div>
-				                        </li>
-				                        {% endif %}
-				                        {% endif %}
-			                        {% endfor %}
-				                        
-											{% if user in private_users or post.creator.is_superuser %}
-											<li class="left clearfix commentlist">
-											<span><i class="fa fa-graduation-cap fa-fw fa-2x pull-left text-muted text-center" style='font-size:2.1em; margin-right:0.2em;'></i></span>
-				                            <div class="chat-body clearfix" style='margin-left: 46px;'>
-												<textarea class="form-control" rows="2"></textarea>
-				                            </div>
-				                            </li>
-											{% else %}
-											<li class="left clearfix commentlist">
-											<span><i class="fa fa-user fa-fw fa-2x pull-left text-muted text-center" style='font-size:2.1em; margin-right:0.2em;'></i></span>
-				                            <div class="chat-body clearfix" style='margin-left: 46px;'>
-												<textarea class="form-control" rows="2"></textarea>
-				                            </div>
-				                            </li>
-											{% endif %}
-				                    </ul>
-
-				                </div></div>
-		                        <!--End of Comment Section-->
-
-	                        {% endif %}
-	                        {% endif %}
-	                    {% endfor %}
-	                </ul>
-	                {% endif %}
-            </div>
 			</div>
 		</div>
 	</div>
