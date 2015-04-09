@@ -9,7 +9,7 @@ var socket = io.connect(connectstr + "/discussionsPosts", {
 });
 
 // global
-var remove_icon = '<small><a class="text-muted removePost" style="text-decoration:none;cursor:pointer;"><i class="fa fa-remove text-danger"></i></a></small>'
+var remove_icon = '<small><a class="text-muted removePost" style="text-decoration:none;cursor:pointer;"><i class="fa fa-remove text-danger"></i></a></small>';
 
 // "read after post" check
 if( ($('#activity_title').data('userpostnum')===0  &&  $('#activity_title').data('readafterpost')=='True') && $('#activity_title').data('userisinstructor')===false){

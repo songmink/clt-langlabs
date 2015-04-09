@@ -112,6 +112,7 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
                 'activity_type': activity_type,
             }
             rendered_string = render_to_string("post_template.html", context)
+            self.log('User post: {0}'.format(msg["msg"]))
             self.emit_to_room_include_me(self.room, 'msg_to_room', rendered_string)
 
     def on_user_comment(self, msg):
