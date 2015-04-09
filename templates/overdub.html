@@ -199,7 +199,7 @@
 				<br>
 
 
-                    <div id='posts' data-ajaxurl='{% url "delete_post" %}'>
+                    <div id='posts' data-ajaxurl='{% url "delete_post" %}' data-saveajaxurl="{% url 'save_post' %}">
                         {% if user_post_num != 0 or not activity.read_after_post or user.is_superuser or user in private_users %}
                             <ul id='posts2' class="chat">
                                 {% for post in posts reversed%}

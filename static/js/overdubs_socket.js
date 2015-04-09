@@ -2,7 +2,11 @@
 
 // connect to namespaces
 var connectstr = $('#connectingDIV').data('protocol')+"://"+$('#connectingDIV').data('host') + ":" + $('#connectingDIV').data('port');
-var socket = io.connect(connectstr + "/discussionsPosts");
+var socket = io.connect(connectstr + "/discussionsPosts", {
+   'reconnect': 'true',
+   'reconnection delay': 500,
+   'max reconnection attempts': 3
+});
 
 // read after post function
 if( ($('#activity_title').data('userpostnum')==0  &&  $('#activity_title').data('readafterpost')=='True') && $('#activity_title').data('userisinstructor')==false){
@@ -48,22 +52,31 @@ socket.on('connect', function () {
     socket.on('cmt_to_room', comment);
 
     socket.on('reconnect', function () {
-        // console.log("reconnect: "+"reconnected to the server")
+        console.log("reconnected!");
     });
 
+    var attempt = 0
     socket.on('reconnecting', function () {
-        // console.log('reconnecting: '+'attempting to reconnect the server')
+       console.log("reconnection attempt "+ attempt++)
     });
 
-    socket.on('error', function (e) {
-        var temp = e ? e : 'A unknown error occurred'
+    socket.on('reconnect_failed', function () {
+       console.log("failed to reconnect")
     });
 
+    socket.on('error', function () {
+       console.log("couldn't connect to chat server");
+       // warning on page?
+       $('#connectingDIV').removeClass('show').addClass('hidden');
+       $('#connectedDIV').removeClass('hidden').addClass('show');
+       clear();
 
+    });
 
     function clear () {
         $('#postTextarea').val('')
     };
+
 var testtt=0;
 // DOM manipulation
     $(function () {
@@ -81,7 +94,26 @@ var testtt=0;
                     var tempATT_audio=''
                     tempATT_audio+=$("#inputAttachments").find('.audioName').first().text();
                     // send Post to server and get a reply of post id
-                    socket.emit('user message', {msg : $("#postTextarea").html() ,attaches: tempATT, attachesName:tempATT_name, audioURL:tempATT_audio});
+
+                    if (socket.socket.connected){
+                        socket.emit('user message', {
+                            msg : $("#postTextarea").html(),
+                            attaches: tempATT, 
+                            attachesName: tempATT_name,
+                            audioURL:tempATT_audio
+                        });
+                    }else {
+                        sendPost(csrftoken, {
+                            text: $('#postTextarea').html(),
+                            ajax_URL: $('#posts').data('saveajaxurl'),
+                            activity_id: $('#activityID').val(),
+                            activity_type: $('#activityType').val(),
+                            attaches: tempATT,
+                            attaches_name: tempATT_name,
+                            audio_URL: tempATT_audio
+                        });
+                    }
+
                     clear();
                     if(read_after_post_lock == true){
                         read_after_post_lock = false
@@ -106,7 +138,21 @@ var testtt=0;
             if ( event.which == 13 && $(this).val!="" ) {
                event.preventDefault();
                // comment($('#activityUSER').val(), $(this).val(), $(this).closest(".comment"))
-               socket.emit('user comment',{cmt : $(this).val(),parentID: $(this).closest(".comment").parent().prev().data('postid')});
+
+               if (socket.socket.connected) {
+                   rv = socket.emit('user comment',{
+                       cmt : $(this).val(),
+                       parentID: $(this).closest(".comment").parent().prev().data('postid')});
+               }else {
+                   sendPost(csrftoken,{
+                      text: $(this).val(),
+                      ajax_URL: $('#posts').data('saveajaxurl'),
+                      activity_id: $('#activityID').val(),
+                      activity_type: $('#activityType').val(),
+                      parent_post: $(this).closest('.comment').parent().prev().data('postid'),
+                   });
+               }
+
                //clear the input
                $(this).val('')
             }
@@ -118,6 +164,39 @@ var testtt=0;
         };
     });
     
+
+    // fallback method of posting comments when chat server is down
+    function sendPost(csrftoken, argv) {
+        console.log(argv.parent_post);
+        $.ajax({
+            type: "POST",
+            url: argv.ajax_URL,
+            async: "false",
+            beforeSend: function(xhr){
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            },
+            data: {
+                activity_type: argv.activity_type,
+                activity_id: argv.activity_id,
+                text: argv.text,
+                attachments: argv.attaches,
+                audioURL: argv.audio_URL,
+                parent_post: argv.parent_post
+            }
+        })
+        .done(function(response){
+            if (argv.parent_post) {
+                // it is a reply to a post
+                var parent_post = $("li[data-postid="+argv.parent_post+"]").next().find('.comment');
+                parent_post.prepend(response);
+            }else{
+                $('#posts2').prepend(response);
+            }
+        })
+        .fail(function(jqXHR, textStatus){
+        });
+    }
+
 
     function message (message) {
         if( read_after_post_lock == false){

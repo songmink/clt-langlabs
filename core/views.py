@@ -244,6 +244,8 @@ class PostSaveView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, View):
             post.creator = post_creator
         if parent_post:
             post.parent_post = parent_post
+            if post.parent_post.is_deleted:
+                post.is_deleted = True
         if audio_URL:
             post.audio_URL = audio_URL
         if post:

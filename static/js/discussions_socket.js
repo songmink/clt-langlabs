@@ -2,7 +2,11 @@
 
 // connect to name space
 var connectstr = $('#connectingDIV').data('protocol')+"://"+$('#connectingDIV').data('host') + ":" + $('#connectingDIV').data('port');
-var socket = io.connect(connectstr + "/discussionsPosts");
+var socket = io.connect(connectstr + "/discussionsPosts", {
+   'reconnect': 'true',
+   'reconnection delay': 500,
+   'max reconnection attempts': 3
+});
 
 // "read after post" check
 if( ($('#activity_title').data('userpostnum')===0  &&  $('#activity_title').data('readafterpost')=='True') && $('#activity_title').data('userisinstructor')===false){
@@ -48,19 +52,33 @@ socket.on('connect', function () {
     });
 
     // receive broadcast message
-    socket.on('msg_to_room', message);
+    socket.on('msg_to_room', message {//function(reponse) {
+        //$('#posts2').prepend(response);
+    });
 
     // receive broadcast comment
     socket.on('cmt_to_room', comment);
 
     socket.on('reconnect', function () {
+        console.log("reconnected!");
     });
 
+    var attempt = 0
     socket.on('reconnecting', function () {
+       console.log("reconnection attempt "+ attempt++)
     });
 
-    socket.on('error', function (e) {
-        var temp = e ? e : 'A unknown error occurred';
+    socket.on('reconnect_failed', function () {
+       console.log("failed to reconnect")
+    });
+
+    socket.on('error', function () {
+       console.log("couldn't connect to chat server");
+       // warning on page?
+       $('#connectingDIV').removeClass('show').addClass('hidden');
+       $('#connectedDIV').removeClass('hidden').addClass('show');
+       clear();
+   
     });
 
     function clear () {
@@ -157,7 +175,6 @@ socket.on('connect', function () {
 
     // fallback method of posting comments when chat server is down
     function sendPost(csrftoken, argv) {
-        console.log(argv.parent_post);
         $.ajax({
             type: "POST",
             url: argv.ajax_URL,
@@ -175,8 +192,7 @@ socket.on('connect', function () {
             }
         })
         .done(function(response){
-            if (argv.parent_post) {
-                // it is a reply to a post
+            if (argv.parent_post) { // it is a reply to a post
                 var parent_post = $("li[data-postid="+argv.parent_post+"]").next().find('.comment');
                 parent_post.prepend(response);
             }else{
