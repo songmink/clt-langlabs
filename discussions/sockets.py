@@ -7,6 +7,7 @@ from socketio.mixins import RoomsMixin, BroadcastMixin
 from socketio.sdjango import namespace
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
+from django.template.loader import render_to_string
 
 from datetime import datetime
 import pdb
@@ -95,24 +96,23 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         :param msg: user's message.
         """
         # save to Post model: 
-        savedMessage=self.postSave(msg["msg"], attachments = msg["attaches"], attachmentsName = msg["attachesName"], audio_URL=msg["audioURL"])
-        thisID = savedMessage.id
-        if savedMessage:
-            create_time = str(savedMessage.created.strftime("%B %-d, %Y, %I:%M %p"))
-            if "PM" in create_time:
-                create_time = create_time.replace("PM", "p.m.")
-            else:
-                create_time = create_time.replace("AM", "a.m.")
-            responseMessage = {
-                "fromMessage": self.socket.session['nickname'],
-                "message": msg, 
-                "createTime": create_time, 
-                "msgID": thisID
+        post = self.postSave(
+            msg["msg"], 
+            attachments = msg["attaches"], 
+            attachmentsName = msg["attachesName"], 
+            audio_URL=msg["audioURL"]
+        )
+        thisID = post.id
+        if post:
+            activity = self.socket.session['DjangoRoom']
+            activity_type = self.socket.session['roomType']
+            context = {
+                'post': post,
+                'private_users': activity.collection.get_private_users(),
+                'activity_type': activity_type,
             }
-            self.emit_to_room_include_me(self.room, 'msg_to_room', json.dumps(responseMessage))
-            return True
-        else:
-            return False
+            rendered_string = render_to_string("post_template.html", context)
+            self.emit_to_room_include_me(self.room, 'msg_to_room', rendered_string)
 
     def on_user_comment(self, msg):
         """-- Save and boradcast a user's comment to others' messages
@@ -120,30 +120,26 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         :param msg: user's comment.
         """
         # save to Post model as a comment
-        savedMessage=self.postSave(msg["cmt"], parent_post=msg["parentID"])
-        # respond to js part and append the message in the html
-        if savedMessage:
-            if savedMessage.parent_post.is_deleted:
-                savedMessage.is_deleted = True
-                savedMessage.save()
-            thisID = savedMessage.id
-            create_time = str(savedMessage.created.strftime("%B %-d, %Y, %I:%M %p"))
-            if "PM" in create_time:
-                create_time = create_time.replace("PM", "p.m.")
-            else:
-                create_time = create_time.replace("AM", "a.m.")
-            responseMessage = {
-                "fromMessage": self.socket.session['nickname'], 
-                "message": msg, 
-                "createTime": create_time, 
-                "msgID": thisID, 
-                "parentPost": msg["parentID"]
+        post = self.postSave(msg["cmt"], parent_post=msg["parentID"])
+        if post:
+            # mark as deleted if parent post was deleted while authoring this post
+            if post.parent_post.is_deleted:
+                post.is_deleted = True
+                post.save()
+
+            activity = self.socket.session['DjangoRoom']
+            activity_type = self.socket.session['roomType']
+            context = {
+                'post': post,
+                'private_users': activity.collection.get_private_users(),
+                'activity_type': activity_type,
+            }
+            response = {
+                'rendered_string': render_to_string("post_template.html", context),
+                'parent_post': msg['parentID']
             }
             self.log('User comment: {0}'.format(msg["cmt"]))
-            self.emit_to_room_include_me(self.room, 'cmt_to_room', json.dumps(responseMessage))
-            return True
-        else:
-            return False
+            self.emit_to_room_include_me(self.room, 'cmt_to_room', json.dumps(response))
 
     def postSave(self, msg, parent_post=None, audio_URL=None, attachments = None, attachmentsName = None):
         """-- Save a message as *POST*

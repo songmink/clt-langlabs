@@ -8,6 +8,9 @@ var socket = io.connect(connectstr + "/discussionsPosts", {
    'max reconnection attempts': 3
 });
 
+// global
+var remove_icon = '<small><a class="text-muted removePost" style="text-decoration:none;cursor:pointer;"><i class="fa fa-remove text-danger"></i></a></small>'
+
 // read after post function
 if( ($('#activity_title').data('userpostnum')==0  &&  $('#activity_title').data('readafterpost')=='True') && $('#activity_title').data('userisinstructor')==false){
     var read_after_post_lock = true
@@ -48,8 +51,33 @@ socket.on('connect', function () {
         // console.log('nicknames: '+nicknames)
     });
 
-    socket.on('msg_to_room', message);
-    socket.on('cmt_to_room', comment);
+    socket.on('msg_to_room', function(response) {
+        if (read_after_post_lock === false) {
+            var $new_post = $($.parseHTML(response));
+            var user = $('#activityUSER').val()
+            var user_is_instructor = $('#activity_title').data('userisinstructor');
+            var post_creator = $new_post.find('strong').html().toLowerCase()
+            if (user == post_creator || user_is_instructor) {
+                $new_post.find('small.pull-right').append(remove_icon)
+            }
+            $('#posts2').prepend($new_post);
+        }    
+    });
+
+    socket.on('cmt_to_room', function(data) {
+        if (read_after_post_lock === false) {
+            var response = eval ("(" + data + ")");
+            var $new_post = $($.parseHTML(response.rendered_string));
+            var user = $('#activityUSER').val();
+            var user_is_instructor = $('#activity_title').data('userisinstructor');
+            var post_creator = $new_post.find('strong').html().toLowerCase()
+            if (user == post_creator || user_is_instructor) {
+                $new_post.find('small.pull-right').append(remove_icon)
+            }
+            var $parent_post = $("li[data-postid="+ response.parent_post +"]").next().find('.comment');
+            $parent_post.prepend($new_post);
+        }
+    });
 
     socket.on('reconnect', function () {
         console.log("reconnected!");
@@ -133,6 +161,7 @@ var testtt=0;
             }
 
         });
+
         // Prepend comments for posts 
         $( "#posts" ).on( "keydown", "textarea", function(event) {
             if ( event.which == 13 && $(this).val!="" ) {
@@ -163,7 +192,6 @@ var testtt=0;
             $("#inputAttachments").html('')
         };
     });
-    
 
     // fallback method of posting comments when chat server is down
     function sendPost(csrftoken, argv) {
@@ -197,89 +225,3 @@ var testtt=0;
         });
     }
 
-
-    function message (message) {
-        if( read_after_post_lock == false){
-  
-            user = $("#activityUSER").val();
-            user_is_instructor = $('#activity_title').data('userisinstructor');
-            var mess=eval ("(" + message + ")");
-            from = mess.fromMessage
-            msg = mess.message
-            created = mess.createTime
-            msgID = mess.msgID
-            var deleteIcon;
-            if(msg.attaches.length>0){
-                var tempAttachments ='<p class="attachDIV well " style="padding:8px;margin-bottom:0px;border-radius:0px;border:0px;background-color:#F8F8F8;">'
-                for(var i=0; i<msg.attaches.length;i++){
-                       tempAttachments+='<span><a class="fileLink text-muted" href="'+msg.attaches[i]+'"  > <i class="icon-file-alt"></i> '+msg.attachesName[i]+'</a></span>'
-                }
-                tempAttachments+='</p>'
-            }else{
-                tempAttachments=''
-            }
-            if(from == user || user_is_instructor){
-                deleteIcon = ' <small><a class="text-muted removePost" style="text-decoration:none;cursor:pointer;" ><i class="fa fa-remove text-danger"></i></a></small>';
-            } else {
-                deleteIcon = '';
-            }
-            // temporarily add audio to links below the message
-            if(msg.audioURL) tempAttachments+='<div id="'+msg.audioURL.slice(0,-4)+'" class="audioDiv"></div>'
-            if(private_users.search('<User: '+from+'>') != -1){
-                var thumbNail = '<span><i class="fa fa-graduation-cap fa-2x pull-left fa-fw text-muted" style="font-size:2.1em;"></i></span>'
-            }else{
-                var thumbNail = '<span><i class="fa fa-user fa-2x pull-left fa-fw text-muted" style="font-size:2.1em;"></i></span>'
-            }
-            var temp = '<div id="'+msgID+'"><li class="left clearfix chatlist" data-postid='+msgID+'>'+thumbNail+'<div class="chat-body clearfix"><div class="header"><strong class="primary-font">'+from.substr(0,1).toUpperCase()+from.substr(1)+'</strong> <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span>'+created+deleteIcon+'</small></div><p>'+msg.msg+'</p>'+tempAttachments+'</div></li><div><ul class="comment">'+thumbNail_comment+'</ul></div></div> ' ;
-            $( "#posts2" ).prepend(temp);
-            if(msg.audioURL){
-                // set synchronization between audio and video player
-                jwplayer(msg.audioURL.slice(0,-4)).setup({
-                    file: recorderServer+recorderDirectory+"/"+msg.audioURL,
-                    width: "100%",
-                    skin: $("#recordTrigger").data('playerskin'),
-                    height: 30
-                });
-                jwplayer(msg.audioURL.slice(0,-4)).onPlay(function(){
-                    jwplayer("overdubVideo").play(true)
-                })
-                .onPause(function(){
-                    jwplayer("overdubVideo").pause(true)
-                })
-                .onComplete(function(){
-                    jwplayer("overdubVideo").stop(true)
-                    initialPause = 1
-                    jwplayer("overdubVideo").play(true)
-                })
-            }
-        }
-    }
-
-    // Add comments to post 
-    function comment (message) {
-        if( read_after_post_lock == false){
-            user = $("#activityUSER").val();
-            user_is_instructor = $('#activity_title').data('userisinstructor');
-            var mess=eval ("(" + message + ")");
-            from = mess.fromMessage
-            msg = mess.message
-            created = mess.createTime
-            msgID = mess.msgID
-            parentPost = mess.parentPost
-            var pp =$("li[data-postid="+parentPost+"]").next().find('.comment')
-            testtt=pp
-            var thumbNail, deleteIcon;
-            if(private_users.search('<User: '+from+'>') != -1){
-                thumbNail = '<span><i class="fa fa-graduation-cap fa-2x pull-left fa-fw text-muted" style="font-size:2.1em;"></i></span>'
-            }else{
-                thumbNail = '<span><i class="fa fa-user fa-2x pull-left fa-fw text-muted" style="font-size:2.1em;"></i></span>'
-            }
-            if(from == user || user_is_instructor){
-                deleteIcon = ' <small><a class="text-muted removePost" style="text-decoration:none;cursor:pointer;" ><i class="fa fa-remove text-danger"></i></a></small>';
-            } else {
-                deleteIcon = '';
-            }
-            var temp =  '<li id="'+msgID+'" class="left clearfix commentlist" data-postid='+msgID+'>'+thumbNail+'<div class="chat-body clearfix"><div class="header"><strong class="primary-font">'+from.substr(0,1).toUpperCase()+from.substr(1)+'</strong> <small class="pull-right text-muted"><span class="glyphicon glyphicon-time"></span>'+created+deleteIcon+'</small></div><p>'+msg.cmt+'</p></div></li>';
-            pp.prepend(temp);
-        }
-    }
