@@ -9,7 +9,7 @@
 <div id={{ post.id }}>
     <li class="left clearfix chatlist" data-postid={{post.id}}>
 
-        {% include 'post_subtemplate.html' with comment=post %}
+        {% include 'post_subtemplate.html' with comment=post private_users=private_users %}
 
             <!-- get attachments from fat Post Model -->
             {% if post.get_documents %}

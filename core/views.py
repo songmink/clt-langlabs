@@ -204,32 +204,37 @@ class PostSaveView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, View):
         activity_type = request.POST.get('activity_type', '')
         activity_id = request.POST.get('activity_id', '')
         post = self.create_post(request)
+        private_users = []
+        course = ActivityCollection() 
         if activity_type == 'discussion':
             activity = DiscussionActivity.objects.get(pk=activity_id)
             activity.posts.add(post)
-            private_users = activity.collection.get_private_users()
+            course = activity.collection
         if activity_type == 'overdub':
             activity = OverdubActivity.objects.get(pk=activity_id)
             activity.posts.add(post)
-            private_users = activity.collection.get_private_users()
+            course = activity.collection
         if activity_type == 'essay':
             essay_response = EssayResponse.objects.get(pk=activity_id)
             essay_response.posts.add(post)
-            private_users = essay_response.essay_activity.collection.get_private_users()
+            course = essay_response.essay_activity.collection
 
         context = {
             "post": post,
-            "private_users": private_users,
+            "private_users": course.get_private_users(),
             "activity_type": activity_type,   
         }
-        rendered_string = render_to_string("post_template.html",
-                                  context,
-                                  context_instance=RequestContext(request))
+        rendered_string = render_to_string("post_template.html", context,
+                                           context_instance=RequestContext(request))
         return self.render_json_response(rendered_string) 
 
     @staticmethod
     def create_post(request):
-        parent_post = request.POST.get('parent_post', '')
+        parent_post_id = request.POST.get('parent_post', '')
+        if parent_post_id:
+            parent_post = Post.objects.get(pk=parent_post_id)
+        else:
+            parent_post = None
         audio_URL = request.POST.get('audioURL', '')
         attachments = request.POST.get('attachments', '')
         post_creator = request.user
@@ -250,42 +255,6 @@ class PostSaveView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, View):
                     document.save()
 
         return post
-
-
-# Save Post
-def savePost(request):
-    ''' -- Function-based View for save a post instead of the chat server. '''
-
-    if request.method == 'POST':
-        postuser = request.user
-        textcontent = request.POST.get("text", '')
-        # activity to assign post to
-        activityType = request.POST.get("activity_type", '')
-        activityID = request.POST.get("activity_id", '')
-        #  validation and save
-        if len(textcontent) > 0:
-            mess = Post(text=textcontent)
-            mess.creator = postuser
-        if request.POST.get('parent_post', '') != '':
-            mess.parent_post = request.POST.get('parent_post', '')
-        if request.POST.get('audio_URL', '') != '':
-            mess.audio_URL = request.POST.get('audio', '')
-        mess.save()
-        #  save mess with that activity
-        if activityType == 'discussion':
-            activity = DiscussionActivity.objects.filter(id=activityID)[0]
-            activity.posts.add(mess)
-        if activityType == 'essay':
-            essayResponse = EssayResponse.objects.filter(id= activityID)[0]
-            essayResponse.posts.add(mess)
-            private_users = essayResponse.essay_activity.collection.get_private_users()
-            context = {
-                "post": mess,
-                "private_users": private_users,
-            }
-            return render_to_response('essay_response_comment.html', context)
-
-    return HttpResponse("Post Success")
 
 
 def fileUpload(request):

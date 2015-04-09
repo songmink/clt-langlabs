@@ -98,7 +98,7 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
         savedMessage=self.postSave(msg["msg"], attachments = msg["attaches"], attachmentsName = msg["attachesName"], audio_URL=msg["audioURL"])
         thisID = savedMessage.id
         if savedMessage:
-            create_time = str(savedMessage.created.strftime("%B %d, %Y, %I:%M %p"))
+            create_time = str(savedMessage.created.strftime("%B %-d, %Y, %I:%M %p"))
             if "PM" in create_time:
                 create_time = create_time.replace("PM", "p.m.")
             else:
@@ -127,7 +127,7 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
                 savedMessage.is_deleted = True
                 savedMessage.save()
             thisID = savedMessage.id
-            create_time = str(savedMessage.created.strftime("%B %d, %Y, %I:%M %p"))
+            create_time = str(savedMessage.created.strftime("%B %-d, %Y, %I:%M %p"))
             if "PM" in create_time:
                 create_time = create_time.replace("PM", "p.m.")
             else:

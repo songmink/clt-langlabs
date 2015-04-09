@@ -313,11 +313,9 @@
                                     {% include 'post_template.html' with activity_type=activity.activity_type %}
                                 {% endif %}
 	                    {% endfor %}
-	                    {% if user in private_users or post.creator.is_superuser %}
-                                <li class="left clearfix commentlist">
-                                    {% include 'textarea_template.html' %}
-	                        </li>
-                            {% endif %}
+                            <li class="left clearfix commentlist">
+                                {% include 'textarea_template.html' %}
+                            </li>
 
 	                </ul>
                     </div>
