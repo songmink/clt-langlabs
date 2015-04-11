@@ -9,6 +9,9 @@ $(document).ready(function(){
     $(".activity_admin_togg").click(function(){
       $("#activity_admin_div").toggle(20)
     })
+
+    $('.control_togg').tooltip();
+
     $(".perm_togg").click(function(){
       if ($(this).hasClass('fa-toggle-on')){
           var permission = $(this).closest('div').data('codename')
@@ -39,6 +42,8 @@ $(document).ready(function(){
           if(changeFlag){
               $(this).removeClass('fa-toggle-on text-primary')
               $(this).addClass('fa-toggle-off text-muted')
+              $(this).attr('title', 'toggle on and select the students who will have permission to view this activity').tooltip('fixTitle')
+
           }
       }else{
           var permission = "no_permission"
@@ -46,8 +51,10 @@ $(document).ready(function(){
           var changeFlag = ajaxChangePermission(ajax_URL, username, permission, 'essay', activity_id, 'enable_control', csrftoken)
           // make ajax call to change permission 
           if(changeFlag){
-            $(this).removeClass('fa-toggle-off text-muted')
-            $(this).addClass('fa-toggle-on text-primary')
+              $(this).removeClass('fa-toggle-off text-muted')
+              $(this).addClass('fa-toggle-on text-primary')
+              $(this).attr('title', 'toggle off to allow any student in the course to view this activity').tooltip('fixTitle')
+
           }
       }
     })

@@ -29,23 +29,27 @@
         
 		{% if activity.read_after_post and user in private_users or activity.read_after_post and user.is_superuser %}
 		<small class='text-muted pull-right'>
-		<span class="label label-default private_public_label" style="cursor:pointer;vertical-align: text-bottom;" data-toggle="tooltip" data-placement="left" title="Students can only read everyone's post after his/her initial post.">Read After Post</span>
+		<span class="label label-default private_public_label" style="cursor:pointer;vertical-align: text-bottom;" data-toggle="tooltip" data-placement="bottom" 
+                      title="Students can only read everyone's post after his/her initial post.">Read After Post</span>
 		</small>&nbsp;
 		{% endif %}
 
 		{% if activity.private_mode %}
 		<small class='text-muted pull-right'>
-		<span class="label label-default private_public_label" style="cursor:pointer;vertical-align: text-bottom;" data-toggle="tooltip" data-placement="right" title="Student can only interact with course instructors.">Private Mode</span>
+		<span class="label label-default private_public_label" style="cursor:pointer;vertical-align: text-bottom;" data-toggle="tooltip" data-placement="bottom" 
+                      title="Student can only interact with course instructors.">Private Mode</span>
 		</small>&nbsp;
 		{% else %}
 		<small class='text-muted pull-right'>
-		<span class="label label-primary private_public_label" style="cursor:pointer;vertical-align: text-bottom;" data-toggle="tooltip" data-placement="right" title="Student can interact with any member in the course.">Public Mode</span>
+		<span class="label label-primary private_public_label" style="cursor:pointer;vertical-align: text-bottom;" data-toggle="tooltip" data-placement="bottom" 
+                      title="Student can interact with any member in the course.">Public Mode</span>
 		</small>&nbsp;
 		{% endif %}
 
 	</h1>
 
 	<!-- Preset the thumbNail style for Instructors and Students -->
+    {% comment %}
     <script>
     var private_users="{{private_users|safe}}"
     var current_user ="{{user}}"
@@ -55,7 +59,7 @@
     	var thumbNail_comment='<li class="left clearfix commentlist"><span><i class="fa fa-user fa-2x pull-left fa-fw text-muted text-center" style="font-size:2.1em; margin-right:0.2em;"></i></span><div class="chat-body clearfix" style="margin-left: 46px;"><textarea class="form-control" rows="2"></textarea></div></li>'
     }
     </script>
-
+    {% endcomment %}
 
     {% if "edit_course" in course_perms%}
     <!-- activity admin div -->
@@ -65,9 +69,11 @@
 		<!-- Permission control for students of this course -->
 		<small>
 		{% if activity.permission_control%}
-		<i class="fa fa-toggle-on text-primary control_togg" style='cursor:pointer;'></i>
+		<i class="fa fa-toggle-on text-primary control_togg" style='cursor:pointer;' data-toggle="tooltip"
+                   title="toggle off to allow any student in the course to view this activity"></i>
 		{% else %}
-		<i class="fa fa-toggle-off text-muted control_togg" style='cursor:pointer;'></i>
+		<i class="fa fa-toggle-off text-muted control_togg" style='cursor:pointer;' data- toggle="tooltip"
+                   title="toggle on and select the students who will have permission to view this activity"></i>
 		{% endif %}
 	    </small>
 	</span>

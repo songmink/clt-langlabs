@@ -44,11 +44,13 @@
 	<h2 id='activity_admin' data-ajaxURL="{% url 'change_perm' %}" data-activityid="{{activity.id}}">Activity Membership Administration
 	<span> &nbsp;
 		<small>
-		{% if activity.permission_control%}
-		<i class="fa fa-toggle-on text-primary control_togg" style='cursor:pointer;'></i>
-		{% else %}
-		<i class="fa fa-toggle-off text-muted control_togg" style='cursor:pointer;'></i>
-		{% endif %}
+                {% if activity.permission_control%}
+                <i class="fa fa-toggle-on text-primary control_togg" style='cursor:pointer;' data-toggle="tooltip"
+                   title="toggle off to allow any student in the course to view this activity"></i>
+                {% else %}
+                <i class="fa fa-toggle-off text-muted control_togg" style='cursor:pointer;' data- toggle="tooltip"
+                   title="toggle on and select the students who will have permission to view this activity"></i>
+                {% endif %}
 	    </small>
 	</span>
 
