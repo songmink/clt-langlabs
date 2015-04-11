@@ -121,32 +121,35 @@ class ActivityViewPermissionMixin(object):
     ''' -- ActivityViewPermissionMixin checks current user's permission to view an activity, and provides screening. '''
 
     def get_object(self, queryset=None):
-        obj = super(ActivityViewPermissionMixin, self).get_object(queryset)
         '''  :returns: "Permission Denied" page if the course/activity is inactive OR deleted AND the user is not an instructor, OR if user is not a member of the course, OR if svtivity membership is on AND the user is not a member. '''
 
- 
+        activity = super(ActivityViewPermissionMixin, self).get_object(queryset)
+        course = activity.collection
+        user = self.request.user
         # if course is inactive or deleted and user doesn't have edit_course
         # perm, then raise 403
-        if not obj.collection.is_active or obj.collection.is_deleted:
-            if not self.request.user.has_perm("core.edit_course", obj.collection):
+        if not course.is_active or course.is_deleted:
+            if not user.has_perm("core.edit_course", course):
                 raise PermissionDenied()
 
         # if activity is inactive or deleted and user doesn't have edit_course
         # perm, then raise 403
-        if not obj.is_active or obj.is_deleted:
-            if not self.request.user.has_perm("core.edit_course", obj.collection):
+        if not activity.is_active or activity.is_deleted:
+            if not user.has_perm("core.edit_course", course):
                 raise PermissionDenied()
 
+        # if user is not an instructor check the following:
         # if activity membership is on, check if user can view_activity. Otherwise
         # just check if user can course_view.
-        if obj.permission_control == True:
-            if not self.request.user.has_perm("view_activity", obj):
-                raise PermissionDenied()
-        else:
-            if not get_perms(self.request.user, obj.collection):
-                raise PermissionDenied()
+        if not user.has_perm('edit_course', course):
+            if activity.permission_control == True:
+                if not user.has_perm("view_activity", activity):
+                    raise PermissionDenied()
+            else:
+                if not get_perms(user, course):
+                    raise PermissionDenied()
 
-        return obj
+        return activity
 
 
 class ActivityListMixin(object):
