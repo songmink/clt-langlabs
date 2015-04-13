@@ -1,0 +1,154 @@
+
+<h1 id="activity_title" class="page-header " data-userpostnum="{{user_post_num}}" data-readafterpost="{{activity.read_after_post}}" 
+    data-userisinstructor="{% if user in private_users or user.is_superuser %}true{% else %}false{% endif %}">
+    {{ activity.title }}
+
+{% if "edit_course" in course_perms %}
+    <small><small>
+        <a href="{% url 'edit_'|add:activity.activity_type activity.id %}" class="text-muted" style="text-decoration:none;">
+            <i class="fa fa-pencil-square-o"></i></a></small></small>
+    <small><small>
+        <a href="{% url 'delete_'|add:activity.activity_type activity.id %}" class="text-muted" style="text-decoration:none;">
+            <i class="fa fa-trash-o"></i></a></small></small>
+    <small><small>
+        <a class="text-muted activity_admin_togg" style="text-decoration:none; cursor: pointer;">
+            <i class="fa fa-user"></i></a></small></small>
+    <small><small>
+        <a class="text-muted activity_copy_togg" style="text-decoration:none;cursor:pointer;" >
+            <i class="fa fa-files-o"></i></a></small></small>
+{% else %}
+    {% if activity.permission_control %}
+        <small><small><a class="text-muted activity_members_togg" style="text-decoration:none; cursor: pointer;"><i class="fa fa-users"></i></a></small></small>
+    {% endif %}
+{% endif %}
+
+
+{% if activity.activity_type == 'essay' %}
+
+    {% if "edit_course" not in course_perms %}
+    <!-- draftbook and discussion toggle -->
+    <div class="btn-group pull-right essaySectionToggle" data-toggle="buttons">
+        <label class="btn btn-info btn-sm sectionToggle active text-muted">
+            <input type="radio" name="options" id="option1" autocomplete="off" value="essay_draftbook" checked> 
+                <p class="lead" style="margin-bottom:0px;"><i class="fa fa-pencil" ></i>  Draftbook</p>
+        </label>
+        <label class="btn btn-info btn-sm sectionToggle text-muted">
+            <input type="radio" name="options" id="option2" autocomplete="off" value="essay_discussion"> 
+                <p class="lead" style="margin-bottom:0px;"><i class="fa fa-coffee"></i>  Discussion</p>
+        </label>
+    </div>
+    {% endif %}
+
+{% else %}{# discussion or overdub #}
+
+    {% if activity.read_after_post and user in private_users or activity.read_after_post and user.is_superuser %}
+        <small class="text-muted pull-right">
+            <span class="label label-default private_public_label" style="cursor:pointer;vertical-align: text-bottom;" data-toggle="tooltip" 
+                  data-placement="bottom" title="Students can only read everyone's post after his/her initial post.">Read After Post</span>
+        </small>&nbsp;
+    {% endif %}
+
+    {% if activity.private_mode %}
+        <small class="text-muted pull-right">
+            <span class="label label-default private_public_label" style="cursor:pointer;vertical-align: text-bottom;" data-toggle="tooltip" 
+                  data-placement="bottom" title="Student can only interact with course instructors.">Private Mode</span>
+            </small>&nbsp;
+    {% else %}
+        <small class="text-muted pull-right">
+            <span class="label label-primary private_public_label" style="cursor:pointer;vertical-align: text-bottom;" data-toggle="tooltip" 
+                  data-placement="bottom" title="Student can interact with any member in the course.">Public Mode</span>
+        </small>&nbsp;
+    {% endif %}
+
+{% endif %}
+</h1>
+
+
+{% if 'edit_course' in course_perms %}
+{% load guardian_tags %}
+    <!-- activity administration div -->
+    <div id='activity_admin_div' class='well' style='display:none'>
+        <h2 id='activity_admin' data-ajaxURL="{% url 'change_perm' %}" data-activityid="{{activity.id}}">Activity Membership Administration
+            <span>&nbsp;<small>
+            <!-- permission control for students of this course -->
+                {% if activity.permission_control%}
+                    <i class="fa fa-toggle-on text-primary control_togg" style='cursor:pointer;' data-toggle="tooltip"
+                       title="toggle off to allow any student in the course to view this activity"></i>
+                {% else %}
+                    <i class="fa fa-toggle-off text-muted control_togg" style='cursor:pointer;' data- toggle="tooltip"
+                       title="toggle on and select the students who will have permission to view this activity"></i>
+                {% endif %}
+            </small></span>
+        </h2>
+
+        <div class='row'>
+            {% csrf_token %}
+            <div class='col-xs-6 text-center lead Bold'>
+                <u><strong> User Name </strong></u>
+            </div>
+            <div class='col-xs-6 text-center lead column_togg' style='cursor:pointer;' data-columnclass='view_activity'>
+                <u><strong> View Activity </strong></u>
+            </div>
+           
+            {% for SingleUser, Permissions in object_course_users.items %}
+                {% if SingleUser != user and not SingleUser.is_superuser %}
+                    <div class='admin_row' data-username='{{SingleUser}}'>
+                        <div class='col-xs-6 text-center lead'>
+                            <p>{{SingleUser}}</p>
+                        </div>
+                        <div class='col-xs-6 text-center lead ' data-codename="{{ activity.activity_type }}s.view_activity">
+                            <p>
+                                {% get_obj_perms SingleUser for activity as "activity_temp_perms" %}
+                                {% if "view_activity" in activity_temp_perms %}
+                                    <i class="fa fa-toggle-on text-primary fa-lg perm_togg view_activity" style='cursor:pointer;'></i>
+                                {% else %}
+                                    <i class="fa fa-toggle-off text-muted fa-lg perm_togg view_activity" style='cursor:pointer;'></i>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div><!-- end activity administration div -->
+
+    <!-- activity copy div -->
+    <div id='activity_copy_div' class='well' style='display:none'>
+        <h2 id='activity_copy' > Activity Duplicate </h2>
+        <div class='row'>
+            <div class='col-xs-5' style='font-size:20px;'> Copy <u>{{activity.title}}</u> to</div>
+            <div class='col-xs-4'>
+                <select class="form-control" id='activity_copy_course'>
+                    {% for course_item in course_list %}
+                        {% get_obj_perms user for course_item as "course_temp_perms" %}
+                        {% if course_item.is_active or "edit_course" in course_temp_perms %}
+                            <option data-courseid="{{course_item.id}}">{{ course_item.title }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class='col-xs-3'>
+                <button id='activity_copy_btn' type="button" class="btn btn-success" data-ajaxurl="{% url 'copy_activity' %}" 
+                        data-activitytype='{{activity.activity_type}}' data-activityid='{{activity.id}}'>Go Copy
+                </button>
+            </div>
+        </div>
+    </div><!-- end of activity copy -->
+
+{% else %}
+    
+    {% if activity.permission_control %}
+        <div id='activity_members_div' class='well' style='display:none;'>
+            <span id='activity_members'>GROUP MEMBERS: </span>
+                {% for SingleUser, Permissions in object_course_users.items %}
+                    {% if  not SingleUser.is_superuser %}
+                        {% get_obj_perms SingleUser for activity as "activity_temp_perms" %}
+                        {% if "view_activity" in activity_temp_perms %}
+                            &nbsp;<span class="label label-info" >{{SingleUser}}</span>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+        </div>
+    {% endif %}
+
+{% endif %}

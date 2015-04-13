@@ -15,7 +15,11 @@
         </small>
     </div>
     <p>
-        {{ comment.text }}
+        {% if comment.parent_post %}
+            {{ comment.text }}
+        {% else %}
+            {{ comment.text|safe }}
+        {% endif %}
     </p>
 </div>
 
