@@ -1,0 +1,37 @@
+{% load staticfiles %}
+<div>
+    <form role="form">{% csrf_token %}
+        <input id='activityType' type="hidden" name="activityTypes" value='{{ activity.activity_type }}'>
+        <input id='activityID' type="hidden" name="activityIDs" value='{{ activity.id }}'>
+        <input id='activityUSER' type="hidden" name="activityUSERs" value='{{ user }}'>
+        <div id='postTextarea' class="form-control" style='border-radius:4px 4px 0px 0px;'></div>
+        <div class="input-group">
+            <button id='sendPost' type="button" class="btn btn-default btn-xs full-width" value='{% url "save_post" %}' style='border-radius:0px 0px 0px 4px;'>
+                <span class="glyphicon glyphicon-send"></span> send
+            </button>
+            <div class="input-group-btn">
+                <button id='uploadTrigger' type="button" class="btn btn-default btn-xs">
+                    <span class="glyphicon glyphicon-file"></span> upload
+                </button>
+                <button id='recordTrigger' type="button" class="btn btn-default btn-xs" data-swfurl="{% static "swf/barebonesRecorder7.swf" %}" 
+                        data-recorderserver='{{recorder_myServer}}' data-recorderhandler='{{recorder_myHandler}}' data-recorderdirectory='{{recorder_myDirectory}}' 
+                        data-recorderlicense='{{recorder_license}}' data-userinfo='audio_{{ user.id}}_{{user.username}}' 
+                        data-playerskin="{% static "jwplayer-skins/five.xml" %}" style='border-radius:0px 0px 4px 0px;'>
+                    <span class="glyphicon glyphicon-record"></span> record
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- *******************file upload****************** -->
+<!-- The file input field used as target for the file upload widget -->
+<input id="fileupload" type="file" name="file" style="display:none;" multiple>
+    <!-- The global progress bar -->
+    <div id="progress" class="progress" style='height:1px;margin:0px;opacity:0.7;'>
+        <div class="progress-bar progress-bar-success"></div>
+    </div>
+    <!-- container for the uploaded files -->
+    <div id='inputAttachments'></div>
+    <!-- container for recorder -->
+    <div id='CLTREC_container'><div id='CLTREC'></div></div>

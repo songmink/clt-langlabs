@@ -7,227 +7,61 @@
 {% get_obj_perms user for course as "course_perms" %}
 {% get_obj_perms user for activity as "activity_perms" %}
 
-{% if activity.permission_control and 'view_activity' not in activity_perms and 'edit_course' not in couse_perms %}
+{% include 'activity_header_template.html' %} 
 
-<h1 class='text-primary text-center'> You're not part of this activity </h1>
-
-{% else %}
-
-    {% include 'activity_header_template.html' %} 
-{% comment %}
-	<h1 id='activity_title' class="page-header " data-userpostnum='{{user_post_num}}' data-readafterpost='{{activity.read_after_post}}' data-userisinstructor='{% if user in private_users or user.is_superuser %}true{% else %}false{% endif %}'>{{ activity.title }}
-
-	{% if "edit_course" in course_perms%}
-
-	<small><small><a href="{% url 'edit_discussion' activity.id %}" class="text-muted" style='text-decoration:none;'><i class="fa fa-pencil-square-o"></i></a></small></small>
-	<small><small><a href="{% url 'delete_discussion' activity.id %}" class="text-muted" style='text-decoration:none;'><i class="fa fa-trash-o"></i></a></small></small>
-	<small><small><a class="text-muted activity_admin_togg" style='text-decoration:none; cursor: pointer;'><i class="fa fa-user"></i></a></small></small>
-	<small><small><a class="text-muted activity_copy_togg" style='text-decoration:none; cursor:pointer;'><i class="fa fa-files-o"></i></a></small></small>
-	{% else %}
-        {% if activity.permission_control %}
-        	<small><small><a class="text-muted activity_members_togg" style='text-decoration:none; cursor: pointer;'><i class="fa fa-users"></i></a></small></small>
-        {% endif %}
-    {% endif %}
-        
-		{% if activity.read_after_post and user in private_users or activity.read_after_post and user.is_superuser %}
-		<small class='text-muted pull-right'>
-		<span class="label label-default private_public_label" style="cursor:pointer;vertical-align: text-bottom;" data-toggle="tooltip" data-placement="bottom" 
-                      title="Students can only read everyone's post after his/her initial post.">Read After Post</span>
-		</small>&nbsp;
-		{% endif %}
-
-		{% if activity.private_mode %}
-		<small class='text-muted pull-right'>
-		<span class="label label-default private_public_label" style="cursor:pointer;vertical-align: text-bottom;" data-toggle="tooltip" data-placement="bottom" 
-                      title="Student can only interact with course instructors.">Private Mode</span>
-		</small>&nbsp;
-		{% else %}
-		<small class='text-muted pull-right'>
-		<span class="label label-primary private_public_label" style="cursor:pointer;vertical-align: text-bottom;" data-toggle="tooltip" data-placement="bottom" 
-                      title="Student can interact with any member in the course.">Public Mode</span>
-		</small>&nbsp;
-		{% endif %}
-
-	</h1>
-
-	<!-- Preset the thumbNail style for Instructors and Students -->
-    <script>
-    var private_users="{{private_users|safe}}"
-    var current_user ="{{user}}"
-	if(private_users.search('<User: '+current_user+'>') != -1){
-    	var thumbNail_comment='<li class="left clearfix commentlist"><span><i class="fa fa-graduation-cap fa-2x pull-left fa-fw text-muted text-center" style="font-size:2.1em; margin-right:0.2em;"></i></span><div class="chat-body clearfix" style="margin-left: 46px;"><textarea class="form-control" rows="2"></textarea></div></li>'
-    }else{
-    	var thumbNail_comment='<li class="left clearfix commentlist"><span><i class="fa fa-user fa-2x pull-left fa-fw text-muted text-center" style="font-size:2.1em; margin-right:0.2em;"></i></span><div class="chat-body clearfix" style="margin-left: 46px;"><textarea class="form-control" rows="2"></textarea></div></li>'
-    }
-    </script>
-
-    {% if "edit_course" in course_perms%}
-    <!-- activity admin div -->
-	<div id='activity_admin_div' class='well' style='display:none'>
-	<h2 id='activity_admin' data-ajaxURL="{% url 'change_perm' %}" data-activityid="{{activity.id}}">Activity Membership Administration
-	<span> &nbsp;
-		<!-- Permission control for students of this course -->
-		<small>
-		{% if activity.permission_control%}
-		<i class="fa fa-toggle-on text-primary control_togg" style='cursor:pointer;' data-toggle="tooltip"
-                   title="toggle off to allow any student in the course to view this activity"></i>
-		{% else %}
-		<i class="fa fa-toggle-off text-muted control_togg" style='cursor:pointer;' data- toggle="tooltip"
-                   title="toggle on and select the students who will have permission to view this activity"></i>
-		{% endif %}
-	    </small>
-	</span>
-	</h2>
-
-	<div class='row'>
-		{% csrf_token %}
-		<div class='col-xs-6 text-center lead Bold'>
-            <u><strong> User Name </strong></u>
-		</div>
-		<div class='col-xs-6 text-center lead column_togg' style='cursor:pointer;' data-columnclass='view_activity'>
-            <u><strong> View Activity </strong></u>
-		</div>
-		{% for SingleUser, Permissions in object_course_users.items %}
-		   {% if SingleUser != user and not SingleUser.is_superuser %}
-		    <div class='admin_row' data-username='{{SingleUser}}'>
-				<div class='col-xs-6 text-center lead'>
-		            <p>{{SingleUser}}</p>
-				</div>
-				<div class='col-xs-6 text-center lead ' data-codename="discussions.view_activity">
-		            <p>
-						{% get_obj_perms SingleUser for activity as "activity_temp_perms" %}
-		   		            	{% if "view_activity" in activity_temp_perms %}
-				            	<i class="fa fa-toggle-on text-primary fa-lg perm_togg view_activity" style='cursor:pointer;'></i>
-				            	{% else %}
-				            	<i class="fa fa-toggle-off text-muted fa-lg perm_togg view_activity" style='cursor:pointer;'></i>
-				            	{% endif %} 
-		            </p>
-				</div>
-		    </div> 
-		   {% endif %}
-		{% endfor %}
-	</div>
-	</div>
-	<!-- Activity Copy -->
-	<div id='activity_copy_div' class='well' style='display:none'>
-	<h2 id='activity_copy' > Activity Duplicate </h2>
-
-	<div class='row'>
-		<div class='col-xs-5' style='font-size:20px;'> Copy <u>{{activity.title}}</u> to</div>
-		<div class='col-xs-4'>
-        <select class="form-control" id='activity_copy_course'>
-				{% load guardian_tags %}
-                {% for course_item in course_list %}
-                  {% get_obj_perms user for course_item as "course_temp_perms" %}
-                  {% if course_item.is_active or "edit_course" in course_temp_perms %}
-                  <option data-courseid="{{course_item.id}}">{{ course_item.title }}</option>
-                  {% endif %}
-                {% endfor %}
-        </select>
-	    </div>
-	    <div class='col-xs-3'><button id='activity_copy_btn' type="button" class="btn btn-success" data-ajaxurl="{% url 'copy_activity' %}" data-activitytype='{{activity.activity_type}}' data-activityid='{{activity.id}}'>Go Copy</button></div>
-	</div>
-	</div>
-	<!-- End of Activity Copy -->
-	{% else %}
-		<!-- Group Members Info -->
-	    {% if activity.permission_control %}
-	    <div id='activity_members_div' class='well' style='display:none;'>
-		<span id='activity_members'>GROUP MEMBERS: </span>
-			{% for SingleUser, Permissions in object_course_users.items %}
-			   {% if  not SingleUser.is_superuser %}
-					{% get_obj_perms SingleUser for activity as "activity_temp_perms" %}
-   		            	{% if "view_activity" in activity_temp_perms %}
-		            	&nbsp;<span class="label label-info">{{SingleUser}}</span>
-		            	{% endif %} 
-			   {% endif %}
-			{% endfor %}
+<div class="container-fluid" style='height:100%;'>
+    <div class="row " >
+        <div class="col-md-4" > <!-- style="border-right: 1px solid #ccc;" -->
+            <h2>Instructions:</h2>
+            {{ activity.instructions|safe }}
         </div>
-	    {% endif %}
-	    <!-- End of Group Members Info -->
-	{% endif %}
+        <div id='connectingDIV' class='row col-md-8 show' data-port="{{ chatserver_port}}" data-host="{{ chatserver_host }}" data-protocol="{{ chatserver_protocol }}">
+            <div id='sysMessage' class="col-md-4 col-md-offset-4"><i class="fa fa-spinner fa-spin fa-5x"></i> Connecting to server ...</div>
+        </div>
+        <div id="connectedDIV" class="col-md-8 hidden">
 
+            {% include 'discussion_form_template.html' %}
 
-{% endcomment %}
-	<div class="container-fluid" style='height:100%;'>
-		<div class="row " >
-			<div class="col-md-4" > <!-- style="border-right: 1px solid #ccc;" -->
-				<h2>Instructions:</h2>
-				{{ activity.instructions|safe }}
+            <br>
 
-			</div>
-     		<div id='connectingDIV' class='row col-md-8 show' data-port="{{ chatserver_port}}" data-host="{{ chatserver_host }}" data-protocol="{{ chatserver_protocol }}">
-	            <div id='sysMessage' class="col-md-4 col-md-offset-4"><i class="fa fa-spinner fa-spin fa-5x"></i> Connecting to server ...</div>
-     		</div>
-			<div id="connectedDIV" class="col-md-8 hidden">
-	            <div>
-					<form role="form">{% csrf_token %}
-					<input id='activityType' type="hidden" name="activityTypes" value='{{ activity.activity_type }}'>
-					<input id='activityID' type="hidden" name="activityIDs" value='{{ activity.id }}'>
-					<input id='activityUSER' type="hidden" name="activityUSERs" value='{{ user }}'>
-					<div id='postTextarea' class="form-control" style='border-radius:4px 4px 0px 0px;'></div>
-					<div class="input-group">
-					<button id='sendPost' type="button" class="btn btn-default btn-xs full-width" value='{% url "save_post" %}' style='border-radius:0px 0px 0px 4px;'><span class="glyphicon glyphicon-send"></span> send</button>
-					<div class="input-group-btn">
-					<button id='uploadTrigger' type="button" class="btn btn-default btn-xs" data-uploadurl="{% url 'file_upload' %}"><span class="glyphicon glyphicon-file"></span> upload</button>
-					<button id='recordTrigger' type="button" class="btn btn-default btn-xs" data-swfurl="{% static "swf/barebonesRecorder7.swf" %}" data-recorderserver='{{recorder_myServer}}' data-recorderhandler='{{recorder_myHandler}}' data-recorderdirectory='{{recorder_myDirectory}}' data-recorderlicense='{{recorder_license}}' data-userinfo='audio_{{ user.id}}_{{user.username}}' data-playerskin="{% static "jwplayer-skins/five.xml" %}" style='border-radius:0px 0px 4px 0px;'><span class="glyphicon glyphicon-record"></span> record</button>
-					</div>
-					</div>
-					</form>
-             	</div>
-             	<!-- *******************file upload****************** -->
-			    <!-- The file input field used as target for the file upload widget -->
-			    <input id="fileupload" type="file" name="file" style="display:none;" multiple>
-				<!-- The global progress bar -->
-				<div id="progress" class="progress" style='height:1px;margin:0px;opacity:0.7;'>
-				    <div class="progress-bar progress-bar-success"></div>
-				</div>
-				<!-- The container for the uploaded files -->
-				<div id='inputAttachments'></div>
-				<!-- *The container for recorder********* -->
-				<div id='CLTREC_container'><div id='CLTREC'></div></div>
-				<!-- ************************************************ -->
-				<br>
-
-                    <div id='posts' data-ajaxurl="{% url 'delete_post' %}" data-saveajaxurl="{% url 'save_post' %}">
-                        {% if user_post_num != 0 or not activity.read_after_post or user.is_superuser or user in private_users %}
-                            <ul id='posts2' class="chat">
-                                {% for post in posts reversed%}
-                                    {% if not activity.private_mode or user in private_users or post.creator in private_users or post.creator == user %}
-                                        {% if not post.parent_post %}
-	                                    <!-- Other's posts -->
-                                            {% include 'post_template.html' with ativity_type=activity.activity_type %}
-                                        {% endif %}
-                                    {% endif %}
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
-                    </div>
-
-
-			</div>
-		</div>
-	</div>
-    <div>
-		<!-- Small modal -->
-		<button class="btn btn-primary hide notificationButton" data-toggle="modal" data-target=".bs-example-modal-sm">Small modal</button>
-
-		<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
-		  <div class="modal-dialog modal-sm">
-			    <div class="modal-content">
-			      <div class="modal-header" style='padding:9px;'>
-			        <h5 class="modal-title" id="myModalLabel">Help Text</h5>
-			      </div>
-			      <div class="modal-body">
-			        Please <kbd>save</kbd> recording before sending post or click <kbd>cancel</kbd>
-			      </div>
-			    </div>
-		  </div>
-		</div>
+            <!-- discussion posts -->
+            <div id='posts' data-ajaxurl="{% url 'delete_post' %}" data-saveajaxurl="{% url 'save_post' %}">
+                {% if user_post_num != 0 or not activity.read_after_post or user.is_superuser or user in private_users %}
+                    <ul id='posts2' class="chat">
+                        {% for post in posts reversed%}
+                            {% if not activity.private_mode or user in private_users or post.creator in private_users or post.creator == user %}
+                                {% if not post.parent_post %}
+                                    <!-- Other's posts -->
+                                    {% include 'post_template.html' with ativity_type=activity.activity_type %}
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
     </div>
+</div>
+
+<!-- Small modal -->
+<div>
+    <button class="btn btn-primary hide notificationButton" data-toggle="modal" data-target=".bs-example-modal-sm">Small modal</button>
+    <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header" style='padding:9px;'>
+                    <h5 class="modal-title" id="myModalLabel">Help Text</h5>
+                </div>
+                <div class="modal-body">
+                    Please <kbd>save</kbd> recording before sending post or click <kbd>cancel</kbd>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <br>
 
-{% endif %}
 {% endblock contentwrap %}
 
 {% block stylesheets %} 
