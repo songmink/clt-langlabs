@@ -1,20 +1,51 @@
 
 // Record Flag: check if user has unuploaded recording before sending
 var recordingFlag = false;
-$(document).ready(function(){
-    // Information of user
-    var userinfo = $("#recordTrigger").data('userinfo');
+$(document).ready(function() {
+
+    ActivityCopy.init();
+    ActivityPermissionsAdmin.init();
+    RichTextEditor.init('discussion');
+    Recorder.init();
+    FileUploader.init();
 
     //  Toggle for comments from posts
-	$( "#posts" ).on( "click", ".chatlist", function(e) {
-        if($(e.target).is('.fileLink')){
-            return;}
-        if($(e.target).is('.attachDIV')){
-            return;}
-		$(this).next().find('.comment').slideToggle( "fast" );
-	});
+    $('#posts').on('click', '.chatlist', function(e) {
+        if($(e.target).is('.fileLink'))  return;
+        if($(e.target).is('.attachDIV')) return;
+        $(this).next().find('.comment').slideToggle( "fast" );
+    });
 
-    //  Trigger upload events
+    $('.private_public_label').tooltip();
+    //$('.private_public_label').mouseenter(function(e) {
+    //    $(this).tooltip('show');
+    //})
+   // .mouseleave(function(e) {
+   //     $(this).tooltip('hide');
+   // });
+
+    $(".activity_members_togg").click(function(){
+        $("#activity_members_div").toggle(20)
+    });
+
+    // Delete comment
+    $('#posts').on('click', '.removePost', function() {
+        var ajax_url = $('#posts').data('ajaxurl');
+        var post_id = $(this).closest('li').data('postid');
+        var data = {'post_id': post_id};
+        Ajax.post(ajax_url, data, csrftoken, function() {
+            $("#"+post_id).remove();
+        });
+    });
+
+});
+
+
+
+
+
+ //  Trigger upload events
+/*
    $("#uploadTrigger").click(function() {
        $("#fileupload").trigger("click");
    })
@@ -27,26 +58,15 @@ $(document).ready(function(){
 		$(this).closest('span').remove()
 
 	});
+*/
 
+//  $('.control_togg').tooltip();
 
-  $('.control_togg').tooltip();
-
-  $('.private_public_label').mouseenter(function(e) {
-     $(this).tooltip('show')
-  })
-  .mouseleave(function(e) {
-     $(this).tooltip('hide')
-  });
-
-  $(".activity_members_togg").click(function(){
-      $("#activity_members_div").toggle(20)
-    })
-  
+ /* 
   // activity copy related code 
   $(".activity_copy_togg").click(function(){
       $("#activity_copy_div").toggle(20)
     })
-
   // copy activity
   $("#activity_copy_btn").click(function(){
     var ajax_temp_URL= $(this).data('ajaxurl')
@@ -60,12 +80,13 @@ $(document).ready(function(){
     ajaxCopyActivity(ajax_temp_URL, activity_temp_type, activity_temp_id, course_temp_name, course_temp_id, csrftoken)
   })
 
+*/
 
     //***initialize the rich text editor********************************************************
-       rteInit()
+      // rteInit()
     // **initialize the recorder****************************************************************
-       recorderInit()
-       $("#CLTREC_container").hide("fast")
+  /*     recorderInit()
+ //      $("#CLTREC_container").hide("fast")
        var toggleFlag = 1
        $("#recordTrigger").click(function() {
            $("#CLTREC_container").toggle("fast")
@@ -79,15 +100,20 @@ $(document).ready(function(){
            }
             
        })
+
+*/
     //*************************jquery upload plugin*********************************************
+
 	/*jslint unparam: true */
 	/*global window, $ */
+/*
 	function csrfSafeMethod(method) {
 	    // these HTTP methods do not require CSRF protection
 	    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 	}
-
+*/
   // set file uploader
+/*
 	$(function () {
 	    'use strict';
 	    // Change this to the location of your server-side upload handler:
@@ -125,10 +151,13 @@ $(document).ready(function(){
 	    }).prop('disabled', !$.support.fileInput)
 	        .parent().addClass($.support.fileInput ? undefined : 'disabled');
 	});
+
+*/
 	// *******************************************************************
+/*
     // below is permission change operations
-    var ajax_URL = $('#activity_admin').data("ajaxurl")
-    var activity_id = $('#activity_admin').data("activityid")
+    //var ajax_URL = $('#activity_admin').data("ajaxurl")
+    //var activity_id = $('#activity_admin').data("activityid")
     csrftoken=$("input[name=csrfmiddlewaretoken]").val()
     $(".activity_admin_togg").click(function(){
       $("#activity_admin_div").toggle(20)
@@ -199,36 +228,11 @@ $(document).ready(function(){
       }
 
     })
-
-  // Delete comment
-  $('#posts').on('click', '.removePost', function() {
-     ajax_url = $('#posts').data('ajaxurl');
-     post_id = $(this).closest('li').data('postid');
-
-     deleteComment(ajax_url, post_id, csrftoken);
-  })
+*/
 
 
-});
-
-function deleteComment(ajaxurl, postid, csrftoken){
-   $.ajax({
-      url:        ajaxurl,
-      type:       'POST',
-      async:      false,
-      beforeSend: function(xhr){
-         xhr.setRequestHeader('X-CSRFToken', csrftoken)
-      },
-      data: {ajax_url:ajaxurl, post_id:postid}      
-   })
-   .done(function(response){
-      $("#"+postid).remove();
-   })
-   .fail(function(jqXHR, textStatus){
-   });
-}
-
-
+//}); document ready ended here
+/*
 function rteInit()
     {
         tinymce.init({
@@ -302,6 +306,7 @@ function rteInit()
         //     menubar: false
         // }); 
     }
+
 // *************************recorder**************************
 var audioName = '';
 var recorderID = 'recorder'
@@ -339,7 +344,7 @@ function recorderInit(){
             // check if SWF hasn't been removed, if this is the case, create a new alternative content container
             if ( $('#'+recorderID) ) swfobject.removeSWF( recorderID );     
             
-            /**SWF Container: Bare Bones Recorder*/
+            //**SWF Container: Bare Bones Recorder/
             $('<div/>', { id: recorderID }).appendTo('#CLTREC_container');
 
             var d = new Date();
@@ -392,7 +397,6 @@ function recorderInit(){
                     break;   
             };
         }
-        
         function thisMovie(movieName) {
             if (navigator.appName.indexOf("Microsoft") != -1) {
                 return window[movieName];
@@ -459,9 +463,4 @@ function ajaxCopyActivity(ajax_URL, activitytype, activityid, coursename, course
 
 }
 
-
-
-
-
-
-
+*/
