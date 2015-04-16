@@ -68,7 +68,6 @@ class UsersWithPermsMixin(object):
             result = User.objects.filter(is_superuser=True).all()
             for user, perms in anyperm.iteritems():
                 if 'edit_course' in perms:
-                    print user
                     result = chain(result, User.objects.filter(username=user))
             result = list(result)
             context['private_users'] = result
@@ -143,6 +142,8 @@ class ActivityViewPermissionMixin(object):
         # just check if user can course_view.
         if not user.has_perm('edit_course', course):
             if activity.permission_control == True:
+                print get_perms(user, course)
+                print get_perms(user, activity)
                 if not user.has_perm("view_activity", activity):
                     raise PermissionDenied()
             else:

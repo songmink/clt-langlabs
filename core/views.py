@@ -369,6 +369,7 @@ def changePerm(request):
                 return HttpResponse('wrong object type')
         except:
             return HttpResponse('no such object')
+        print perm_operation_type
         if perm_operation_type == 'assign_perm':
             assign_perm(perm_codename, perm_user, target_object)
             return HttpResponse('successful change')
