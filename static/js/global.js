@@ -1,6 +1,7 @@
-// noname.js
+// modules.js
 
 //= requires utils.js
+//= requires 
 
 //
 // ActivityPermissionsAdmin:
@@ -11,7 +12,7 @@
     var s; // cache
     ActivityPermissionsAdmin = {
  
-        /**[ module settings ]***/
+        /***[ module settings ]***/
         settings: {
             activity_type: $('#activityType').val(),
             activity_id: $('#activity_admin').data('activityid'),
@@ -117,7 +118,7 @@
 
 //
 // ActivityCopy:
-//   handles activity copy
+//   copies an activity
 //
 (function() {
     var s; // cache
@@ -156,7 +157,6 @@
                                return $(this).text() == $('#activity_copy_course').val();
                            }).data('courseid'),
             };
-            console.log(data)
             Ajax.post(ajax_url, data, csrftoken, function(response) {
                 if (response.indexOf('success_redirect') != -1) {
                     window.location.href = response.slice(16);
@@ -169,7 +169,7 @@
 
 //
 // RichTextEditor:
-//   initializes rich text editor with appropriate settings
+//   initializes a rich text editor with appropriate settings
 //
 (function() {
     
@@ -233,13 +233,30 @@
                 forced_root_block: false,
                 entity_encoding: 'raw',
                 menubar: false
-            }
+            },
+            essay_options: {
+                selector: "#essayTextarea",
+                skin : 'flat_design_tinymce',
+                auto_focus: "essayTextarea",
+                statusbar : false,
+                toolbar1: "undo redo | forecolor backcolor styleselect | bold italic | alignleft aligncenter alignright alignjustify | " +
+                          "bullist numlist | outdent indent | emoticons link print",
+                plugins: [
+                  "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+                  "searchreplace wordcount visualblocks visualchars code fullscreen",
+                  "insertdatetime media nonbreaking save table contextmenu directionality",
+                  "emoticons template paste textcolor "
+                ],
+                menubar: false
+            },
         },
 
         init: function(option) {
             s = this.settings;
             if (option == "discussion") {
                 tinymce.init(s.discussion_options);
+            }else if (option == "essay") {
+                tinymce.init(s.essay_options);
             }
         },
     };
@@ -363,7 +380,6 @@
         },
 
         discussionRecorderMessage: function(x,y) {
-            console.log('suuup');
             switch(x) {
                 case 1:  recordingFlag = false; //no recording
                          break;
@@ -503,6 +519,126 @@
 
 
 //
+// EssayResponseDiscussion:
+//   handles sending and removing comments of an essay draft
+//
+(function() {
+    var s; // cache
+    EssayResponseDiscussion = {
+
+        /***[ module settings ]***/
+        settings: {
+            essay_discussion: $('#essay_discussion'),
+        },
+
+        init: function() {
+            s = this.settings;
+            this.bindUIActions();
+        },
+
+        bindUIActions: function() {
+            s.essay_discussion.on('keypress', 'textarea', EssayResponseDiscussion.sendPost);
+            s.essay_discussion.on('click', '.removePost', EssayResponseDiscussion.removePost);
+            s.essay_discussion.on('click', '.draftToggle', EssayResponseDiscussion.toggleDraft);
+        },
+
+        /***[ module functions ]***/
+        sendPost: function(event) {
+            if (event.which == 13 && $(this).val!="" ) {
+                event.preventDefault();
+                var activity_id = $(this).closest('ul').data('responseid'); // really should be object_id (see PostSaveView)
+                var data = {
+                    activity_type: "essay", 
+                    activity_id: activity_id,
+                    text: $(this).val(),
+                };
+                var ajax_url = $("#essay_discussion").data('ajaxurl');
+                var csrftoken = $("input[name=csrfmiddlewaretoken]").val();
+                Ajax.post(ajax_url, data, csrftoken, function(new_comment) {
+                    var draft_comments = "#draft_comments" + activity_id + " li";
+                    var comment_form_position = $(draft_comments).length - 1;
+                    $(draft_comments).eq(comment_form_position).before(new_comment);
+                    $('textarea').val('');
+                });
+            }
+        },
+ 
+        removePost: function() {
+            var ajax_url = $("#essay_responses").data("ajaxurl");
+            var post_id = $(this).closest("li").data("postid");
+            var csrftoken = $("input[name=csrfmiddlewaretoken]").val();
+            Ajax.post(ajax_url, {post_id: post_id}, csrftoken, function(response){
+                $("#"+post_id).remove();
+            });
+        },
+
+        // toggles between submitted essay responses => toggles associated discussion
+        toggleDraft: function(event) {
+            event.preventDefault();
+            $(this).closest("div").find(".draftToggle").removeClass('active');
+            $(this).addClass('active');
+            var tempShow = $(this).closest("div").find(".draftToggle.active").find('input').first().val();
+            $("#"+tempShow).show();
+            $(this).closest("div").find(".draftToggle").not(".active").find('input').each(function() {
+                var temp_noShow = $(this).val()
+                $("#"+temp_noShow).hide()
+            });
+        }
+    };
+})();
+
+
+//
+// JumpToUser:
+//   toggles for jump-to-user well in essay activity
+//
+(function() {
+    var s; // cache
+    JumpToUser = {
+
+        /***[ module settings ]***/
+        settings: {
+            all_user_responses_toggle: $(".userResponseAllToggle"),
+        },
+
+        init: function() {
+            s = this.settings;
+            if ($(".userResponseToggle")){
+                s.user_response_toggle = $(".userResponseToggle");
+            }
+            this.bindUIActions();
+        },
+
+        bindUIActions: function() {
+            if ($(".userResponseToggle")){
+                s.user_response_toggle.click(JumpToUser.showUserResponses);
+            }
+            s.all_user_responses_toggle.click(JumpToUser.showAllUserResponses);
+        },
+
+        /***[ module functions ]***/
+        showUserResponses: function() {
+            console.log("show user responses");
+            var tempShow = $(this).data('userdraft');
+            if($("#"+tempShow).size()>0) {
+                $(".allUserResponses").each(function() {
+                    $(this).hide();
+                });
+                $("#"+tempShow).show();
+            }
+        },
+
+        showAllUserResponses: function() {
+            console.log("show all user responses");
+            $('.allUserResponses').each(function() {
+                $(this).show();
+            });
+        },
+    };
+})();
+
+
+//
 // TemplateModule:
 //   what does it do?
 //
@@ -521,10 +657,12 @@
         },
 
         bindUIActions: function() {
-
+            // example:
+            // s.someSetting.someEvent(ModuleName.moduleFunction);
         },
 
         /***[ module functions ]***/
+        moduleFunction: function() {},
     };
 })();
 
