@@ -28,7 +28,7 @@ $(document).ready(function(){
             draft_content: tinymce.get('essayTextarea').getContent(),
         };
         Ajax.post(ajax_url, data, csrftoken, function(msg) {
-            if(msg=='Success' && operation=='submit'){
+            if (msg=='Success' && operation=='submit') {
                 // reload page: we need to update submitted_essay_responses.count
                 window.location.reload(true);
             }

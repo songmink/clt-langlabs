@@ -2,6 +2,7 @@
 
 //= requires utils.js
 //= requires global.js
+//= requires socket.js
 
 // Record Flag: check if user has unuploaded recording before sending
 var recordingFlag = false;
@@ -24,23 +25,23 @@ $(document).ready(function() {
 
     // removes an attached object
     $("#connectedDIV").on( "click", ".removeIcon", function() {
-        $(this).closest('span').remove()
+        $(this).closest('span').remove();
     });
 
-    //  toggles comments (replies) from a post
+    // toggles comments (replies) from a post
     $('#posts').on('click', '.chatlist', function(e) {
-        if($(e.target).is('.fileLink'))  return;
-        if($(e.target).is('.attachDIV')) return;
+        if ($(e.target).is('.fileLink'))  return;
+        if ($(e.target).is('.attachDIV')) return;
         $(this).next().find('.comment').slideToggle( "fast" );
     });
 
     $('.private_public_label').tooltip();
 
     $(".activity_members_togg").click(function(){
-        $("#activity_members_div").toggle(20)
+        $("#activity_members_div").toggle(20);
     });
 
-    // Delete comment
+    // deletes a post/comment
     $('#posts').on('click', '.removePost', function() {
         var ajax_url = $('#posts').data('ajaxurl');
         var post_id = $(this).closest('li').data('postid');
@@ -50,6 +51,5 @@ $(document).ready(function() {
             $("#"+post_id).remove();
         });
     });
-
 });
 

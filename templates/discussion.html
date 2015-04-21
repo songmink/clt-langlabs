@@ -16,7 +16,7 @@
             {{ activity.instructions|safe }}
         </div>
         <div id='connectingDIV' class='row col-md-8 show' data-port="{{ chatserver_port}}" data-host="{{ chatserver_host }}" data-protocol="{{ chatserver_protocol }}">
-            <div id='sysMessage' class="col-md-4 col-md-offset-4"><i class="fa fa-spinner fa-spin fa-5x"></i> Connecting to server ...</div>
+            <div id='sysMessage' class="col-md-4 col-md-offset-4"><i class="fa fa-spinner fa-pulse fa-5x"></i> Connecting to server ...</div>
         </div>
         <div id="connectedDIV" class="col-md-8 hidden">
 
@@ -82,7 +82,7 @@
 <script>WEB_SOCKET_SWF_LOCATION="{{ STATIC_URL }}flashsocket/WebSocketMain.swf"; window.room = "{{ room.id }}";</script>
 <script src="{% static "js/utils.js" %}"></script>
 <script src="{% static "js/global.js" %}"></script>
-<script src="{% static "js/chat_client.js" %}"></script>
+<script src="{% static "js/sockets.js" %}"></script>
 <script src="{% static "js/discussion.js" %}"></script>
 <!-- ******************Recorder libs****************** -->
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
