@@ -5,6 +5,7 @@ import json
 from socketio.namespace import BaseNamespace
 from socketio.mixins import RoomsMixin, BroadcastMixin
 from socketio.sdjango import namespace
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.template.loader import render_to_string
@@ -102,7 +103,6 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
             attachmentsName = msg["attachesName"], 
             audio_URL=msg["audioURL"]
         )
-        thisID = post.id
         if post:
             activity = self.socket.session['DjangoRoom']
             activity_type = self.socket.session['roomType']
@@ -110,6 +110,8 @@ class ThreadNamespace(BaseNamespace, RoomsMixin, BroadcastMixin):
                 'post': post,
                 'private_users': activity.collection.get_private_users(),
                 'activity_type': activity_type,
+                'recorder_myDirectory': settings.RECORDER_MYDIRECTORY,
+                'recorder_myServer': settings.RECORDER_MYSERVER,
             }
             rendered_string = render_to_string("post_template.html", context)
             self.log('User post: {0}'.format(msg["msg"]))

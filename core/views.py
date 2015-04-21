@@ -220,9 +220,11 @@ class PostSaveView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, View):
             course = essay_response.essay_activity.collection
 
         context = {
-            "post": post,
-            "private_users": course.get_private_users(),
-            "activity_type": activity_type,   
+            'post': post,
+            'private_users': course.get_private_users(),
+            'activity_type': activity_type,   
+            'recorder_myDirectory': settings.RECORDER_MYDIRECTORY,
+            'recorder_myServer': settings.RECORDER_MYSERVER,
         }
         rendered_string = render_to_string("post_template.html", context,
                                            context_instance=RequestContext(request))
@@ -236,7 +238,7 @@ class PostSaveView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, View):
         else:
             parent_post = None
         audio_URL = request.POST.get('audioURL', '')
-        attachments = request.POST.get('attachments', '')
+        attachments = request.POST.getlist('attachments[]')
         post_creator = request.user
         text = request.POST.get('text', '')
         if len(text) > 0:
@@ -369,7 +371,6 @@ def changePerm(request):
                 return HttpResponse('wrong object type')
         except:
             return HttpResponse('no such object')
-        print perm_operation_type
         if perm_operation_type == 'assign_perm':
             assign_perm(perm_codename, perm_user, target_object)
             return HttpResponse('successful change')

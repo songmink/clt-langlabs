@@ -1,4 +1,4 @@
-// chat_client.js
+// sockets.js
 
 //= requires utils.js
 
@@ -137,12 +137,13 @@
         // messageToRoom: fires when a post is received from the chat server
         messageToRoom: function(response) {
             if (s.read_after_post_lock === false) {
-                var $new_post = $($.parseHTML(response));
-                var post_creator = $new_post.find('strong').html().toLowerCase()
+                var new_post = $(response);
+                var post_creator = new_post.find('strong').html().toLowerCase();
                 if (s.user == post_creator || s.user_is_instructor) {
-                    $new_post.find('small.pull-right').append(s.remove_icon)
+                    new_post.find('small.pull-right').append(s.remove_icon);
                 }
-                s.posts.prepend($new_post);
+                s.posts.prepend(new_post);
+
             }
         },
 
@@ -150,13 +151,13 @@
         commentToRoom: function(data) {
             if (s.read_after_post_lock === false) {
                 var response = eval ("(" + data + ")");
-                var $new_post = $($.parseHTML(response.rendered_string));
-                var post_creator = $new_post.find('strong').html().toLowerCase()
+                var new_post = $(response.rendered_string);
+                var post_creator = new_post.find('strong').html().toLowerCase()
                 if (s.user == post_creator || s.user_is_instructor) {
-                    $new_post.find('small.pull-right').append(s.remove_icon)
+                    new_post.find('small.pull-right').append(s.remove_icon)
                 }
-                var $parent_post = $("li[data-postid="+ response.parent_post +"]").next().find('.comment');
-                $parent_post.prepend($new_post);
+                var parent_post = $("li[data-postid="+ response.parent_post +"]").next().find('.comment');
+                parent_post.prepend(new_post);
             }
         },
 
@@ -189,9 +190,9 @@
                     }else {
                         ChatClient.fallbackAjaxPost({
                             text: $('#postTextarea').html(),
-                            attaches: tempATT,
+                            attachments: tempATT,
                             attaches_name: tempATT_name,
-                            audio_URL: tempATT_audio
+                            audioURL: tempATT_audio
                         });
                     }
                     

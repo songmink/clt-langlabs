@@ -1,4 +1,4 @@
-
+{% load staticfiles %}
 {% if activity_type == "essay" %}
 <li id="{{ post.id }}" class="left clearfix commentlist" data-postid="{{ post.id }}">
     {% include 'post_subtemplate.html' with comment=post %}
@@ -22,16 +22,15 @@
 
             <!-- audio files -->
             {% if post.audio_URL %}
-            {% load staticfiles %}
-            <div id="{{post.audio_URL|cut:"."}}" class='audioDiv'></div>
+            <div id="{{post.audio_URL|cut:'.'}}" class='audioDiv'></div>
             <script>
-                jwplayer("{{post.audio_URL|cut:"."}}").setup({
+                jwplayer("{{post.audio_URL|cut:'.'}}").setup({
                     file: "{{recorder_myServer}}{{recorder_myDirectory}}/{{post.audio_URL}}",
                     width: "100%",
-                    skin: "{% static "jwplayer-skins/five.xml" %}",
+                    skin: "{% static 'jwplayer-skins/five.xml' %}",
                     height: 30
                 });
-                {% if activity_type == "overdub" %}
+                {% if activity_type == 'overdub' %}
                 jwplayer(msg.audioURL.slice(0,-4)).onPlay(function(){
                     jwplayer("overdubVideo").play(true)
                 })
