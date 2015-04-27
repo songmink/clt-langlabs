@@ -1,4 +1,5 @@
 <!-- collection_create.html -->
+
 {% extends "base.html" %}
 {% load staticfiles %}
 {% load crispy_forms_tags %}
@@ -18,3 +19,12 @@
 </div>
 
 {% endblock contentwrap %}
+
+{% block stylesheets %}
+<link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block more_javascript %}
+<script src="{% static 'js/collection_edit.js' %}"></script>
+{% endblock more_javascript %}
+
