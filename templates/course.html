@@ -152,6 +152,24 @@
     {% if orphan_num == 0 and not activity_list_course %} 
         <div id="no_activities" style="display: none;" data-username='{{ user }}'></div>
     {% endif %}
+  
+    <div id="has_created_lesson" class="modal fade" data-flag="{{ has_created_lesson }}">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Your lesson was successfully created!</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Create a new activity and your lesson will appear in the lessons list.</p>
+                    <p>Alternatively, you can edit an existing activity and assign it to your newly created lesson.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock contentwrap %}
 
 {% block stylesheets %} 

@@ -84,6 +84,13 @@ class CourseIndexView(LoginRequiredMixin, CourseListMixin, ActivityListMixin, Us
     context_object_name = 'course'
     template_name = 'course.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(CourseIndexView, self).get_context_data(**kwargs)
+        if self.request.session.get('has_created_lesson', False):
+            context['has_created_lesson'] = True
+            self.request.session['has_created_lesson'] = False
+        return context
+
     def get_object(self, queryset=None):
         obj = super(CourseIndexView, self).get_object(queryset)
         if (not self.request.user.has_perm("core.edit_course", obj)) & (not obj.is_active):
@@ -146,6 +153,7 @@ class LessonCreateView(LoginRequiredMixin, CourseListMixin, CreateView):
 
     def form_valid(self, form):
     # Auto set the following fields:
+        self.request.session['has_created_lesson'] = True
         form.instance.collection = get_object_or_404(
             ActivityCollection, pk=self.kwargs['addpk'])
         return super(LessonCreateView, self).form_valid(form)

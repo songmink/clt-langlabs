@@ -54,6 +54,11 @@ $(document).ready(function(){
     // course administration tooltips
     $('.ca-tooltip').tooltip();
 
+    // modal to display when user has just created a lesson
+    if ($('#has_created_lesson').data('flag')) {
+        $('#has_created_lesson').modal('show');
+    }
+
     // If no activities have been created, give tour of course
     if ($('#no_activities').length != 0) {
         tour.init();
