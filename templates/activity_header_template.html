@@ -6,16 +6,16 @@
 {% if "edit_course" in course_perms %}
     <small><small>
         <a href="{% url 'edit_'|add:activity.activity_type activity.id %}" class="text-muted" style="text-decoration:none;">
-            <i class="fa fa-pencil-square-o"></i></a></small></small>
+            <i class="aa-tooltip fa fa-pencil-square-o" data-toggle="tooltip" data-placement="top" title="Edit Activity"></i></a></small></small>
     <small><small>
         <a href="{% url 'delete_'|add:activity.activity_type activity.id %}" class="text-muted" style="text-decoration:none;">
-            <i class="fa fa-trash-o"></i></a></small></small>
+            <i class="aa-tooltip fa fa-trash-o" data-toggle="tooltip" data-placement="top" title="Delete Activity"></i></a></small></small>
     <small><small>
         <a class="text-muted activity_admin_togg" style="text-decoration:none; cursor: pointer;">
-            <i class="fa fa-user"></i></a></small></small>
+            <i class="aa-tooltip fa fa-user" data-toggle="tooltip" data-placement="top" title="Activity Membership Administration"></i></a></small></small>
     <small><small>
         <a class="text-muted activity_copy_togg" style="text-decoration:none;cursor:pointer;" >
-            <i class="fa fa-files-o"></i></a></small></small>
+            <i class="aa-tooltip fa fa-files-o" data-toggle="tooltip" data-placement="top" title="Copy Activity"></i></a></small></small>
 {% else %}
     {% if activity.permission_control %}
         <small><small><a class="text-muted activity_members_togg" style="text-decoration:none; cursor: pointer;"><i class="fa fa-users"></i></a></small></small>
@@ -44,19 +44,19 @@
     {% if activity.read_after_post and user in private_users or activity.read_after_post and user.is_superuser %}
         <small class="text-muted pull-right">
             <span class="label label-default private_public_label" style="cursor:pointer;vertical-align: text-bottom;" data-toggle="tooltip" 
-                  data-placement="bottom" title="Students can only read everyone's post after his/her initial post.">Read After Post</span>
+                  data-placement="top" title="Students can only read everyone's post after his/her initial post.">Read After Post</span>
         </small>&nbsp;
     {% endif %}
 
     {% if activity.private_mode %}
         <small class="text-muted pull-right">
             <span class="label label-default private_public_label" style="cursor:pointer;vertical-align: text-bottom;" data-toggle="tooltip" 
-                  data-placement="bottom" title="Student can only interact with course instructors.">Private Mode</span>
+                  data-placement="top" title="Student can only interact with course instructors.">Private Mode</span>
             </small>&nbsp;
     {% else %}
         <small class="text-muted pull-right">
             <span class="label label-primary private_public_label" style="cursor:pointer;vertical-align: text-bottom;" data-toggle="tooltip" 
-                  data-placement="bottom" title="Student can interact with any member in the course.">Public Mode</span>
+                  data-placement="top" title="Student can interact with any member in the course.">Public Mode</span>
         </small>&nbsp;
     {% endif %}
 
@@ -73,10 +73,10 @@
             <!-- permission control for students of this course -->
                 {% if activity.permission_control%}
                     <i class="fa fa-toggle-on text-primary control_togg" style='cursor:pointer;' data-toggle="tooltip"
-                       title="toggle off to allow any student in the course to view this activity"></i>
+                       title="Toggle off to allow any student in the course to participate in this activity."></i>
                 {% else %}
                     <i class="fa fa-toggle-off text-muted control_togg" style='cursor:pointer;' data- toggle="tooltip"
-                       title="toggle on and select the students who will have permission to view this activity"></i>
+                       title="Toggle on and select a group of students who will have permission to participate this activity."></i>
                 {% endif %}
             </small></span>
         </h2>

@@ -6,10 +6,13 @@
 <br>
 <br>
 <form action="" method="post">{% csrf_token %}
-	<p class="text-center lead">Are you sure you want to delete <strong>"{{ object }}"? </strong></p>
+    <p class="text-center lead">Are you sure you want to delete,<strong>"{{ object }}"? </strong></p>
     
     <!-- <input type="submit" value="Confirm" /> -->
-    <div class="text-center"><button type="submit" class="btn btn-primary">Confirm</button></div>
+    <div class="text-center">
+        <button type="submit" class="btn btn-primary">Confirm</button>
+        <button type="submit" class="btn btn-primary" onClick="history.go(-1);return true;">Cancel</button>
+    </div>
 </form>
 
 {% endblock contentwrap %}

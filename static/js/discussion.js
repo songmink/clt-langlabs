@@ -35,6 +35,8 @@ $(document).ready(function() {
         $(this).next().find('.comment').slideToggle( "fast" );
     });
 
+    // tooltips
+    $('.aa-tooltip').tooltip();
     $('.private_public_label').tooltip();
 
     $(".activity_members_togg").click(function(){

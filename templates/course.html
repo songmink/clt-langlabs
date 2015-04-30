@@ -4,16 +4,26 @@
 {% block contentwrap %}
 {% load guardian_tags %}
 {% get_obj_perms user for course as "course_perms" %}
+
 <h1 class="page-header" style='margin-top: 18px;'>{{ course.title }}<span class="text-muted"><small> {{ course.nickname }}</small></span> 
     {% if "edit_course" in course_perms %}
-    <span class="tour-step tour-step-one">
-        <small><small><a href="{% url 'edit_collection' course.id %}" class="text-muted tour-step tour-step-two" style='text-decoration:none;'><i class="fa fa-pencil-square-o"></i></a></small></small>
-        <small><small><a href="{% url 'delete_collection' course.id %}" class="text-muted tour-step tour-step-three" style='text-decoration:none;'><i class="fa fa-trash-o"></i></a></small></small>
-        <small><small><a class="text-muted course_admin_togg tour-step tour-step-four" style='text-decoration:none; cursor: pointer;'><i class="fa fa-user"></i></a></small></small>
-        <small><small><a href="{% url 'copy_collection' course.id %}" class="text-muted tour-step tour-step-five" style='text-decoration:none;'><i class="fa fa-files-o"></i></a></small></small>
-    </span>
+        <span class="tour-step tour-step-one">
+            <small><small>
+                <a href="{% url 'edit_collection' course.id %}" class="text-muted tour-step tour-step-two" style='text-decoration:none;'>
+                    <i class="ca-tooltip fa fa-pencil-square-o" data-toggle="tooltip" data-placement="top" title="Edit Course"></i></a></small></small>
+            <small><small>
+                <a href="{% url 'delete_collection' course.id %}" class="text-muted tour-step tour-step-three" style='text-decoration:none;'>
+                    <i class="ca-tooltip fa fa-trash-o" data-toggle="tooltip" data-placement="top" title="Delete Course"></i></a></small></small>
+            <small><small>
+                <a class="text-muted course_admin_togg tour-step tour-step-four" style='text-decoration:none; cursor: pointer;'>
+                    <i class="ca-tooltip fa fa-user" data-toggle="tooltip" data-placement="top" title="Course Membership Administration"></i></a></small></small>
+            <small><small>
+                <a href="{% url 'copy_collection' course.id %}" class="text-muted tour-step tour-step-five" style='text-decoration:none;'>
+                    <i class="ca-tooltip fa fa-files-o" data-toggle="tooltip" data-placement="top" title="Copy Course"></i></a></small></small>
+        </span>
     {% endif %}
 </h1> 
+
 <!-- Course Administration -->
 {% if "edit_course" in course_perms %}
 <div id='course_admin_div' class='well' style='display:none;'>

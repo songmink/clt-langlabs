@@ -25,17 +25,17 @@
                     <!-- all drafts are graded -->
                     <button id='draftSaveBtn' type="button" class="btn btn-default btn-sm pull-left draftEditBtn" style='width:50%;border-radius:0px 0px 0px 4px;' 
                             data-ajaxurl="{% url 'edit_essay_draft' %}" data-operation="save" data-essayid="{{activity.id}}">
-                        <i class="fa fa-floppy-o"></i> SAVE
+                        <i class="fa fa-floppy-o"></i> Save
                     </button>
                     <button id="draftSubmitBtn" type="button" class="btn btn-default btn-sm pull-right draftEditBtn" style='width:50%;border-radius:0px 0px 4px 0px;' 
                             data-ajaxurl="{% url 'edit_essay_draft' %}" data-operation="submit" data-essayid="{{activity.id}}">
-                        <i class="fa fa-paper-plane-o"></i> SUBMIT
+                        <i class="fa fa-paper-plane-o"></i> Submit
                     </button>
                 {% else %}
                     <!-- we have ungraded essay drafts -->
                     <button id='draftSaveBtn' type="button" class="btn btn-default btn-sm pull-left draftEditBtn" style='width:100%;border-radius:0px 0px 4px 4px;' 
                             data-ajaxurl="{% url 'edit_essay_draft' %}" data-operation="save" data-essayid="{{activity.id}}">
-                        <i class="fa fa-floppy-o"></i> SAVE
+                        <i class="fa fa-floppy-o"></i> Save
                     </button>
                 {% endif %}
 
@@ -90,16 +90,16 @@
 
         <!-- jump-to-user well -->
         <div  class='well well-sm' style='border:0px;'>
-            <span>Jump to User: </span>
+            <span>Filter by User: </span>
             {% for SingleUser, Permissions in object_course_users.items %}
-                {% if  not SingleUser.is_superuser %}
+                {% if not SingleUser.is_superuser %}
                     {# only print users who have permission to view activity #}
-                    {% get_obj_perms SingleUser for activity as "activity_temp_perms" %}
+                    {% get_obj_perms SingleUser for activity as 'activity_temp_perms' %}
                     {% if activity.permission_control %}
                          {% if "view_activity" in activity_temp_perms and SingleUser not in private_users %}
                              &nbsp;<span class="label label-default userResponseToggle" style='cursor:pointer;' data-userdraft='user_{{SingleUser}}'>{{SingleUser}}</span>
                          {% endif %} 
-                    {% else %}
+                    {% elif SingleUser not in private_users %}
                         &nbsp;<span class="label label-default userResponseToggle" style='cursor:pointer;' data-userdraft='user_{{SingleUser}}'>{{SingleUser}}</span>
                     {% endif %}
                 {% endif %}

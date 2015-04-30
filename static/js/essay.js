@@ -49,5 +49,8 @@ $(document).ready(function(){
             })
         });
     }
+
+    // tooltips
+    $('.aa-tooltip').tooltip();
 });
 

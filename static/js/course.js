@@ -51,6 +51,9 @@ $(document).ready(function(){
 
     }
 
+    // course administration tooltips
+    $('.ca-tooltip').tooltip();
+
     // If no activities have been created, give tour of course
     if ($('#no_activities').length != 0) {
         tour.init();

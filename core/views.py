@@ -98,9 +98,9 @@ class CourseCreateView(LoginRequiredMixin, CourseListMixin, CreateView):
     template_name = 'collection_create.html'
     fields = ['title', 'nickname', 'description', 'accesscode', 'is_active','is_public']
 
-    def dispatch(self, *args, **kwargs):
-        # do not let anyone create a course at the moment
-        raise PermissionDenied();
+#    def dispatch(self, *args, **kwargs):
+#        # do not let anyone create a course at the moment
+#        raise PermissionDenied();
 
     def form_valid(self, form):
         form.save()
