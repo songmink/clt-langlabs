@@ -7,7 +7,7 @@
   {% get_obj_perms user for course as "course_perms" %}
 	<!-- CONTEXT MENU - Activities --> 
     <li class="dropdown">
-              <a data-toggle="dropdown" class="dropdown-toggle" href="#">More Activities <b class="caret"></b></a>
+              <a id="more_activities" data-toggle="dropdown" class="dropdown-toggle tour-step tour-step-six" href="#">More Activities <b class="caret"></b></a>
               <ul class="dropdown-menu">
 
                 {% for activity_item in activity_list %}

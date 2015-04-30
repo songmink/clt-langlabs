@@ -51,7 +51,62 @@ $(document).ready(function(){
 
     }
 
-	});
+    // If no activities have been created, give tour of course
+    if ($('#no_activities').length != 0) {
+        tour.init();
+        tour.start();
+    };
+
+});
+
+
+// tour settings
+(function () {
+
+    var user = $('#no_activities').data('username');
+    tour = new Tour({
+        steps: [
+            {
+                orphan: true,
+                title: function(){ return 'Welcome, ' + user + '!'; },
+                content: '<p>This tour will walk you through some important features of your course.</p><p>If you are a seasoned langlabs user simply press "End Tour" to begin managing your course.</p>',
+            },
+            {
+                element: '.tour-step.tour-step-two',
+                placement: 'bottom',
+                title: 'Course Administration',
+                content: '<p>The Edit option allows you to update course details.</p><p>For example, updating the course title or description, activating or deactivating the course, etc.</p>',
+            },
+            {
+                element: '.tour-step.tour-step-three',
+                placement: 'bottom',
+                title: 'Course Administration',
+                content: '<p>The Delete option deletes the entire course with all associated activites and lessons.</p><p>A confirmation is required so do not worry if you accidentally misclick this option.</p>',
+            },
+            {
+                element: '.tour-step.tour-step-four',
+                placement: 'bottom',
+                title: 'Course Administration',
+                content: '<p>The Course Membership Administration option allows you to grant instructor privileges to course subscribers (e.g. your T.A.).</p><p>Caution! they will have the ability to edit and delete anything from activities up to and including the course itself.</p>',
+            },
+            {
+                element: '.tour-step.tour-step-five',
+                placement: 'bottom',
+                title: 'Course Administration',
+                content: '<p>The Course Copy option allows you to make a duplicate of this course with all the activities and lessons you created.</p><p>So if you teach the same course at a later time, you can simply copy this one and save the time of recreating content.</p>',
+           },
+
+            {
+                element: '.tour-step.tour-step-six',
+                placement: 'bottom',
+                title: 'Activities',
+                content: '<p>Activities and lessons are the bread and butter of your course. In this dropdown menu you will the options to create both.</p><p>Actvities are where your students will be interacting with you and each other. And lessons are a way of organizing your activities</p>',
+            },
+        ],
+    });
+}());
+
+
 
 function csrfSafeMethod(method) {
     // these HTTP methods do not require CSRF protection
