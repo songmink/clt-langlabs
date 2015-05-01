@@ -33,7 +33,7 @@
                             initialPause =0
                         }
                     })
-                </script> 
+                </script>
             {% endif %}
             {{ activity.instructions|safe }}
         </div>
@@ -84,13 +84,13 @@
 
 {% endblock contentwrap %}
 
-{% block stylesheets %} 
+{% block stylesheets %}
 <link href="{% static "css/overdub.css" %}" rel="stylesheet">
 <link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
 <!-- *****************video player(need to be put in head to load audio)******************* -->
-<script src="http://jwpsrv.com/library/RJueXGxbEeOB1SIACi0I_Q.js"></script>
+<script src="https://jwpsrv.com/library/RJueXGxbEeOB1SIACi0I_Q.js"></script>
 {% endblock stylesheets%}
-{% block more_javascript %} 
+{% block more_javascript %}
 <!-- *****************upload libs******************** -->
 <script src="{% static "jqueryUpload/jquery.ui.widget.js" %}"></script>
 <script src="{% static "jqueryUpload/jquery.iframe-transport.js" %}"></script>
