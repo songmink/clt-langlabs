@@ -21,7 +21,7 @@
                             width: "100%",
                             skin: "{% static "jwplayer-skins/five.xml" %}",
                             autostart: true,
-                            // controls: false,
+                            controls: false,
                             mute: true
                         });
                     // Added auto buffering for overdub Video
@@ -54,7 +54,7 @@
                             {% if not activity.private_mode or user in private_users or post.creator in private_users or post.creator == user %}
                                 {% if not post.parent_post %}
                                     <!-- Other's posts -->
-                                    {% include 'post_template.html' with ativity_type=activity.activity_type %}
+                                    {% include 'post_template.html' with activity_type=activity.activity_type %}
                                 {% endif %}
                             {% endif %}
                         {% endfor %}
