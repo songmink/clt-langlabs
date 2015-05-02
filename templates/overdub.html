@@ -21,7 +21,7 @@
                             width: "100%",
                             skin: "{% static "jwplayer-skins/five.xml" %}",
                             autostart: true,
-                            // controls: false,
+                            controls: false,
                             mute: true
                         });
                     // Added auto buffering for overdub Video
@@ -33,7 +33,7 @@
                             initialPause =0
                         }
                     })
-                </script> 
+                </script>
             {% endif %}
             {{ activity.instructions|safe }}
         </div>
@@ -54,7 +54,7 @@
                             {% if not activity.private_mode or user in private_users or post.creator in private_users or post.creator == user %}
                                 {% if not post.parent_post %}
                                     <!-- Other's posts -->
-                                    {% include 'post_template.html' with ativity_type=activity.activity_type %}
+                                    {% include 'post_template.html' with activity_type=activity.activity_type %}
                                 {% endif %}
                             {% endif %}
                         {% endfor %}
@@ -84,13 +84,13 @@
 
 {% endblock contentwrap %}
 
-{% block stylesheets %} 
+{% block stylesheets %}
 <link href="{% static "css/overdub.css" %}" rel="stylesheet">
 <link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
 <!-- *****************video player(need to be put in head to load audio)******************* -->
-<script src="http://jwpsrv.com/library/RJueXGxbEeOB1SIACi0I_Q.js"></script>
+<script src="https://jwpsrv.com/library/RJueXGxbEeOB1SIACi0I_Q.js"></script>
 {% endblock stylesheets%}
-{% block more_javascript %} 
+{% block more_javascript %}
 <!-- *****************upload libs******************** -->
 <script src="{% static "jqueryUpload/jquery.ui.widget.js" %}"></script>
 <script src="{% static "jqueryUpload/jquery.iframe-transport.js" %}"></script>
