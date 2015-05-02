@@ -7,16 +7,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>CLT Language Labs</title>
 
+
     <!-- Bootstrap -->
     <link href="{% static "bootstrap/dist/css/bootstrap.min.css" %}" rel="stylesheet">
 
     <!-- Extensions - Experimenting with these -->
     <!-- <link href="{% static "css/base.css" %}" rel="stylesheet"> -->
-    
+
     <!-- The Bootstrap template named "Starter Template barebones " -->
     <link href="{% static "css/dashboard.css" %}" rel="stylesheet">
+
+
     {% block stylesheets %} {% endblock stylesheets%}
-  
+
   </head>
   <body>
     {% block navbar %}
@@ -30,11 +33,11 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{% url 'home' %}">CLT Lang Labs</a>   
+          <a class="navbar-brand" href="{% url 'home' %}">CLT Lang Labs</a>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            
+
           </ul>
 
 
@@ -44,11 +47,11 @@
 
           {% block coursenav %}
           <!-- CONTEXT MENU - Courses -->
-          
+
             <li class="dropdown">
               <a href="." class="dropdown-toggle" data-toggle="dropdown"> {% block course_button_label %} Courses <b class="caret"></b>{% endblock course_button_label %}</a>
               <ul class="dropdown-menu">
-              {% block course_item_list %} 
+              {% block course_item_list %}
               {% load guardian_tags %}
                 {% for course_item in course_list %}
                   {% get_obj_perms user for course_item as "course_temp_perms" %}
@@ -58,17 +61,17 @@
                 {% endfor %}
               {% endblock course_item_list %}
               <li class="divider"></li>
-              <li><a href="{% url 'create_collection' %}"><small><span class="glyphicon glyphicon-plus-sign"></span> New Course</small></a></li> 
-              <li><a href="{% url 'course_list' %}"><small><span class="glyphicon glyphicon-search"></span> Search Course</small></a></li> 
-              <li ><a><small data-toggle="modal" data-target=".courseSubscribe" style="cursor:pointer;"><i class="fa fa-book"></i> Subscribe with code</small></a></li> 
-              </ul>              
+              <li><a href="{% url 'create_collection' %}"><small><span class="glyphicon glyphicon-plus-sign"></span> New Course</small></a></li>
+              <li><a href="{% url 'course_list' %}"><small><span class="glyphicon glyphicon-search"></span> Search Course</small></a></li>
+              <li ><a><small data-toggle="modal" data-target=".courseSubscribe" style="cursor:pointer;"><i class="fa fa-book"></i> Subscribe with code</small></a></li>
+              </ul>
             </li>
           {% endblock coursenav %}
             <li class="dropdown">
             {% if not user.is_authenticated %}
               <a href="{% url 'login' %}" class="dropdown-toggle"> login </a>
-            {% else %}            
-              <a href="." class="dropdown-toggle" data-toggle="dropdown"> {{ user.username }}</a>            
+            {% else %}
+              <a href="." class="dropdown-toggle" data-toggle="dropdown"> {{ user.username }}</a>
               <ul class="dropdown-menu">
                 <li><a href="{% url 'logout' %}">logout</a></li>
               </ul>
@@ -117,6 +120,8 @@
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://code.jquery.com/jquery.js"></script>
+
+
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="{% static "bootstrap/dist/js/bootstrap.min.js" %}"></script>
     <script src="{% static "js/base.js" %}"></script>

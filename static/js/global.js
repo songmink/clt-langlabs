@@ -1,7 +1,7 @@
 // modules.js
 
 //= requires utils.js
-//= requires 
+//= requires
 
 //
 // ActivityPermissionsAdmin:
@@ -11,7 +11,7 @@
 
     var s; // cache
     ActivityPermissionsAdmin = {
- 
+
         /***[ module settings ]***/
         settings: {
             activity_type: $('#activityType').val(),
@@ -53,14 +53,14 @@
                 object_id: s.activity_id
             };
             if (s.activity_memb_toggle.hasClass('fa-toggle-on')){
-                data.operation_type = "disable_control"; 
+                data.operation_type = "disable_control";
                 Ajax.post(s.ajax_url, data, s.csrftoken, function() {
                     s.activity_memb_toggle.removeClass('fa-toggle-on text-primary');
                     s.activity_memb_toggle.addClass('fa-toggle-off text-muted');
                     s.activity_memb_toggle.attr('title', 'toggle on and select the students who will have permission to view this activity').tooltip('fixTitle');
                 });
             }else {
-                data.operation_type = "enable_control"; 
+                data.operation_type = "enable_control";
                 Ajax.post(s.ajax_url, data, s.csrftoken, function() {
                     s.activity_memb_toggle.removeClass('fa-toggle-off text-muted');
                     s.activity_memb_toggle.addClass('fa-toggle-on text-primary');
@@ -78,13 +78,13 @@
                 object_id: s.activity_id
             };
             if (s.user_perm_toggle.hasClass('fa-toggle-on')){
-                data.operation_type = 'remove_perm'; 
+                data.operation_type = 'remove_perm';
                 Ajax.post(s.ajax_url, data, s.csrftoken, function() {
                     s.user_perm_toggle.removeClass('fa-toggle-on text-primary');
                     s.user_perm_toggle.addClass('fa-toggle-off text-muted');
                 });
             }else {
-                data.operation_type = 'assign_perm'; 
+                data.operation_type = 'assign_perm';
                 Ajax.post(s.ajax_url, data, s.csrftoken, function() {
                     s.user_perm_toggle.removeClass('fa-toggle-off text-muted');
                     s.user_perm_toggle.addClass('fa-toggle-on text-primary');
@@ -150,9 +150,9 @@
             var ajax_url = s.activity_copy_button.data('ajaxurl');
             var csrftoken = $("input[name=csrfmiddlewaretoken]").val();
             var data = {
-                activity_type: s.activity_copy_button.data('activitytype'), 
-                activity_id: s.activity_copy_button.data('activityid'), 
-                course_name: $('#activity_copy_course').val(), 
+                activity_type: s.activity_copy_button.data('activitytype'),
+                activity_id: s.activity_copy_button.data('activityid'),
+                course_name: $('#activity_copy_course').val(),
                 course_id: $('option').filter(function() {
                                return $(this).text() == $('#activity_copy_course').val();
                            }).data('courseid'),
@@ -172,10 +172,10 @@
 //   initializes a rich text editor with appropriate settings
 //
 (function() {
-    
+
     var s; // cache
     RichTextEditor = {
-        
+
         /***[ module settings ]***/
         settings: {
             discussion_options: {
@@ -388,9 +388,9 @@
                 case 15: var attFile = '<span class="attachedAudio" style="cursor:pointer;"><a class="audioLink text-muted" href='
                                        + s.recorderServer
                                        + s.recorderDirectory
-                                       + "/" + s.audioName 
+                                       + "/" + s.audioName
                                        + ".mp3" + '><i class="icon-file-alt"></i> <span class="audioName">'
-                                       + s.audioName + ".mp3" 
+                                       + s.audioName + ".mp3"
                                        + '</span></a> <small> <i class="icon-remove removeIcon" style="color:grey; opacity:0.01;"></i></small></span>';
                          $('#inputAttachments').append(attFile);
                          s.recorder_trigger.trigger( "click" );
@@ -398,7 +398,7 @@
                          break;
             };
         },
- 
+
         overdubRecorderMessage: function(x,y) {
             switch(x) {
                 case 1:  recordingFlag = false; //no recording
@@ -490,7 +490,7 @@
                     $.each(data.result.files, function (index, file) {
                         // $('<p/>').text(file.name).appendTo('#files');
                         var attFile = '<span class="attachedFile" style="cursor:pointer;"><a class="fileLink text-muted" href='
-                                      + file.url 
+                                      + file.url
                                       + '  ><i class="icon-file-alt"></i> <span class="fileName">'
                                       + file.name
                                       + '</span></a> <small> <i class="icon-remove removeIcon" style="color:grey; opacity:0.01;"></i></small></span>';
@@ -548,7 +548,7 @@
                 event.preventDefault();
                 var activity_id = $(this).closest('ul').data('responseid'); // really should be object_id (see PostSaveView)
                 var data = {
-                    activity_type: "essay", 
+                    activity_type: "essay",
                     activity_id: activity_id,
                     text: $(this).val(),
                 };
@@ -562,7 +562,7 @@
                 });
             }
         },
- 
+
         removePost: function() {
             var ajax_url = $("#essay_responses").data("ajaxurl");
             var post_id = $(this).closest("li").data("postid");
