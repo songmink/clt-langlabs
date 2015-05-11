@@ -149,7 +149,7 @@
     </div>
     <!-- End of Orphaned List of Activities -->
 
-    {% if orphan_num == 0 and not activity_list_course %} 
+    {% if 'edit_course' in course_perms and orphan_num == 0 and not activity_list_course %} 
         <div id="no_activities" style="display: none;" data-username='{{ user }}'></div>
     {% endif %}
   

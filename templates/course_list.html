@@ -6,26 +6,17 @@
 {% load guardian_tags %}
 <h2 class="sub-header">Find Your Course</h2>
 <script>
-var courses_example=[{name:"New York",state:"WA"},{name:"Las Vegas",state:"NV"},{name:"Boston",state:"MA"}];
 var courses_json = {{courses_json|safe}};
 var courses = TAFFY(courses_json)
-var keywords = TAFFY()
-var previousSearchInput=''
-var cursorInSearchBox = false
-var currentMouseOver = false
-var currentMouseOverObject
 </script>
+
 <div class='row placeholders'>
 	<br>
 	<br>
-	<div class="input-group col-xs-6 col-xs-offset-3">
-		  <input id='searchInput' class="form-control" type="text" placeholder="input keywords for courses and instructors">
-		  <span class="input-group-addon courseSearchButton" style='cursor:pointer;'><i class="fa fa-search fa-fw" ></i></span>
-	</div>
-    <div id='autoComplete' class="list-group col-xs-6 col-xs-offset-3" style='padding-right:0px; text-align:left; cursor:pointer;z-index: 1; position:absolute;max-height:300px;overflow:auto;'></div>
-	<div id="searchResult" class='col-xs-6 col-xs-offset-3'>
-
-	</div>
+    <div class="input-group col-xs-6 col-xs-offset-3">
+        <input id="course_search" class="form-control" type="text" placeholder="keywords"></input>
+		<span class="input-group-addon" style='cursor:pointer;'><i id="course_search_button" class="fa fa-search fa-fw" ></i></span>
+    </div>
 </div>
 
 
@@ -63,7 +54,7 @@ var currentMouseOverObject
 			        	<a href="{% url 'subscribe_course' course.accesscode %}" class="btn btn-success btn-sm" role="button"> &nbsp;JOIN NOW <span class="glyphicon glyphicon-chevron-right"></span>&nbsp; </a>
 		        	{% endif %}
 	        	{% else %}
-	        	<a><small data-toggle="modal" data-target=".courseSubscribe" style="cursor:pointer;"> <i class="fa fa-book"></i> Subscribe (requires access code)</small></a> <br> <small>or Request access code from instructor.</small> 
+                    <a><small data-toggle="modal" data-target=".courseSubscribe" style="cursor:pointer;"> <i class="fa fa-book"></i> Subscribe (requires access code)</small></a> 
 	        	{% endif %}
 	        </p>
 		</div>
@@ -79,5 +70,6 @@ var currentMouseOverObject
 <link href="{% static "css/course_list.css" %}" rel="stylesheet">
 {% endblock stylesheets%}
 {% block more_javascript %} 
+<script src="{% static "js/typeahead.bundle.js" %}"></script>
 <script src="{% static "js/course_list.js" %}"></script>
 {% endblock more_javascript %}

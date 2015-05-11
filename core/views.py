@@ -88,7 +88,9 @@ class CourseIndexView(LoginRequiredMixin, CourseListMixin, ActivityListMixin, Us
         context = super(CourseIndexView, self).get_context_data(**kwargs)
         if self.request.session.get('has_created_lesson', False):
             context['has_created_lesson'] = True
-            self.request.session['has_created_lesson'] = False
+        else:
+            context['has_created_lesson'] = False
+        self.request.session['has_created_lesson'] = False
         return context
 
     def get_object(self, queryset=None):

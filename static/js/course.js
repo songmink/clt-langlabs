@@ -55,7 +55,8 @@ $(document).ready(function(){
     $('.ca-tooltip').tooltip();
 
     // modal to display when user has just created a lesson
-    if ($('#has_created_lesson').data('flag')) {
+    console.log($('#has_created_lesson').data('flag'))
+    if ($('#has_created_lesson').data('flag') == 'True') {
         $('#has_created_lesson').modal('show');
     }
 
@@ -108,7 +109,7 @@ $(document).ready(function(){
                 element: '.tour-step.tour-step-six',
                 placement: 'bottom',
                 title: 'Activities',
-                content: '<p>Activities and lessons are the bread and butter of your course. In this dropdown menu you will the options to create both.</p><p>Actvities are where your students will be interacting with you and each other. And lessons are a way of organizing your activities</p>',
+                content: '<p>Activities and lessons are the bread and butter of your course. In this dropdown menu you will find the options to create both.</p><p>Actvities are where your students will be interacting with you and each other. And lessons are a way of organizing your activities</p>',
             },
         ],
     });
