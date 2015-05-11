@@ -13,11 +13,28 @@
 
             <!-- get attachments from fat Post Model -->
             {% if post.get_documents %}
-            <p class="attachDIV well" style="padding:8px;margin-bottom:0px;border-radius:0px;border:0px;background-color:#F8F8F8;">
+            <div class="attachDIV well" style="padding:8px;margin-bottom:0px;border-radius:0px;border:0px;background-color:#F8F8F8;">
                 {% for document in post.get_documents %}
-                <span><a class="fileLink text-muted" href="{{ document.accessURL }}"  ><i class="icon-file-alt"></i> {{ document }} </a></span>
+                    <span><a class="fileLink text-muted btn btn-md" href="" data-toggle="modal" data-target="#{{ document.id }}viewer" ><i class="fa fa-files-o"></i> {{ document }} </a></span>
+                    <!-- Modal -->
+                    <div class="modal fade" id="{{ document.id }}viewer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-md">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">{{ document }}</h4>
+                          </div>
+                          <div class="modal-body">
+                            <img src="{{ document.accessURL }}" width="100%" />
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                 {% endfor %}
-            </p>
+            </div>
             {% endif %}
 
             <!-- audio files -->
