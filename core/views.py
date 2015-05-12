@@ -64,7 +64,6 @@ class CourseListView(LoginRequiredMixin, CourseListMixin,ListView):
 
     def get_context_data(self, **kwargs):
         context = super(CourseListView, self).get_context_data(**kwargs)
-        # try:
         data = []
         courses=self.get_queryset()
         for course in courses:
@@ -73,8 +72,10 @@ class CourseListView(LoginRequiredMixin, CourseListMixin,ListView):
                 private_users.append(private_user.username)
             data.append({"course_name":course.title, "instructors":private_users})
         context['courses_json'] = json.dumps(data)
-        # except: 
-            # pass
+        unique_list = []
+        for pair in data:
+            unique_list = list(set(unique_list) | set(pair['instructors']))
+        context['single_instructors'] = json.dumps(unique_list)
         return context
 
 class CourseIndexView(LoginRequiredMixin, CourseListMixin, ActivityListMixin, UsersWithPermsMixin, DetailView):
@@ -107,9 +108,9 @@ class CourseCreateView(LoginRequiredMixin, CourseListMixin, CreateView):
     template_name = 'collection_create.html'
     fields = ['title', 'nickname', 'description', 'accesscode', 'is_active','is_public']
 
-#    def dispatch(self, *args, **kwargs):
-#        # do not let anyone create a course at the moment
-#        raise PermissionDenied();
+    def dispatch(self, *args, **kwargs):
+        # do not let anyone create a course at the moment
+        raise PermissionDenied();
 
     def form_valid(self, form):
         form.save()

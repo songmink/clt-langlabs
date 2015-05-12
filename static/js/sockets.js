@@ -137,7 +137,8 @@
         // messageToRoom: fires when a post is received from the chat server
         messageToRoom: function(response) {
             if (s.read_after_post_lock === false) {
-                var new_post = $(response);
+                console.log(response)
+                var new_post = $(response.trim());
                 var post_creator = new_post.find('strong').html().toLowerCase();
                 if (s.user == post_creator || s.user_is_instructor) {
                     new_post.find('small.pull-right').append(s.remove_icon);
@@ -151,7 +152,7 @@
         commentToRoom: function(data) {
             if (s.read_after_post_lock === false) {
                 var response = eval ("(" + data + ")");
-                var new_post = $(response.rendered_string);
+                var new_post = $(response.rendered_string.trim());
                 var post_creator = new_post.find('strong').html().toLowerCase()
                 if (s.user == post_creator || s.user_is_instructor) {
                     new_post.find('small.pull-right').append(s.remove_icon)

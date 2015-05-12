@@ -11,9 +11,9 @@ $(document).ready(function(){
 
     // suggestion engine for instructors
     var bloodhound_instructors = new Bloodhound({
-        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('instructors'),
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
         queryTokenizer: Bloodhound.tokenizers.whitespace,
-        local: courses_json,
+        local: single_instructors,
     });
     
     // typeahead settings
@@ -25,7 +25,6 @@ $(document).ready(function(){
     },
     {
         name: 'bloodhound_instructors',
-        display: 'instructors',
         limit: 7,
         source: bloodhound_instructors,
     });
