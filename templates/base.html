@@ -61,7 +61,11 @@
                 {% endfor %}
               {% endblock course_item_list %}
               <li class="divider"></li>
+
+              {% if perms.core.create_course %}
               <li><a href="{% url 'create_collection' %}"><small><span class="glyphicon glyphicon-plus-sign"></span> New Course</small></a></li>
+              {% endif %}
+
               <li><a href="{% url 'course_list' %}"><small><span class="glyphicon glyphicon-search"></span> Search Course</small></a></li>
               <li ><a><small data-toggle="modal" data-target=".courseSubscribe" style="cursor:pointer;"><i class="fa fa-book"></i> Subscribe with code</small></a></li>
               </ul>
@@ -119,7 +123,7 @@
     </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://code.jquery.com/jquery-1.9.0.min.js"></script> 
+    <script src="https://code.jquery.com/jquery-1.9.0.min.js"></script>
 
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="{% static "bootstrap/dist/js/bootstrap.min.js" %}"></script>

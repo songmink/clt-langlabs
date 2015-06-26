@@ -6,7 +6,7 @@
 <h2 class="sub-header">Current Courses</h2>
 
 <div class="row" >
-	{% for course in course_list %}
+    {% for course in course_list %}
 	{% get_obj_perms user for course as "course_temp_perms" %}
 	    {% if course.is_active or "edit_course" in course_temp_perms %}
 		    {% if course.is_active %}
@@ -16,16 +16,16 @@
 					<div class="col-xs-12 text-left text-muted">
 						<span class=''><em>-with</em></span>
 						<span> &nbsp;<i class="fa fa-graduation-cap"></i>
-							{% for courseInstructor in course.get_private_users %} 
+							{% for courseInstructor in course.get_private_users %}
 								{% if not  courseInstructor.is_superuser %}
-									<u>{{courseInstructor}}&nbsp;</u> 
-								{% endif %} 
+									<u>{{courseInstructor}}&nbsp;</u>
+								{% endif %}
 							{% endfor %} &nbsp;&nbsp;
 							<i class="fa fa-user"></i>&nbsp;{{course.get_user_num}}
 						</span>
 					</div>
 				</div>
-                
+
 		    {% else %}
 				<div class="col-md-3">
 					<div class='col-xs-12 text-left'><a href="{{ course.get_absolute_url }}" class='text-muted'><h3>{{course.title}} <small>(DEACTIVATED)</small></h3></a></div>
@@ -33,27 +33,30 @@
 					<div class="col-xs-12 text-left text-muted">
 						<span class=''><em>-with</em></span>
 						<span> &nbsp;<i class="fa fa-graduation-cap"></i>
-							{% for courseInstructor in course.get_private_users %} 
+							{% for courseInstructor in course.get_private_users %}
 								{% if not  courseInstructor.is_superuser %}
-									<u>{{courseInstructor}}&nbsp;</u> 
-								{% endif %} 
+									<u>{{courseInstructor}}&nbsp;</u>
+								{% endif %}
 							{% endfor %} &nbsp;&nbsp;
 							<i class="fa fa-user"></i>&nbsp;{{course.get_user_num}}
 						</span>
 					</div>
-					
+
 				</div>
 		    {% endif %}
 		{% endif %}
 	{% empty %}
     	<div class="col-md-12">
-    		<p class="center-block lead" style="padding: 100px">Hi, you do not appear to have any courses assigned to you. Try searching for your course <a href="{% url 'course_list' %}" class="btn btn-success">here</a>.</p>
+    		<p class="center-block lead text-center">Hi, you do not appear to have any courses assigned to you. Try searching for your course <a href="{% url 'course_list' %}" class="btn btn-primary"><i class="fa fa-search"></i></a>.</p>
+            {% if perms.core.create_course %}
+            <p class="center-block lead text-center"><a href="{% url 'create_collection' %}" class="btn btn-success"> <i class="fa fa-plus-square"></i> Or, create a new course!</a></p>
+            {% endif %}
     	</div>
 	{% endfor %}
 </div>
 {% endblock contentwrap %}
 
-{% block stylesheets %} 
+{% block stylesheets %}
 <link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
 <link href="{% static "css/home.css" %}" rel="stylesheet">
 {% endblock stylesheets%}

@@ -4,6 +4,7 @@ Django base settings for cltlanglab project.
 import os
 from unipath import Path
 
+
 # Secret key stored in environment variable not here.
 #SECRET_KEY = os.environ['SECRET_KEY']
 
@@ -35,14 +36,20 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     # Project apps:
-     'discussions',
-     'overdub_discussions',
-     'essays',
-     'core',
+    'discussions',
+    'overdub_discussions',
+    'essays',
+    'core',
 
     # Utils:
     'crispy_forms',
     'guardian',
+    'uhauth',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.request',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -52,7 +59,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',   
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
 
 )
 
@@ -72,12 +79,12 @@ USE_TZ = True
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
-LOGIN_URL = '/accounts/login/'
-LOGOUT_URL = '/accounts/logout'
+# LOGIN_URL = '/accounts/login/'
+# LOGOUT_URL = '/accounts/logout'
 
-LOGIN_REDIRECT_URL = '/home'
+# LOGIN_REDIRECT_URL = '/home'
 
-REDIRECT_FIELD_NAME = 'home'
+# REDIRECT_FIELD_NAME = 'home'
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
@@ -87,7 +94,7 @@ AUTHENTICATION_BACKENDS = (
 
 ANONYMOUS_USER_ID = -1
 
-# Potential sockets setup
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -121,7 +128,4 @@ LOGGING = {
 }
 #########################
 
-# HEROKU SETUP?
 
-# Honor the 'X-Forwarded-Proto' header for request.is_secure()
-## SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

@@ -7,14 +7,17 @@ from discussions.models import DiscussionActivity
 from overdub_discussions.models import OverdubActivity
 from essays.models import EssayActivity, EssayResponse
 
+
 class ActivityCollectionAdmin(admin.ModelAdmin):
-	save_as = True
+    save_as = True
+
 
 class DiscussionActivityAdmin(admin.ModelAdmin):
-	save_as = True
+    save_as = True
+
 
 class OverdubActivityAdmin(admin.ModelAdmin):
-	save_as = True
+    save_as = True
 
 admin.site.register(ActivityCollection, ActivityCollectionAdmin)
 admin.site.register(Lesson)

@@ -24,7 +24,7 @@ from django.template import RequestContext
 from django.template.loader import render_to_string
 from itertools import chain
 
-from core.mixins import CourseListMixin, ActivityListMixin, UsersWithPermsMixin, FakeDeleteMixin 
+from core.mixins import CourseListMixin, ActivityListMixin, UsersWithPermsMixin, FakeDeleteMixin
 
 from .models import ActivityCollection, Lesson, Post, Document
 
@@ -39,18 +39,18 @@ class IndexView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
-        mood = datetime.now().time().second/60.0              
+        mood = datetime.now().time().second/60.0
         if mood > .80:
             context['moodtext'] = 'white'
         else:
             context['moodtext'] = 'black'
 
         context['moodlight'] = '%.2f' % (mood)
-        return context  
+        return context
 
 
 class HomeView(LoginRequiredMixin, CourseListMixin, TemplateView):
-    ''' -- Homepage of cltlanglabs '''
+    ''' -- A user's homepage in cltlanglabs '''
     template_name = 'home.html'
 
 class CourseListView(LoginRequiredMixin, CourseListMixin,ListView):
@@ -109,8 +109,11 @@ class CourseCreateView(LoginRequiredMixin, CourseListMixin, CreateView):
     fields = ['title', 'nickname', 'description', 'accesscode', 'is_active','is_public']
 
     def dispatch(self, *args, **kwargs):
-        # do not let anyone create a course at the moment
-        raise PermissionDenied();
+        if self.request.user.has_perm('core.create_course'):
+            return super(CourseCreateView, self).dispatch(self.request, *args, **kwargs)
+
+        # user does not have create_course permission.
+        raise PermissionDenied()
 
     def form_valid(self, form):
         form.save()
@@ -138,7 +141,7 @@ class CourseUpdateView(LoginRequiredMixin, PermissionRequiredMixin, CourseListMi
         assign_perm('core.edit_course', self.request.user, form.instance)
         return super(CourseUpdateView, self).form_valid(form)
 
-class CourseDeleteView(LoginRequiredMixin, PermissionRequiredMixin, CourseListMixin, FakeDeleteMixin, DeleteView):  #FakeDeleteMixin, 
+class CourseDeleteView(LoginRequiredMixin, PermissionRequiredMixin, CourseListMixin, FakeDeleteMixin, DeleteView):  #FakeDeleteMixin,
     ''' -- Course Delete Page '''
 
     model = ActivityCollection
@@ -197,7 +200,7 @@ class PostDeleteView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, View
         post = Post.objects.get(pk=post_id)
         post.is_deleted = True
         post.save()
-    
+
         # delete any children posts if it is a parent post
         if not post.parent_post:
             child_posts = Post.objects.filter(parent_post=post_id)
@@ -216,7 +219,7 @@ class PostSaveView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, View):
         activity_id = request.POST.get('activity_id', '')
         post = self.create_post(request)
         private_users = []
-        course = ActivityCollection() 
+        course = ActivityCollection()
         if activity_type == 'discussion':
             activity = DiscussionActivity.objects.get(pk=activity_id)
             activity.posts.add(post)
@@ -233,13 +236,13 @@ class PostSaveView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, View):
         context = {
             'post': post,
             'private_users': course.get_private_users(),
-            'activity_type': activity_type,   
+            'activity_type': activity_type,
             'recorder_myDirectory': settings.RECORDER_MYDIRECTORY,
             'recorder_myServer': settings.RECORDER_MYSERVER,
         }
         rendered_string = render_to_string("post_template.html", context,
                                            context_instance=RequestContext(request))
-        return self.render_json_response(rendered_string) 
+        return self.render_json_response(rendered_string)
 
     @staticmethod
     def create_post(request):
@@ -299,7 +302,7 @@ def fileUpload(request):
 def subscribeCourse(request, accesskey):
     ''' -- Function-based view for user to subscribe a course '''
 
-    courseToSubscribe = get_object_or_404(ActivityCollection, 
+    courseToSubscribe = get_object_or_404(ActivityCollection,
         accesscode=accesskey,
         is_deleted=False,
     )
@@ -325,7 +328,7 @@ def CourseCopyView(request, course_id):
     try:
         courseToCopy.title = courseToCopy.title+"("+timeStamp+")"
     except:
-        return HttpResponse('copy failed when saving course title') 
+        return HttpResponse('copy failed when saving course title')
     # deal with unique accesscode
     try:
         courseToCopy.accesscode = courseToCopy.accesscode+"("+timeStamp+")"
@@ -348,7 +351,7 @@ def CourseCopyView(request, course_id):
         if lessonsToAdd.count() != 0:
             for l in lessonsToAdd.all():
                 activityToCopy.lesson.add(courseToCopy.lesson_set.filter( title = l.title )[0])
-    
+
     return  redirect(courseToCopy)
 
 # change user object permission
@@ -386,7 +389,7 @@ def changePerm(request):
             assign_perm(perm_codename, perm_user, target_object)
             return HttpResponse('successful change')
         elif perm_operation_type == 'remove_perm':
-            remove_perm(perm_codename, perm_user, target_object) 
+            remove_perm(perm_codename, perm_user, target_object)
             return HttpResponse('successful change')
         elif perm_operation_type == 'enable_control':
             target_object.permission_control = True
@@ -399,7 +402,7 @@ def changePerm(request):
         else:
             return HttpResponse('no change')
     else:
-        return HttpResponse('post ajax required') 
+        return HttpResponse('post ajax required')
 
 # copy activity
 @login_required
@@ -439,7 +442,7 @@ def copyActivity(request):
         target_object.lesson.clear()
         return HttpResponse("success_redirect"+course_to_attach.get_absolute_url())
     else:
-        return HttpResponse('post ajax required') 
+        return HttpResponse('post ajax required')
 
 # change lesson title
 @login_required
@@ -453,7 +456,7 @@ def editLessonTitle(request):
             target_lesson = Lesson.objects.filter(id=lesson_id)[0]
             target_lesson.title = new_title
             target_lesson.save()
-            return HttpResponse('Success') 
+            return HttpResponse('Success')
         except:
             return HttpResponseBadRequest()
 
@@ -461,7 +464,7 @@ def editLessonTitle(request):
 @login_required
 def editEssayDraft(request):
     ''' -- Function-based view to save the edition of an Essay Draft. '''
- 
+
     if request.method == 'POST':
         operation = request.POST.get("operation", '')
         essay_id = request.POST.get("essay_id", '')
@@ -472,7 +475,7 @@ def editEssayDraft(request):
         draft_content = request.POST.get("draft_content", '')
         progressing_response = EssayResponse.objects.filter(user=request.user, essay_activity__id=essay_id, status='in progress').order_by('modified','-draft_number')
         # There is an exiting essay response
-        if progressing_response.count() == 1: 
+        if progressing_response.count() == 1:
             target_object = progressing_response[0]
             target_object.draft_title = draft_title
             target_object.draft = draft_content
@@ -483,7 +486,7 @@ def editEssayDraft(request):
             target_object.save()
             return HttpResponse('Success')
         # There is not an exiting essay response
-        elif progressing_response.count() == 0 : 
+        elif progressing_response.count() == 0 :
             new_draft_number = EssayResponse.objects.filter(user=request.user, essay_activity__id=essay_id).count()+1
             target_object = EssayResponse(essay_activity=get_object_or_404(EssayActivity, pk=essay_id), draft_title=draft_title, user= request.user,draft_number=new_draft_number,draft=draft_content)
             if operation == 'save':
@@ -505,6 +508,6 @@ def uhcaslogout(request):
     protocol = ('http://', 'https://')[request.is_secure()]
     host = request.get_host()
     logouturl += '?' + urlencode({'service': protocol + host })
-    
+
     return HttpResponseRedirect(logouturl)
 

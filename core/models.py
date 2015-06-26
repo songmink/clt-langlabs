@@ -30,7 +30,7 @@ class ActivityCollection(models.Model):
         :Meta:
             | **permissions**   -- Object level permission control("edit_course" -> Instructor ; "view_course" -> Student)
 
-    ''' 
+    '''
 
     title = models.CharField(max_length=100, unique=True)
     nickname = models.CharField(max_length=100)
@@ -45,6 +45,7 @@ class ActivityCollection(models.Model):
         permissions = (
             ('view_course', 'view course'),
             ('edit_course', 'edit course'),
+            ('create_course', 'create course'),
         )
 
     def get_private_users(self):
@@ -125,7 +126,7 @@ class Post(models.Model):
 
     def __unicode__(self):
         return self.text
- 
+
     def get_documents(self):
         ''' :returns: Documents that are related to a Post. '''
 
@@ -152,7 +153,7 @@ class AbstractActivity(models.Model):
             | **abstract**  -- Set class to abstract
             | **permissions**   -- Object level permission control("view_activity" permission is checked when *permission_control* is set to true )
 
-    '''    
+    '''
     DISCUSSION = 'discussion'
     ESSAY = 'essay'
     OVERDUB = 'overdub'

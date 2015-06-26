@@ -8,6 +8,9 @@ Django dev settings for cltlanglab project.
 
 from .base import *
 
+# NEEDED for CAS logins on dev systems with OPENSSL < 1
+import uhauth.tls_patch
+
 SECRET_KEY = os.environ['SECRET_KEY']
 
 DEBUG = True
@@ -18,6 +21,8 @@ TEMPLATE_DEBUG = True
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
 ALLOWED_HOSTS = []
+
+ROOT_URLCONF = 'cltlanglab.urls'
 
 # Append apps used in development not production.
 INSTALLED_APPS += (
@@ -35,6 +40,7 @@ DATABASES = {
     }
 }
 
+
 # gevent.socket.io server settings (ssl not used in development)
 CHAT_SERVER_PROTOCOL = 'http'
 CHAT_SERVER_HOST = 'localhost'
@@ -45,4 +51,27 @@ RECORDER_MYSERVER ="http://localhost/"
 RECORDER_MYHANDLER ="phpinc/save-v7.php"
 RECORDER_MYDIRECTORY = "uploads"
 RECORDER_LICENSE = ''
+
+
+# CAS SETUP #
+
+MIDDLEWARE_CLASSES += ('django_cas.middleware.CASMiddleware',)
+
+AUTHENTICATION_BACKENDS += ('uhauth.backends.UHCASAttributesBackend',)
+
+CAS_SERVER_URL = 'https://cas-test.its.hawaii.edu/cas/'
+CAS_VERSION = 'CAS_2_SAML_1_0'
+CAS_REDIRECT_URL = '/'
+
+# END CAS #
+
+
+LOGIN_URL = '/accounts/login/'
+LOGOUT_URL = '/accounts/logout'
+
+LOGIN_REDIRECT_URL = '/home'
+REDIRECT_FIELD_NAME = 'home'
+
+
+
 

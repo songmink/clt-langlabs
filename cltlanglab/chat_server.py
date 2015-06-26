@@ -3,7 +3,8 @@ Cltlanglab Chat Server configuration file
 """
 # chat_server.py
 #!/usr/bin/env python
-import os, sys
+import os
+import sys
 from gevent import monkey
 from socketio.server import SocketIOServer
 
