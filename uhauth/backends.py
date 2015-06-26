@@ -50,10 +50,10 @@ class UHCASAttributesBackend(CASBackend):
         except:
             pass
 
-        # try:
+        try:
             uh_affiliation = user_attrs['eduPersonAffiliation']
-        # except:
-            # uh_affiliation = []
+        except:
+            uh_affiliation = []
 
         """
             If user is staff or faculty, add a create_course permission to their user account.
