@@ -50,10 +50,10 @@ class UHCASAttributesBackend(CASBackend):
         except:
             pass
 
-        try:
+        # try:
             uh_affiliation = user_attrs['eduPersonAffiliation']
-        except:
-            uh_affiliation = []
+        # except:
+            # uh_affiliation = []
 
         """
             If user is staff or faculty, add a create_course permission to their user account.
@@ -61,6 +61,7 @@ class UHCASAttributesBackend(CASBackend):
             get this permission assigned through admin panel (by system or staff admin)
         """
         if 'faculty' in uh_affiliation or 'staff' in uh_affiliation:
+
             if not user.has_perm('core.create_course'):
                 content_type = ContentType.objects.get_for_model(ActivityCollection)
                 permission = Permission.objects.get(codename='create_course', content_type=content_type)
