@@ -20,10 +20,10 @@ class EssayUpdateView(ActivityEditPermissionMixin, CourseListMixin, CreateActivi
     ''' -- Essay Edit Page '''
 
     model=EssayActivity
-    context_object_name = 'activity' 
+    context_object_name = 'activity'
     template_name = 'activity_edit.html'
     fields = ['title', 'instructions',
-              'lesson', 'is_active', 'required_revisions']
+              'lesson', 'is_active', 'required_revisions', 'display_order']
     activity_type = 'essay'
 
     def get_form(self, form_class):
@@ -41,7 +41,7 @@ class EssayCreateView(ActivityEditPermissionMixin, CourseListMixin, CreateActivi
     model = EssayActivity
     template_name = 'activity_create.html'
     fields = ['title', 'instructions', 'lesson',
-              'is_active', 'required_revisions']
+              'is_active', 'required_revisions', 'display_order']
     activity_type = 'essay'
 
     def get_form(self, form_class):

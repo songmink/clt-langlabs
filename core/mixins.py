@@ -1,13 +1,16 @@
 # mixins.py
-from django.shortcuts import render, get_object_or_404
-from django.core.exceptions import PermissionDenied
-from django.contrib.auth.models import User
-from django.http import HttpResponseRedirect
-from guardian.shortcuts import get_objects_for_user, get_users_with_perms, get_perms
 from itertools import chain
 from operator import attrgetter
 from copy import deepcopy
 from datetime import datetime
+from collections import OrderedDict
+
+from django.shortcuts import render, get_object_or_404
+from django.core.exceptions import PermissionDenied
+from django.contrib.auth.models import User
+from django.http import HttpResponseRedirect
+
+from guardian.shortcuts import get_objects_for_user, get_users_with_perms, get_perms
 
 from core.models import ActivityCollection, AbstractActivity, Post, Lesson
 from essays.models import EssayResponse
@@ -167,46 +170,42 @@ class ActivityListMixin(object):
         except:  # in course detail view?
             course = self.get_object()
 
-        nodes = [
-            course.discussions.filter(is_deleted=False).all(),
-            course.essays.filter(is_deleted=False).all(),
-            course.overdubs.filter(is_deleted=False).all(),
-            # Add new types here...
-        ]
+        # Retrieve all lessons associated with course.
+        lessons = course.lesson_set.all().order_by('display_order')
 
-        acts = []
-        acts_navi = []
-        act_orphans = ''
+        # Initialize a data structure for representing lessons and activities
+        lessondict = OrderedDict()
+        for lesson in lessons:
+            lessondict[lesson.id] = (lesson, [])
 
+        # Gather activities associated with this course.
+        activities = (list(course.discussions.all().filter(is_deleted=False).order_by('display_order'))
+            + list(course.essays.all().filter(is_deleted=False).order_by('display_order'))
+            + list(course.overdubs.all().filter(is_deleted=False).order_by('display_order'))
+            )
+        activities.sort(key=lambda x: x.display_order, reverse=False)
 
-        # Activities associated with lessons...
-        for i in nodes:
-            for eachActivity in i:
-                if eachActivity.lesson.count() != 0:
-                    acts_navi.append(eachActivity)
-                    for j in eachActivity.lesson.all():
-                        tempActivity = deepcopy(eachActivity)
-                        tempActivity.activity_to_lesson = j
-                        acts.append(tempActivity)
+        # Map each activity to its lesson
+        orphan_activities = []
+        for activity in activities:
+            activitylessons = activity.lesson.all()
+            if activitylessons:
+                for lesson in activitylessons:
+                    lessondict[lesson.id][1].append(activity)
+            else:
+                orphan_activities.append(activity)
 
-        # Orphans - Activities NOT associated with lessons
-        orphan_num = 0
-        for i in nodes:
-            act_orphans = chain(act_orphans, i.filter(lesson__isnull=True))
-            orphan_num += i.filter(lesson__isnull=True).count()
+        menu_listing = []
+        for i, j in lessondict.items():
+            for k in j[1]:
+                menu_listing.append(k)
 
-        # Sort the activities list by lesson display order then by activity
-        # display order
-        # we may do the sorting as an array
-        acts.sort(key=lambda x: x.activity_to_lesson.title, reverse=False)
-        acts.sort(
-            key=lambda x: x.activity_to_lesson.display_order, reverse=False)
 
         context['course'] = course
-        context['activity_list_course'] = acts
-        context['activity_list'] = acts_navi
-        context['orphan_list'] = act_orphans
-        context['orphan_num'] = orphan_num
+        context['activity_list_course'] = lessondict
+        context['activity_list'] = menu_listing + orphan_activities
+        context['orphan_list'] = orphan_activities
+        context['orphan_num'] = len(orphan_activities)
 
         return context
 

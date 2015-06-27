@@ -194,6 +194,23 @@ class LessonAddView(LessonCreateView):
         return self.object.collection.get_absolute_url()
 
 
+class LessonUpdateView(LoginRequiredMixin, CourseListMixin, UpdateView):
+    ''' -- Lesson Edit Page '''
+
+    model = Lesson
+    template_name = 'lesson_edit.html'
+    fields = ['title', 'description', 'display_order']
+    permission_required = 'core.edit_course'
+    raise_exception = True
+
+    def form_valid(self, form):
+        form.save()
+        # assign_perm('core.edit_course', self.request.user, form.instance)
+        return super(LessonUpdateView, self).form_valid(form)
+
+    def get_success_url(self):
+        return self.object.collection.get_absolute_url()
+
 class PostDeleteView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, View):
     ''' -- Class based view which handles post deletions '''
 

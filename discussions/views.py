@@ -26,7 +26,7 @@ class DiscussionCreateView(CourseListMixin, CreateActivityMixin, CreateView):
     model = DiscussionActivity
     template_name = 'activity_create.html'
     fields = ['title', 'instructions',
-              'lesson', 'is_active', 'read_after_post', 'private_mode']
+              'lesson', 'is_active', 'read_after_post', 'private_mode', 'display_order']
     activity_type = 'discussion'
 
     def get_form(self, form_class):
@@ -49,10 +49,10 @@ class DiscussionUpdateView(ActivityEditPermissionMixin, CourseListMixin, CreateA
     ''' -- Discussion Edit Page '''
 
     model=DiscussionActivity
-    context_object_name = 'activity' 
+    context_object_name = 'activity'
     template_name = 'activity_edit.html'
     fields = ['title', 'instructions',
-              'lesson', 'is_active', 'read_after_post', 'private_mode']
+              'lesson', 'is_active', 'read_after_post', 'private_mode', 'display_order']
     activity_type = 'discussion'
 
     def get_form(self, form_class):

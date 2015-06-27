@@ -13,12 +13,12 @@ from .models import OverdubActivity
 
 # def overdub_detail_view(request, pk):
 # 	activity = get_object_or_404(EssayActivity, pk=pk)
-	
+
 # 	course = activity.collection
 # 	course_list = ActivityCollection.objects.filter()
 # 	activity_list = AbstractActivity.objects.filter(collection=course).order_by("display_order")
-	
-# 	return render(request, 'essay.html', 
+
+# 	return render(request, 'essay.html',
 # 		{
 # 			'activity' : activity,
 # 			'course' : course,
@@ -42,7 +42,7 @@ class OverdubCreateView(CourseListMixin, CreateActivityMixin, CreateView):
     model = OverdubActivity
     template_name = 'activity_create.html'
     fields = ['title', 'instructions', 'media',
-              'lesson', 'is_active', 'read_after_post', 'private_mode']
+              'lesson', 'is_active', 'read_after_post', 'private_mode', 'display_order']
     activity_type = 'overdub'
 
     def get_form(self, form_class):
@@ -77,10 +77,10 @@ class OverdubUpdateView(ActivityEditPermissionMixin, CourseListMixin, CreateActi
     ''' -- Overdub Edit Page '''
 
     model= OverdubActivity
-    context_object_name = 'activity' 
+    context_object_name = 'activity'
     template_name = 'activity_edit.html'
     fields = ['title', 'instructions', 'media',
-              'lesson', 'is_active', 'read_after_post', 'private_mode']
+              'lesson', 'is_active', 'read_after_post', 'private_mode', 'display_order']
     activity_type = 'overdub'
 
     def get_form(self, form_class):
@@ -92,7 +92,7 @@ class OverdubUpdateView(ActivityEditPermissionMixin, CourseListMixin, CreateActi
         form.fields['upload_video'] = forms.FileField(required = False,label='or Upload a Video')
 
         return form
-    
+
     def form_valid(self, form):
         ''' :returns: *"Media"* is assigned to an external URL if it's filled, otherwise it points to the uploaded file. '''
 
