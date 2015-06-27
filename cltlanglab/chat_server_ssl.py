@@ -1,5 +1,5 @@
 """
-Cltlanglab Chat Server configuration file for SSL connections.
+Cltlanglab Chat Server configuration file for SSL connections. This usually applies to production server context.
 """
 # chat_server_ssl.py
 #!/usr/bin/env python
@@ -24,7 +24,7 @@ from django.conf import settings
 PORT = settings.CHAT_SERVER_PORT
 host = settings.CHAT_SERVER_HOST
 key = settings.SSL_KEY
-cert = settings.SSL_CERT 
+cert = settings.SSL_CERT
 
 # Connect to django db
 connections['default'].allow_thread_sharing = True

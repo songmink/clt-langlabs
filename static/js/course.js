@@ -24,18 +24,18 @@ $(document).ready(function(){
           var username = $(this).closest('div.admin_row').data('username')
           var changeFlag = ajaxChangePermission(ajax_URL, username, permission, 'course', course_id, 'assign_perm', csrftoken)
 
-          // make ajax call to change permission 
+          // make ajax call to change permission
           if(changeFlag){
             $(this).removeClass('fa-toggle-off text-muted')
             $(this).addClass('fa-toggle-on text-primary')
           }
       }
     })
-    
+
     //turn to inline mode
     $.fn.editable.defaults.mode = 'inline';
     if($(".editable_lesson_title").size()!=0){
-    
+
       $(".editable_lesson_title").each(function(){
         $(this).editable({
           ajaxOptions: {
@@ -55,7 +55,7 @@ $(document).ready(function(){
     $('.ca-tooltip').tooltip();
 
     // modal to display when user has just created a lesson
-    console.log($('#has_created_lesson').data('flag'))
+    // console.log($('#has_created_lesson').data('flag'))
     if ($('#has_created_lesson').data('flag') == 'True') {
         $('#has_created_lesson').modal('show');
     }
@@ -141,7 +141,7 @@ function ajaxChangePermission(ajax_URL, username, code_name, objecttype, objecti
       }else{
         changeSuccess = false
       }
-      
+
     })
     .fail(function( jqXHR, textStatus) {
       // alert( "Request failed: " + textStatus );

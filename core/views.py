@@ -141,7 +141,8 @@ class CourseUpdateView(LoginRequiredMixin, PermissionRequiredMixin, CourseListMi
         assign_perm('core.edit_course', self.request.user, form.instance)
         return super(CourseUpdateView, self).form_valid(form)
 
-class CourseDeleteView(LoginRequiredMixin, PermissionRequiredMixin, CourseListMixin, FakeDeleteMixin, DeleteView):  #FakeDeleteMixin,
+
+class CourseDeleteView(LoginRequiredMixin, PermissionRequiredMixin, CourseListMixin, FakeDeleteMixin, DeleteView):
     ''' -- Course Delete Page '''
 
     model = ActivityCollection
@@ -150,12 +151,13 @@ class CourseDeleteView(LoginRequiredMixin, PermissionRequiredMixin, CourseListMi
     permission_required = 'core.edit_course'
     raise_exception = True
 
+
 class LessonCreateView(LoginRequiredMixin, CourseListMixin, CreateView):
     ''' -- Lesson Create Page '''
 
     model = Lesson
     template_name = 'lesson_create.html'
-    fields = ['title', 'description']
+    fields = ['title', 'description', 'display_order']
 
     def form_valid(self, form):
     # Auto set the following fields:
@@ -185,7 +187,7 @@ class LessonAddView(LessonCreateView):
     def form_valid(self, form):
     # Auto set the following fields:
         form.instance.collection = get_object_or_404(
-            ActivityCollection, pk=self.kwargs['addpk'])
+            ActivityCollection, pk=self.kwargs['addpk'])
         return super(LessonAddView, self).form_valid(form)
 
     def get_success_url(self):

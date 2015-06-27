@@ -106,7 +106,7 @@ class UserPostNumMixin(object):
 
 class ActivityEditPermissionMixin(object):
     ''' -- ActivityEditPermissionMixin checks current user's permission to update or delete an activity in a course, and provides screening. '''
-    
+
     def get_object(self, queryset=None):
         '''  :returns: "Permission Denied" page if user is a not an Instructor of the course. '''
 
@@ -177,6 +177,7 @@ class ActivityListMixin(object):
         acts = []
         acts_navi = []
         act_orphans = ''
+
 
         # Activities associated with lessons...
         for i in nodes:
@@ -250,7 +251,7 @@ class RecorderMixin(object):
         context['recorder_myHandler'] = settings.RECORDER_MYHANDLER
         context['recorder_myDirectory'] = settings.RECORDER_MYDIRECTORY
         context['recorder_license'] = settings.RECORDER_LICENSE
-        
+
         return context
 
 class ChatServerMixin(object):
@@ -263,7 +264,7 @@ class ChatServerMixin(object):
         context['chatserver_protocol'] = settings.CHAT_SERVER_PROTOCOL
         context['chatserver_host'] = settings.CHAT_SERVER_HOST
         context['chatserver_port'] = settings.CHAT_SERVER_PORT
-        
+
         return context
 
 
@@ -272,10 +273,10 @@ class PostsListMixin(object):
 
     def get_context_data(self, **kwargs):
         ''' :returns: context that contains activity posts. '''
-       
+
         context = super(PostsListMixin, self).get_context_data(**kwargs)
         context['posts'] = self.get_object().posts.filter(is_deleted=False)
-        
+
         return context
 
 
