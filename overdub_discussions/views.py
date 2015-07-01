@@ -41,8 +41,7 @@ class OverdubCreateView(CourseListMixin, CreateActivityMixin, CreateView):
 
     model = OverdubActivity
     template_name = 'activity_create.html'
-    fields = ['title', 'instructions', 'media',
-              'lesson', 'is_active', 'read_after_post', 'private_mode', 'display_order']
+    fields = ['title', 'instructions', 'lesson', 'is_active', 'read_after_post', 'private_mode', 'display_order', 'media']
     activity_type = 'overdub'
 
     def get_form(self, form_class):
@@ -50,9 +49,11 @@ class OverdubCreateView(CourseListMixin, CreateActivityMixin, CreateView):
             form_class)  # instantiate using parent
         form.fields['lesson'].queryset = Lesson.objects.filter(
             collection=get_object_or_404(ActivityCollection, pk=self.kwargs['pk']))
-        form.fields['media'].label = "Video URL (e.g. http://youtu.be/DJ9zIuFoQ5o)"
+        form.fields['media'].help_text = "Video or audio URL (e.g. http://youtu.be/DJ9zIuFoQ5o)"
         # form.fields['upload_video'].label = "or Upload a Video"
-        form.fields['upload_video'] = forms.FileField(required = False,label='or Upload a Video')
+        upload_filefield = forms.FileField(required=False, help_text='or Upload a Video')
+
+        form.fields['upload_video'] = upload_filefield
 
         # form.fields['upload_video'] = forms.FileField(required = False,label='or Upload a Video')
         # do something like:  form.fields['uploaded_video']=forms.CharField(label = "What is your favorite color?",max_length = 80,required = True)
@@ -79,8 +80,7 @@ class OverdubUpdateView(ActivityEditPermissionMixin, CourseListMixin, CreateActi
     model= OverdubActivity
     context_object_name = 'activity'
     template_name = 'activity_edit.html'
-    fields = ['title', 'instructions', 'media',
-              'lesson', 'is_active', 'read_after_post', 'private_mode', 'display_order']
+    fields = ['title', 'instructions', 'lesson', 'is_active', 'read_after_post', 'private_mode', 'display_order', 'media']
     activity_type = 'overdub'
 
     def get_form(self, form_class):
@@ -88,8 +88,11 @@ class OverdubUpdateView(ActivityEditPermissionMixin, CourseListMixin, CreateActi
             form_class)  # instantiate using parent
         form.fields['lesson'].queryset = Lesson.objects.filter(
             collection=get_object_or_404(ActivityCollection, pk=self.object.collection.id))
-        form.fields['media'].label = "Video URL (e.g. http://youtu.be/DJ9zIuFoQ5o)"
-        form.fields['upload_video'] = forms.FileField(required = False,label='or Upload a Video')
+        form.fields['media'].label = 'Specify overdub source media:'
+
+        # form.fields['media'].help_text = "Overdub source: Video or audio URL (e.g. http://youtu.be/DJ9zIuFoQ5o)"
+
+        form.fields['upload_video'] = forms.FileField(required=False, help_text='alternatively, upload a media file from your computer.')
 
         return form
 
@@ -97,7 +100,7 @@ class OverdubUpdateView(ActivityEditPermissionMixin, CourseListMixin, CreateActi
         ''' :returns: *"Media"* is assigned to an external URL if it's filled, otherwise it points to the uploaded file. '''
 
         try:
-            instance = Document(file_upload = self.request.FILES['upload_video'])
+            instance = Document(file_upload=self.request.FILES['upload_video'])
             instance.save()
             if not form.instance.media:
                 form.instance.media=instance.accessURL

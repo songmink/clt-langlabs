@@ -1,7 +1,7 @@
 
-<h1 id="activity_title" class="page-header " data-userpostnum="{{user_post_num}}" data-readafterpost="{{activity.read_after_post}}" 
+<h1 id="activity_title" class="page-header " data-userpostnum="{{user_post_num}}" data-readafterpost="{{activity.read_after_post}}"
     data-userisinstructor="{% if user in private_users or user.is_superuser %}true{% else %}false{% endif %}">
-    {{ activity.title }}
+    <span class="small"><a href="{{ activity.collection.get_absolute_url }}"><i class="fa fa-caret-left"></i> {{ activity.collection.nickname }}</a> {{ activity.title }}</span>
 
 {% if "edit_course" in course_perms %}
     <small><small>
@@ -29,11 +29,11 @@
     <!-- draftbook and discussion toggle -->
     <div class="btn-group pull-right essaySectionToggle" data-toggle="buttons">
         <label class="btn btn-info btn-sm sectionToggle active text-muted">
-            <input type="radio" name="options" id="option1" autocomplete="off" value="essay_draftbook" checked> 
+            <input type="radio" name="options" id="option1" autocomplete="off" value="essay_draftbook" checked>
                 <p class="lead" style="margin-bottom:0px;"><i class="fa fa-pencil" ></i>  Draftbook</p>
         </label>
         <label class="btn btn-info btn-sm sectionToggle text-muted">
-            <input type="radio" name="options" id="option2" autocomplete="off" value="essay_discussion"> 
+            <input type="radio" name="options" id="option2" autocomplete="off" value="essay_discussion">
                 <p class="lead" style="margin-bottom:0px;"><i class="fa fa-coffee"></i>  Discussion</p>
         </label>
     </div>
@@ -43,19 +43,19 @@
 
     {% if activity.read_after_post and user in private_users or activity.read_after_post and user.is_superuser %}
         <small class="text-muted pull-right">
-            <span class="label label-default private_public_label" style="cursor:pointer;vertical-align: text-bottom;" data-toggle="tooltip" 
+            <span class="label label-default private_public_label" style="cursor:pointer;vertical-align: text-bottom;" data-toggle="tooltip"
                   data-placement="top" title="Students can only read everyone's post after his/her initial post.">Read After Post</span>
         </small>&nbsp;
     {% endif %}
 
     {% if activity.private_mode %}
         <small class="text-muted pull-right">
-            <span class="label label-default private_public_label" style="cursor:pointer;vertical-align: text-bottom;" data-toggle="tooltip" 
+            <span class="label label-default private_public_label" style="cursor:pointer;vertical-align: text-bottom;" data-toggle="tooltip"
                   data-placement="top" title="Student can only interact with course instructors.">Private Mode</span>
             </small>&nbsp;
     {% else %}
         <small class="text-muted pull-right">
-            <span class="label label-primary private_public_label" style="cursor:pointer;vertical-align: text-bottom;" data-toggle="tooltip" 
+            <span class="label label-primary private_public_label" style="cursor:pointer;vertical-align: text-bottom;" data-toggle="tooltip"
                   data-placement="top" title="Student can interact with any member in the course.">Public Mode</span>
         </small>&nbsp;
     {% endif %}
@@ -89,7 +89,7 @@
             <div class='col-xs-6 text-center lead column_togg' style='cursor:pointer;' data-columnclass='view_activity'>
                 <u><strong> View Activity </strong></u>
             </div>
-           
+
             {% for SingleUser, Permissions in object_course_users.items %}
                 {% if SingleUser != user and not SingleUser.is_superuser %}
                     <div class='admin_row' data-username='{{SingleUser}}'>
@@ -128,7 +128,7 @@
                 </select>
             </div>
             <div class='col-xs-3'>
-                <button id='activity_copy_btn' type="button" class="btn btn-success" data-ajaxurl="{% url 'copy_activity' %}" 
+                <button id='activity_copy_btn' type="button" class="btn btn-success" data-ajaxurl="{% url 'copy_activity' %}"
                         data-activitytype='{{activity.activity_type}}' data-activityid='{{activity.id}}'>Go Copy
                 </button>
             </div>
@@ -136,7 +136,7 @@
     </div><!-- end of activity copy -->
 
 {% else %}
-    
+
     {% if activity.permission_control %}
         <div id='activity_members_div' class='well' style='display:none;'>
             <span id='activity_members'>GROUP MEMBERS: </span>

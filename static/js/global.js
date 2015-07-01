@@ -186,6 +186,7 @@
                 end_container_on_empty_block: true,
                 skin : 'flat_design_tinymce',
 
+
                 style_formats: [
                     {title: 'Headers', items: [
                         {title: 'Header 1', format: 'h1'},

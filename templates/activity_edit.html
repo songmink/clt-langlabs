@@ -9,10 +9,10 @@
 <div class="row">
 	<div class="col-md-3"></div>
 	<div class="col-md-6">
-		<form action="" method="post" role="form" {% if activity_type == 'overdub' %}enctype='multipart/form-data'{% endif %}>{% csrf_token %}
-			{{ form|crispy }}
+		<form action="" method="post" role="form" enctype='multipart/form-data'>{% csrf_token %}
+            {{ form|crispy }}
 			<input type="submit" value="Update" />
-		</form>		
+		</form>
 	</div>
 	<div class="col-md-3"></div>
 </div>
@@ -37,12 +37,12 @@
 <!-- Modal Experiment -->
 {% endblock contentwrap %}
 
-{% block stylesheets %} 
+{% block stylesheets %}
 <link href="{% static "css/rte_instructions.css" %}" rel="stylesheet">
 <link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
 {% endblock stylesheets%}
-{% block more_javascript %} 
-<script type="text/javascript"> 
+{% block more_javascript %}
+<script type="text/javascript">
    var courseID = "{{course.id}}";
 </script>
 <script src="{% static "js/tinymce/tinymce.min.js" %}"></script>

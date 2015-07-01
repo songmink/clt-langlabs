@@ -33,7 +33,7 @@ class OverdubActivity(AbstractActivity):
 
     collection = models.ForeignKey(
         ActivityCollection, blank=True, null=True, on_delete=models.SET_NULL, related_name='overdubs')
-    media = models.CharField(null=True, blank=True, max_length=400)
+    media = models.CharField(null=True, blank=True, max_length=400, help_text='Video or audio URL (e.g. http://youtu.be/DJ9zIuFoQ5o)')
     # upload_video = models.FileField(
     #        upload_to='overdub_videos', null=True, blank=True)
     read_after_post = models.BooleanField(default=False)
