@@ -22,7 +22,7 @@ DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
 ALLOWED_HOSTS = []
 
-ROOT_URLCONF = 'cltlanglab.urls'
+ROOT_URLCONF = 'cltlanglab.urls-dev'
 
 # Append apps used in development not production.
 INSTALLED_APPS += (
@@ -55,13 +55,13 @@ RECORDER_LICENSE = ''
 
 # CAS SETUP #
 
-MIDDLEWARE_CLASSES += ('django_cas.middleware.CASMiddleware',)
+# MIDDLEWARE_CLASSES += ('django_cas.middleware.CASMiddleware',)
 
-AUTHENTICATION_BACKENDS += ('uhauth.backends.UHCASAttributesBackend',)
+# AUTHENTICATION_BACKENDS += ('uhauth.backends.UHCASAttributesBackend',)
 
-CAS_SERVER_URL = 'https://cas-test.its.hawaii.edu/cas/'
-CAS_VERSION = 'CAS_2_SAML_1_0'
-CAS_REDIRECT_URL = '/'
+# CAS_SERVER_URL = 'https://cas-test.its.hawaii.edu/cas/'
+# CAS_VERSION = 'CAS_2_SAML_1_0'
+# CAS_REDIRECT_URL = '/'
 
 # END CAS #
 
