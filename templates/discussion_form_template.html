@@ -7,11 +7,11 @@
         <div id='postTextarea' class="form-control" style='border-radius:4px 4px 0px 0px;'></div>
         <div class="input-group">
             <button id='sendPost' type="button" class="btn btn-default btn-xs full-width" value='{% url "save_post" %}' style='border-radius:0px 0px 0px 4px;'>
-                <span class="glyphicon glyphicon-send"></span> send
+                <span class="glyphicon glyphicon-send"></span> submit
             </button>
             <div class="input-group-btn">
                 <button id='uploadTrigger' type="button" class="btn btn-default btn-xs">
-                    <span class="glyphicon glyphicon-file"></span> upload
+                    <span class="glyphicon glyphicon-paperclip"></span> attachments
                 </button>
                 <button id='recordTrigger' type="button" class="btn btn-default btn-xs" data-swfurl="{% static "swf/barebonesRecorder7.swf" %}" 
                         data-recorderserver='{{recorder_myServer}}' data-recorderhandler='{{recorder_myHandler}}' data-recorderdirectory='{{recorder_myDirectory}}' 
