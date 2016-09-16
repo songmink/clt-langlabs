@@ -2,6 +2,7 @@
 <h1 id="activity_title" class="page-header " data-userpostnum="{{user_post_num}}" data-readafterpost="{{activity.read_after_post}}"
     data-userisinstructor="{% if user in private_users or user.is_superuser %}true{% else %}false{% endif %}">
     <span class="small"><a href="{{ activity.collection.get_absolute_url }}"><i class="fa fa-caret-left"></i> {{ activity.collection.nickname }}</a> {{ activity.title }}</span>
+    <input id='activityType' type="hidden" name="activityTypes" value='{{ activity.activity_type }}'>
 
 {% if "edit_course" in course_perms %}
     <small><small>
@@ -100,9 +101,9 @@
                             <p>
                                 {% get_obj_perms SingleUser for activity as "activity_temp_perms" %}
                                 {% if "view_activity" in activity_temp_perms %}
-                                    <i class="fa fa-toggle-on text-primary fa-lg perm_togg view_activity" style='cursor:pointer;'></i>
+                                    <i class="fa fa-toggle-on text-primary fa-lg perm_togg view_activity" style='cursor:pointer;' id='{{SingleUser}}'></i>
                                 {% else %}
-                                    <i class="fa fa-toggle-off text-muted fa-lg perm_togg view_activity" style='cursor:pointer;'></i>
+                                    <i class="fa fa-toggle-off text-muted fa-lg perm_togg view_activity" style='cursor:pointer;' id='{{SingleUser}}'></i>
                                 {% endif %}
                             </p>
                         </div>

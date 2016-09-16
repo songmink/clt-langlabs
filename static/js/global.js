@@ -73,21 +73,21 @@
         updateUserPermission: function() {
             var data = {
                 codename: s.user_perm_toggle.closest('div').data('codename'),
-                object_username: s.user_perm_toggle.closest('div.admin_row').data('username'),
+                object_username: $(this).closest('div.admin_row').data('username'),
                 object_type: s.activity_type,
                 object_id: s.activity_id
             };
-            if (s.user_perm_toggle.hasClass('fa-toggle-on')){
+            if ($('#'+object_username).hasClass('fa-toggle-on')){
                 data.operation_type = 'remove_perm';
                 Ajax.post(s.ajax_url, data, s.csrftoken, function() {
-                    s.user_perm_toggle.removeClass('fa-toggle-on text-primary');
-                    s.user_perm_toggle.addClass('fa-toggle-off text-muted');
+                    $('#'+object_username).removeClass('fa-toggle-on text-primary');
+                    $('#'+object_username).addClass('fa-toggle-off text-muted');
                 });
             }else {
                 data.operation_type = 'assign_perm';
                 Ajax.post(s.ajax_url, data, s.csrftoken, function() {
-                    s.user_perm_toggle.removeClass('fa-toggle-off text-muted');
-                    s.user_perm_toggle.addClass('fa-toggle-on text-primary');
+                    $('#'+object_username).removeClass('fa-toggle-off text-muted');
+                    $('#'+object_username).addClass('fa-toggle-on text-primary');
                 });
             }
         },
@@ -666,5 +666,3 @@
         moduleFunction: function() {},
     };
 })();
-
-
