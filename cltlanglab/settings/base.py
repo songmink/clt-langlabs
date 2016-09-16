@@ -19,10 +19,11 @@ MEDIA_ROOT = PROJECT_DIR.child('media')
 
 STATICFILES_DIRS = (
     PROJECT_DIR.child('static'),
+#    '/web/static/cltlanglabs/',
 )
 
-STATIC_URL = '/static/'
-
+STATIC_URL = '/static/cltlanglabs/'
+STATIC_ROOT = '/web/static/cltlanglabs/'
 TEMPLATE_DIRS = (PROJECT_DIR.child('templates'),)
 
 # Application definition
@@ -45,6 +46,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'guardian',
     'uhauth',
+    # 'django_cas_ng',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -127,5 +129,3 @@ LOGGING = {
     },
 }
 #########################
-
-

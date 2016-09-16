@@ -5,22 +5,22 @@ from django.contrib import admin
 from django.conf.urls.static import static
 admin.autodiscover()
 
-from core.views import IndexView, HomeView, CourseListView, CourseIndexView, CourseCreateView, CourseUpdateView, CourseDeleteView, CourseCopyView, ActivityCreateIndexView, LessonCreateView, LessonAddView, PostDeleteView, PostSaveView, fileUpload, subscribeCourse, changePerm, copyActivity, editLessonTitle, editEssayDraft, uhcaslogout
+from core.views import IndexView, HomeView, CourseListView, CourseIndexView, CourseCreateView, CourseUpdateView, CourseDeleteView, CourseCopyView, ActivityCreateIndexView, LessonUpdateView, LessonCreateView, LessonAddView, PostDeleteView, PostSaveView, fileUpload, subscribeCourse, changePerm, copyActivity, editLessonTitle, editEssayDraft, uhcaslogout
 from discussions.views import DiscussionCreateView, DiscussionDetailView, DiscussionUpdateView, DiscussionDeleteView
 from essays.views import EssayCreateView, EssayDetailView, EssayUpdateView, EssayDeleteView, EssayResponseUpdateView
 from overdub_discussions.views import OverdubCreateView, OverdubDetailView, OverdubUpdateView, OverdubDeleteView
 from settings import base
-import socketio.sdjango
-socketio.sdjango.autodiscover()
-
+#import django_cas_ng
+#import socketio.sdjango
+#socketio.sdjango.autodiscover()
 
 urlpatterns = patterns('',
-
     url(r'^course/(?P<pk>\d+)$', CourseIndexView.as_view(), name='course'),
     url(r'^course/add/$', CourseCreateView.as_view(), name='create_collection'),
     url(r'^course/edit/(?P<pk>\d+)$', CourseUpdateView.as_view(), name='edit_collection'),
     url(r'^course/delete/(?P<pk>\d+)$', CourseDeleteView.as_view(), name='delete_collection'),
     url(r'^course/copy/(\w+)/$', CourseCopyView, name='copy_collection'),
+    url(r'^lesson/edit/(?P<pk>\d+)$', LessonUpdateView.as_view(), name='edit_lesson'),
     url(r'^lesson/add/(?P<addpk>\d+)$', LessonCreateView.as_view(), name='create_lesson'),
     url(r'^lesson/add2/(?P<addpk>\d+)$', LessonAddView.as_view(), name='add_lesson'),
     url(r'^activity/add/(?P<pk>\d+)$', ActivityCreateIndexView.as_view(), name='create_activity'),
@@ -48,16 +48,21 @@ urlpatterns = patterns('',
     url(r'^essaydraft/edit/$', editEssayDraft, name='edit_essay_draft'),
 
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^socket\.io', include(socketio.sdjango.urls)),
-
+    #url(r'^socket\.io', include(socketio.sdjango.urls)),
     url(r'^accounts/login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
-
+#
     # url(r'^accounts/login/$', 'django_cas.views.login', name='login'),
     # url(r'^accounts/logout/$', uhcaslogout, name='logout'),
+
+    # url(r'^accounts/login/$', 'django_cas_ng.views.login', name='login'),
+    # url(r'^accounts/logout/$', uhcaslogout, name='logout'),
+    # url(r'^accounts/callback$', 'django_cas_ng.views.callback', name='cas_ng_proxy_callback'),
 
     url(r'^crossdomain.xml$','flashpolicies.views.simple',{'domains': ['*']}),
     url(r'^home/$', HomeView.as_view(), name='home'),
     url(r'^$', IndexView.as_view(), name='landing'),
 
-)+ static(base.MEDIA_URL, document_root=base.MEDIA_ROOT)
+)
+urlpatterns += static(base.MEDIA_URL, document_root=base.MEDIA_ROOT)
+urlpatterns += static(base.STATIC_URL, document_root=base.STATIC_ROOT)
