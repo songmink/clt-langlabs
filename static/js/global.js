@@ -77,17 +77,17 @@
                 object_type: s.activity_type,
                 object_id: s.activity_id
             };
-            if ($('#'+object_username).hasClass('fa-toggle-on')){
+            if ($('#'+data.object_username).hasClass('fa-toggle-on')){
                 data.operation_type = 'remove_perm';
                 Ajax.post(s.ajax_url, data, s.csrftoken, function() {
-                    $('#'+object_username).removeClass('fa-toggle-on text-primary');
-                    $('#'+object_username).addClass('fa-toggle-off text-muted');
+                    $('#'+data.object_username).removeClass('fa-toggle-on text-primary');
+                    $('#'+data.object_username).addClass('fa-toggle-off text-muted');
                 });
             }else {
                 data.operation_type = 'assign_perm';
                 Ajax.post(s.ajax_url, data, s.csrftoken, function() {
-                    $('#'+object_username).removeClass('fa-toggle-off text-muted');
-                    $('#'+object_username).addClass('fa-toggle-on text-primary');
+                    $('#'+data.object_username).removeClass('fa-toggle-off text-muted');
+                    $('#'+data.object_username).addClass('fa-toggle-on text-primary');
                 });
             }
         },
