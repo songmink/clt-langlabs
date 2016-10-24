@@ -1,0 +1,13 @@
+.footer-img {
+	float: left;
+	margin: 0px;
+}
+
+.footer {
+	color: #999;
+	font-size: 13px;
+	overflow: hidden;
+	height: 144px;
+	padding-top: 75px;
+	padding-bottom: 30px;
+}

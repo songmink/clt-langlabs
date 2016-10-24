@@ -109,7 +109,7 @@ class CourseCreateView(LoginRequiredMixin, CourseListMixin, CreateView):
     fields = ['title', 'nickname', 'description', 'accesscode', 'is_active','is_public']
 
     def dispatch(self, *args, **kwargs):
-        if self.request.user.has_perm('core.create_course'):
+        if self.request.user.has_perm('core.edit_course'):
             return super(CourseCreateView, self).dispatch(self.request, *args, **kwargs)
 
         # user does not have create_course permission.

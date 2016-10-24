@@ -1,5 +1,5 @@
 
-{% if user in private_users or post.creator.is_superuser %}
+{% if user.is_superuser %}
     <span><i class="fa fa-graduation-cap fa-fw fa-2x pull-left text-muted text-center" style='font-size:2.1em; margin-right:0.2em;'></i></span>
 {% else %}
     <span><i class="fa fa-user fa-fw fa-2x pull-left text-muted text-center" style='font-size:2.1em; margin-right:0.2em;'></i></span>

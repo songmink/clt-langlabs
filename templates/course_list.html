@@ -21,7 +21,7 @@ var courses = TAFFY(courses_json)
 </div>
 
 
-<div class="col=md-12 placeholders course_result_div" >
+<div class="col-md-12 placeholders course_result_div" >
 <table class="table table-hover text-left lead">
 	<thead>
 		<tr>
@@ -38,7 +38,7 @@ var courses = TAFFY(courses_json)
 </thead>
 <tbody>
 {% for course in courses %}
-	<tr>
+	<tr class='course_row' data-coursename="{{course.title}}">
 		<td> {{course.title}} </td>
 
 		<td><span><i class="fa fa-graduation-cap"></i>

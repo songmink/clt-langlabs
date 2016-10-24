@@ -15,41 +15,45 @@
 		<link href="{% static "bootstrap/dist/css/bootstrap.min.css" %}" rel="stylesheet">
 
 		<!-- The Bootstrap template named "Starter Template barebones " -->
-		<link href="{% static "css/dashboard.css" %}" rel="stylesheet">
-		<style type="text/css">
-			body {
-				font-family: 'Roboto', sans-serif;
-				background: rgba(222,184,125, white);
-			}
-			.title {
-				color: black;
-				font-weight: 300;
-			}
-		</style>
+		<link href="{% static "css/index.css" %}" rel="stylesheet">
+		<link href="{% static "css/footer.css" %}" rel="stylesheet">
+
 	</head>
 	<body>
-	 	<div class="container-fluid">
-			<div class="row">
-				<div class="col-md-12 text-center">
-					<div class="lead title" style="font-size: 3em;">
-						Language Labs @ The Center for Language & Technology
-					</div>
-				</div>
-				
-				<div class="col-md-12">
-					<div class="btn-group btn-group-justified center-block" style="width: 100px;">
-						<a href="{% url 'home' %}" class="btn btn-success">Get Started</a>
-					</div>
-				</div>
-				<p>&nbsp;</p>
-				<div class="col-md-12">
-					<div class="center-block text-center">University of Hawaii username and password required.</div>
-				</div>
 
-				<div class="col-md-12">
-					<div class="center-block text-center">Welcome</div>
-				</div>
+		<!-- header -->
+		<div class="row">
+			<div class="header ">
+				<a href="http://clt.manoa.hawaii.edu">
+					<img  src="https://clt.manoa.hawaii.edu/wp-content/uploads/2015/01/CLTlogo2013.jpg" class="img-responsive" width="399px" height=auto>
+				</a>	
+			</div>	
+		</div>
 
+		<!-- content -->
+	 	<div class="row" style="padding-bottom: 40px;">
+			<div class="col-md-12 text-center">
+				<div class="lead title" style="font-size: 3em;">
+					Language Labs @ The Center for Language & Technology
+				</div>
+			</div>
+			
+			<div class="col-md-12">
+				<div class="btn-group btn-group-justified center-block" style="width: 100px;">
+					<a href="{% url 'home' %}" class="btn btn-success">Get Started</a>
+				</div>
+			</div>
+			<p>&nbsp;</p>
+			<div class="col-md-12">
+				<div class="center-block text-center">University of Hawaii username and password required.</div>
+			</div>
+
+			<div class="col-md-12">
+				<div class="center-block text-center">Welcome</div>
 			</div>
 		</div>
+		
+		<!-- footer -->
+		{% include 'footer.html' %}
+
 	</body>

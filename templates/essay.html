@@ -89,6 +89,7 @@
         <h3>Discussion</h3>
 
         <!-- jump-to-user well -->
+	{% if user.is_superuser %}
         <div  class='well well-sm' style='border:0px;'>
             <span>Filter by User: </span>
             {% for SingleUser, Permissions in object_course_users.items %}
@@ -106,11 +107,13 @@
             {% endfor %}
             &nbsp;<span class="label label-default userResponseAllToggle" style='cursor:pointer;'>show all</span>
         </div>
+	{% endif %}
 
     <!-- essay responses by user -->
     <div id="essay_responses" data-ajaxurl="{% url 'delete_post' %}">
         {% regroup all_essay_responses by user as response_list %}
             {% for responses in response_list %}
+	    {% if user == responses.grouper or user.is_superuser %}
                 <div id='user_{{responses.grouper}}' class='allUserResponses bs-callout bs-callout-info' style='margin-top:15px;'>
                     {% if responses.grouper in private_users or post.creator.is_superuser %}
                         <span>
@@ -203,6 +206,7 @@
                     {% endfor %}
                     <br>
                 </div>
+	    {% endif %}
             {% endfor %}
         </div>
     </div>

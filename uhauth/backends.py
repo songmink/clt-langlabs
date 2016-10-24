@@ -60,7 +60,7 @@ class UHCASAttributesBackend(CASBackend):
             Only needed here if this is not assigned from a previous login. Non staff/faculty can
             get this permission assigned through admin panel (by system or staff admin)
         """
-        if 'faculty' in uh_affiliation or 'staff' in uh_affiliation:
+        if 'faculty' in uh_affiliation:
 
             if not user.has_perm('core.create_course'):
                 content_type = ContentType.objects.get_for_model(ActivityCollection)
