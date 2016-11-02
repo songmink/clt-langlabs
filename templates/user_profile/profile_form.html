@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block contentwrap %}
+
+<h1 class="page-header">Update Profile</h1>
+<div class="row">
+	<div class="col-md-3"></div>
+	<div class="col-md-6">
+		<form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+			{{ form|crispy }}
+			<div id='validate_msg'></div>
+			<br>
+			<input type="submit" class='btn btn-default' value="Save" />
+		</form>		
+	</div>
+	<div class="col-md-3"></div>
+</div>
+
+{% endblock contentwrap %}
+
+{% block more_javascript %} 
+	<script src="{% static "js/profile.js" %}"></script>
+
+{% endblock more_javascript %}
