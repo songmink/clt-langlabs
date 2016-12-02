@@ -5,7 +5,7 @@
 <html lang="en">
 	<head>
 		<!-- Google Font -->
-		<link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,300' rel='stylesheet' type='text/css'>
+		<link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,300' rel='stylesheet' type='text/css'>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -23,9 +23,9 @@
 
 		<!-- header -->
 		<div class="row">
-			<div class="header ">
-				<a href="http://clt.manoa.hawaii.edu">
-					<img  src="https://clt.manoa.hawaii.edu/wp-content/uploads/2015/01/CLTlogo2013.jpg" class="img-responsive" width="399px" height=auto>
+			<div class="col-md-12">
+				<a href="{% url 'landing' %}">
+					<img  src="{% static 'img/Langlab-logo.png' %}" class="img-responsive" width=350px>
 				</a>	
 			</div>	
 		</div>
@@ -34,7 +34,6 @@
 	 	<div class="row" style="padding-bottom: 40px;">
 			<div class="col-md-12 text-center">
 				<div class="lead title" style="font-size: 3em;">
-					Language Labs @ The Center for Language & Technology
 				</div>
 			</div>
 			

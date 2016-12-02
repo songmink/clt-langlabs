@@ -15,7 +15,7 @@ Unipath==1.0
 argparse==1.2.1
 distribute==0.6.24
 django-braces==1.4.0
-django-cas==2.1.1
+#django-cas==2.1.1
 django-cas-ng==3.5.4
 django-crispy-forms==1.6.0
 django-flashpolicies==1.5

@@ -107,16 +107,30 @@
 </div>
 <div class="section" id="run-development-server">
 <h2>Run Development Server<a class="headerlink" href="#run-development-server" title="Permalink to this headline">¶</a></h2>
-<p>Two server need to be run:</p>
-<div class="highlight-python"><div class="highlight"><pre># This is the chat server that run on localhost:8001
-    $ python cltlanglab/run.py
+<p>Two server need to be run using <strong>screen</strong>:</p>
+<div class="highlight-python"><div class="highlight"><pre>    # This is to start a new screen session
+    $ screen -s
+# This is the chat server that run on localhost:8001
+    $ python cltlanglab/chat_server.py
+    # Then press ctrl+a+d to detach from current screen
 </pre></div>
 </div>
 <p>And the django development server:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ python manage.py runserver localhost:8000 --settings=cltlanglab.settings.dev
+<div class="highlight-python"><div class="highlight"><pre># This is to start a new screen session
+$ screen -s
+# python development server run on localhost:8000
+$ python manage.py runserver localhost:8000 --settings=cltlanglab.settings.dev
+# Then press ctrl+a+d to detach from current screen
 </pre></div>
 </div>
 <p>The web app can be visited through <a class="reference external" href="http://localhost:8000">http://localhost:8000</a></p>
+<p>To get back to any one of the two screen above:</p>
+<div class="highlight-python"><div class="highlight"><pre># This is to list all screen sessions
+$ screen -ls
+# To session with session name or number
+$ screen -r &lt;name&gt;
+</pre></div>
+</div>
 </div>
 </div>
 

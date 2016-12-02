@@ -10,12 +10,22 @@ from django.utils.text import slugify
 # Create your models here.
 
 def upload_location(instance, filename):
+	'''  :returns: upload location of user's image file. '''
 	extension = filename.split('.')[-1]
 	path = "profile_images"
 	return "%s/%s-%s.%s" %(path, instance.user.username, instance.id, extension)
 
 
 class UserProfile(models.Model):
+    '''-- UserProfile Model is used to manage user's profile.
+
+        :Fields:
+            | **user**  -- The user this profile belongs to.
+            | **slug**  -- For generating URLs.
+            | **bio** -- Personal blurb.
+            | **image**  -- User's avatar. Maximum image size is 1MB.
+
+    '''
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     slug = models.SlugField(unique=True, default='')
     bio = models.TextField(verbose_name='About Me', default='', blank=True)
@@ -25,6 +35,7 @@ class UserProfile(models.Model):
         return self.user.username
  
     def get_absolute_url(self):
+	''' :returns: Absolute URL of user's image. '''
         return reverse("profile:detail", kwargs={"slug": self.user.username})
 
     def save(self, *args, **kwargs):
@@ -35,5 +46,6 @@ class UserProfile(models.Model):
 
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
+    '''  The profile will be created automatically when a new user is created. '''
     if created:
         profile, new = UserProfile.objects.get_or_create(user=instance)

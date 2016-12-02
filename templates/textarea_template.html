@@ -1,8 +1,11 @@
-
-{% if user.is_superuser %}
-    <span><i class="fa fa-graduation-cap fa-fw fa-2x pull-left text-muted text-center" style='font-size:2.1em; margin-right:0.2em;'></i></span>
+{% if user.profile.image %}
+	<a href="{% url 'profile:detail' slug=user.username  %}">
+	<span><img src="{{ user.profile.image.url}}" style="height:35px; width:35px; float:left; margin-right:15px"></span></a>
 {% else %}
-    <span><i class="fa fa-user fa-fw fa-2x pull-left text-muted text-center" style='font-size:2.1em; margin-right:0.2em;'></i></span>
+	{% if user.is_superuser %}
+	    <span><i class="fa fa-graduation-cap fa-fw fa-2x pull-left text-muted text-center" style='font-size:2.1em; margin-right:0.2em;'></i></span>
+	{% else %}
+	    <span><i class="fa fa-user fa-fw fa-2x pull-left text-muted text-center" style='font-size:2.1em; margin-right:0.2em;'></i></span>
+	{% endif %}
 {% endif %}
-<div class="chat-body clearfix" style='margin-left: 46px;'><textarea class="form-control" rows="2"></textarea></div>
-
+<div class="chat-body clearfix" style='margin-left: 50px;'><textarea class="form-control" rows="2"></textarea></div>

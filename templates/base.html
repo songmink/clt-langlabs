@@ -62,7 +62,7 @@
               {% endblock course_item_list %}
               <li class="divider"></li>
 
-              {% if perms.core.edit_course %}
+              {% if perms.core.create_course %}
               <li><a href="{% url 'create_collection' %}"><small><span class="glyphicon glyphicon-plus-sign"></span> New Course</small></a></li>
               {% endif %}
 
@@ -77,6 +77,8 @@
             {% else %}
               <a href="." class="dropdown-toggle" data-toggle="dropdown"> {{ user.username }}</a>
               <ul class="dropdown-menu">
+                <li><a href="{% url 'profile:detail' slug=user.username %}">My Profile</a></li>
+		<li class="divider"></li>
                 <li><a href="{% url 'logout' %}">logout</a></li>
               </ul>
             </li>

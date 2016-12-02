@@ -481,7 +481,7 @@
         options: function() {
             var csrftoken = $("input[name=csrfmiddlewaretoken]").val();
             return {
-                url: '/upload/',
+                url: '/langlab/upload/',
                 crossDomain: false,
                 dataType: 'json',
                 beforeSend: function(xhr, settings) {

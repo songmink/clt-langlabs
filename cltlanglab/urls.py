@@ -12,6 +12,7 @@ from overdub_discussions.views import OverdubCreateView, OverdubDetailView, Over
 from settings import base
 import socketio.sdjango
 socketio.sdjango.autodiscover()
+import django_cas_ng
 
 
 urlpatterns = patterns('',
@@ -54,11 +55,15 @@ urlpatterns = patterns('',
     # url(r'^accounts/login/$', 'django.contrib.auth.views.login', name='login'),
     # url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
 
-    url(r'^accounts/login/$', 'django_cas.views.login', name='login'),
+#    url(r'^accounts/login/$', 'django_cas.views.login', name='login'),
+#    url(r'^accounts/logout/$', uhcaslogout, name='logout'),
+    url(r'^accounts/login/$', 'django_cas_ng.views.login', name='login'),
     url(r'^accounts/logout/$', uhcaslogout, name='logout'),
+    url(r'^accounts/callback$', 'django_cas_ng.views.callback', name='cas_ng_proxy_callback'),
 
     url(r'^crossdomain.xml$','flashpolicies.views.simple',{'domains': ['*']}),
     url(r'^home/$', HomeView.as_view(), name='home'),
     url(r'^$', IndexView.as_view(), name='landing'),
+    url(r'^profile/', include('user_profile.urls', namespace='profile')),
 
 )+ static(base.MEDIA_URL, document_root=base.MEDIA_ROOT)

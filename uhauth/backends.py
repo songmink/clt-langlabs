@@ -9,7 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 
-from django_cas.backends import CASBackend
+from django_cas_ng.backends import CASBackend
 
 from core.models import ActivityCollection
 

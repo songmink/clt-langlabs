@@ -11,6 +11,7 @@ from django import forms
 
 
 class ProfileDetailView(LoginRequiredMixin, CourseListMixin, DetailView):
+	''' Profile detail page. '''
         model = UserProfile
         template_name = 'user_profile/profile_detail.html'
         context_object_name = 'profile_instance'
@@ -27,6 +28,7 @@ class ProfileDetailView(LoginRequiredMixin, CourseListMixin, DetailView):
                 return obj
 
 class ProfileUpdateView(LoginRequiredMixin, CourseListMixin, UpdateView):
+	''' Profile edit page. '''
 	model = UserProfile
 	template_name = 'user_profile/profile_form.html'
 	context_object_name = 'profile_instance'

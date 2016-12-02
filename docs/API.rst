@@ -16,6 +16,7 @@ Contents:
    discussions
    essays
    overdub_discussions
+   user_profile
 
 
 Indices and tables
