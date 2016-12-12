@@ -182,6 +182,7 @@ class ActivityListMixin(object):
         activities = (list(course.discussions.all().filter(is_deleted=False).order_by('display_order'))
             + list(course.essays.all().filter(is_deleted=False).order_by('display_order'))
             + list(course.overdubs.all().filter(is_deleted=False).order_by('display_order'))
+            + list(course.flatpages.all().filter(is_deleted=False).order_by('display_order'))
             )
         activities.sort(key=lambda x: x.display_order, reverse=False)
 

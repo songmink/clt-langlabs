@@ -1,0 +1,36 @@
+{% extends "base_activity.html" %}
+{% load staticfiles %}
+
+{% block contentwrap %}
+{% load guardian_tags %}
+{% get_obj_perms user for course as "course_perms" %}
+{% get_obj_perms user for activity as "activity_perms" %}
+
+{% include 'activity_header_template.html' %} 
+
+<div class="container-fluid" style='height:100%;'>
+    <div class="row " >
+        <div class="col-md-10 col-md-offset-1" >
+            {{ activity.content | safe}}
+            {% if activity.get_documents %}
+                <div id="AttachmentsArea" style="background:#ffe; margin-top: 30px;">
+                    <h4 style="margin-top:0;margin-bottom:15px;"> Attachments</h4>
+                    {% for document in activity.get_documents %}
+                        <span><a class="fileLink text-muted" href="{{ document.accessURL }}" target="_blank"><i class="fa fa-files-o" style="padding-right: 3px;"></i> {{ document }} </a></br></span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock contentwrap %}
+
+{% block stylesheets %}
+<link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
+{% endblock stylesheets%}
+{% block more_javascript %}
+<script src="{% static "js/base.js" %}"></script>
+<script src="{% static "js/utils.js" %}"></script>
+<script src="{% static "js/global.js" %}"></script>
+<script src="{% static "js/flatpage.js" %}"></script>
+{% endblock more_javascript %}

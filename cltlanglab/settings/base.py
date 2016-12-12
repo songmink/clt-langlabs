@@ -10,8 +10,10 @@ from unipath import Path
 
 PROJECT_DIR = Path(__file__).ancestor(3)  # Points to <project root> (e.g. clt-langlabs-dev-py)
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = PROJECT_DIR.child('media')
+#MEDIA_URL = '/media/'
+#MEDIA_ROOT = PROJECT_DIR.child('media')
+MEDIA_URL = '/media/cltlanglabs/'
+MEDIA_ROOT = '/web/media/cltlanglabs/'
 
 # Disable this when static directories are managed outside of individual apps
 # E.g., in the project root as we are doing in this project.
@@ -41,12 +43,14 @@ INSTALLED_APPS = (
     'overdub_discussions',
     'essays',
     'core',
+    'flatpage',
+    'user_profile',
 
     # Utils:
     'crispy_forms',
     'guardian',
     'uhauth',
-    # 'django_cas_ng',
+    'django_cas_ng',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

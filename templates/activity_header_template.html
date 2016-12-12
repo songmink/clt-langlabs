@@ -40,7 +40,7 @@
     </div>
     {% endif %}
 
-{% else %}{# discussion or overdub #}
+{% elif activity.activity_type == 'discussion' or activity.activity_type == 'overdub' %}{# discussion or overdub #}
 
     {% if activity.read_after_post and user in private_users or activity.read_after_post and user.is_superuser %}
         <small class="text-muted pull-right">

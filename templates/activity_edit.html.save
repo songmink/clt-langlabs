@@ -1,0 +1,78 @@
+<!-- discussion_create.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block contentwrap %}
+
+<h1 class="page-header">{{ course.nickname }} <span class="text-muted">{{ course.title }} </span></h1>
+<div class="row">
+	<div class="col-md-3"></div>
+	<div class="col-md-6">
+		<form action="" method="post" role="form" enctype='multipart/form-data'>{% csrf_token %}
+            {{ form|crispy }}
+                        {% if activity_type == 'flatpage' %}
+                                <div id="attachmentArea">
+                                        <div id="singleAttachDiv">
+                                                <a id="singleAttachLink" href="javascript:void(0);"><i class="fa fa-paperclip fa-lg"></i>&nbsp; Attach a file</a>
+                                        </div>
+                                        <div id="moreAttachDiv">
+                                                <a id="moreAttachLink" href="javascript:void(0);"><i class="fa fa-paperclip fa-lg"></i>&nbsp; Attach another file</a>
+                                        </div>
+                                </div>
+                                <br />
+                        {% endif %}
+            {% if activity.attachments.all %}
+                <h5 style="margin-top:10px; margin-bottom:10px"><strong>Previous Attachment{{activity.attachments.all.count|pluralize}}:</strong></h5>
+                <div class="attachDIV well" style="padding:8px;margin-bottom:0px;border-radius:0px;border:0px;background-color:#F8F8F8;">
+                    {% for document in activity.attachments.all %}
+                        <span><a class="fileLink text-muted btn btn-md" href="{{ document.accessURL }}" target="_blank"><i class="fa fa-files-o"></i>{{ document }}</a>&nbsp; &nbsp;<a href="javascript:void(0);" class="removeAttachment">Remove</a></span>
+                      <br />
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+			<input type="submit" value="Update" />
+		</form>
+	</div>
+	<div class="col-md-3"></div>
+</div>
+
+<!-- Modal for addin a lesson on the fly -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+		<div class="modal-body">
+			<div><iframe src="{% url 'add_lesson' course.id %}" width='100%' height='570' frameborder="0"></iframe></div>
+		</div>
+
+		<div class="modal-footer">
+		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		</div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal Experiment -->
+{% endblock contentwrap %}
+
+{% block stylesheets %}
+<link href="{% static "css/rte_instructions.css" %}" rel="stylesheet">
+<link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
+{% endblock stylesheets%}
+{% block more_javascript %}
+<script type="text/javascript">
+   var courseID = "{{course.id}}";
+</script>
+<script src="{% static "js/tinymce/tinymce.min.js" %}"></script>
+<script src="{% static "js/activity_create.js" %}"></script>
+<script src="{% static "js/global.js" %}"></script>
+{% if activity_type == 'overdub' %}
+<script src="{% static "js/overdub_create.js" %}"></script>
+{% endif %}
+{% if activity_type == 'flatpage' %}
+<script src="{% static "js/flatpage_create.js" %}"></script>
+{% endif %}
+{% endblock more_javascript %}

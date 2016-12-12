@@ -11,6 +11,27 @@
 	<div class="col-md-6">
 		<form action="" method="post" role="form" enctype='multipart/form-data'>{% csrf_token %}
             {{ form|crispy }}
+            {% if activity_type == 'flatpage' %}
+                <div id="AttachmentsArea" class="form-group" style="background:#ffe;">
+                    <span><label style="margin-top:0; display:inline;"> Attachments</label>&nbsp;&nbsp;&nbsp;
+                    <button id='uploadTrigger'" type="button" class="btn btn-default btn-xs" ><span class="glyphicon glyphicon-plus"></span>Add</button></span>
+                    <div id="inputAttachments" data-ajaxurl="{% url 'delete_attachment' %}" style="margin-top: 15px;">
+                        {% if activity.get_documents %}
+                            {% for document in activity.get_documents %}
+                                <span class="attachedFile" style="cursor:pointer;">
+                                    <small><i class="fa fa-times removeAttachment text-danger" style="cursor:pointer; padding-right: 15px;" data-toggle="tooltip" data-placement="top" data-original-title="Remove" ></i></small>
+                                    <i class="fa fa-files-o" style="padding-right: 3px;"></i><a class="fileLink text-muted" href="{{ document.accessURL }}" target="_blank">
+                                    <span class="fileName"> {{ document }} </span>
+                                    </a><input type="hidden" name="attachments" value="{{ document.accessURL }}"/><br />
+                                </span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <input type="file" id="fileupload" name="file" style="display: none;" multiple 
+                    data-url="{% url 'file_upload' %}"
+                    data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
+            {% endif %}
 			<input type="submit" value="Update" />
 		</form>
 	</div>
@@ -47,7 +68,17 @@
 </script>
 <script src="{% static "js/tinymce/tinymce.min.js" %}"></script>
 <script src="{% static "js/activity_create.js" %}"></script>
+<!-- *****************upload libs******************** -->
+<script src="{% static "jqueryUpload/jquery.ui.widget.js" %}"></script>
+<script src="{% static "jqueryUpload/jquery.iframe-transport.js" %}"></script>
+<script src="{% static "jqueryUpload/jquery.fileupload.js" %}"></script>
+<script src="{% static "jqueryUpload/jquery.cookie.js" %}"></script>
+<script src="{% static "js/global.js" %}"></script>
+<script src="{% static "js/utils.js" %}"></script>
 {% if activity_type == 'overdub' %}
 <script src="{% static "js/overdub_create.js" %}"></script>
+{% endif %}
+{% if activity_type == 'flatpage' %}
+<script src="{% static "js/flatpage_create.js" %}"></script>
 {% endif %}
 {% endblock more_javascript %}

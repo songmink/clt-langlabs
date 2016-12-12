@@ -13,6 +13,7 @@ ACTIVITY_TYPES = (
     ('DiscussionActivity',  'Discussion Activity'),
     ('EssayActivity',       'Essay Activity'),
     ('OverdubActivity',     'Overdub Media Activity'),
+    ('FlatpageActivity',    'Flatpage Activity'),
 )
 
 
@@ -157,10 +158,12 @@ class AbstractActivity(models.Model):
     DISCUSSION = 'discussion'
     ESSAY = 'essay'
     OVERDUB = 'overdub'
+    FLATPAGE = 'flatpage'
     ACTIVITY_TYPES = (
         (DISCUSSION,  'Discussion Activity'),
         (ESSAY,       'Essay Activity'),
         (OVERDUB,     'Overdub Media Activity'),
+        (FLATPAGE,    'Flatpage Activity'),
     )
 
     title = models.CharField(max_length=100)

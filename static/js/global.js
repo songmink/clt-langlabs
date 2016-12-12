@@ -250,6 +250,24 @@
                 ],
                 menubar: false
             },
+
+            flatpage_options: {
+                selector: "#flatpageTextarea",
+                skin : 'flat_design_tinymce',
+                brower_spellcheck: true,
+                auto_focus: "flatpageTextarea_ifr",
+                statusbar : false,
+                toolbar1: "undo redo | forecolor backcolor styleselect | fontsizeselect bold italic | alignleft aligncenter alignright alignjustify | " +
+                          "bullist numlist | outdent indent | emoticons link print",
+                fontsize_formats: '8pt 10pt 12pt 14pt 18pt 24pt 36pt',
+                plugins: [
+                  "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+                  "searchreplace wordcount visualblocks visualchars code fullscreen",
+                  "insertdatetime media nonbreaking save table contextmenu directionality",
+                  "emoticons template paste textcolor "
+                ],
+                menubar: false
+            },
         },
 
         init: function(option) {
@@ -258,6 +276,8 @@
                 tinymce.init(s.discussion_options);
             }else if (option == "essay") {
                 tinymce.init(s.essay_options);
+            }else if (option == "flatpage") {
+                tinymce.init(s.flatpage_options);
             }
         },
     };

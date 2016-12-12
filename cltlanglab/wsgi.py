@@ -16,7 +16,7 @@ import sys
 sys.path.append('/pythonweb/clt-langlabs-dev-py')
 
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cltlanglab.settings.")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cltlanglab.settings.dev")
 
 from django.core.wsgi import get_wsgi_application
 
