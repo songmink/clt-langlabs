@@ -16,20 +16,6 @@ class FlatpageDetailView(ActivityViewPermissionMixin, CourseListMixin, ActivityL
     context_object_name = 'activity'
     template_name = 'flatpage.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(FlatpageDetailView, self).get_context_data(**kwargs)
-        video_ext = ['m4v', 'avi', 'wmv']
-        attachments = self.object.get_documents;
-        context['attachedFiles'] = []
-        if attachments:
-            attachmentDict = dict()
-            for attachment in self.object.get_documents:
-                filename, file_extension = os.path.splitext(attachment.accessURL)
-                attachmentDict[attachment.accessURL] = ''
-                if file_extension in video_ext:
-                    attachmentDict[attachment.accessURL] = 'video'
-        context['attachedFiles'] = attachmentDict
-        return context
 
 class FlatpageCreateView(CourseListMixin, CreateActivityMixin, CreateView):
     ''' -- Flatpage Create Page '''

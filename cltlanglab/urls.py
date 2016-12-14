@@ -9,7 +9,7 @@ from core.views import IndexView, HomeView, CourseListView, CourseIndexView, Cou
 from discussions.views import DiscussionCreateView, DiscussionDetailView, DiscussionUpdateView, DiscussionDeleteView
 from essays.views import EssayCreateView, EssayDetailView, EssayUpdateView, EssayDeleteView, EssayResponseUpdateView
 from overdub_discussions.views import OverdubCreateView, OverdubDetailView, OverdubUpdateView, OverdubDeleteView
-from flatpage.views import FlatpageDetailView, FlatpageCreateView
+from flatpage.views import FlatpageDetailView, FlatpageCreateView, FlatpageUpdateView, FlatpageDeleteView, deleteAttachment
 from settings import base
 import socketio.sdjango
 socketio.sdjango.autodiscover()
@@ -37,8 +37,10 @@ urlpatterns = patterns('',
     url(r'^essay/delete/(?P<pk>\d+)$', EssayDeleteView.as_view(), name='delete_essay'),
     url(r'^essay/grade/(?P<pk>\d+)$', EssayResponseUpdateView.as_view(), name='grade_essay'),
     url(r'^flatpage/(?P<pk>\d+)$', FlatpageDetailView.as_view(), name='flatpage'),
-    url(r'^flatpage/add/(?P<pk>\d+)$', FlatpageCreateView.as_view(), name='create_flatpage')
-
+    url(r'^flatpage/add/(?P<pk>\d+)$', FlatpageCreateView.as_view(), name='create_flatpage'),
+    url(r'^flatpage/edit/(?P<pk>\d+)$', FlatpageUpdateView.as_view(), name='edit_flatpage'),
+    url(r'^flatpage/delete/(?P<pk>\d+)$', FlatpageDeleteView.as_view(), name='delete_flatpage'),
+    url(r'^attachment/delete/$', deleteAttachment, name='delete_attachment'),
     url(r'^overdub/(?P<pk>\d+)$', OverdubDetailView.as_view(), name='overdub'),
     url(r'^overdub/add/(?P<pk>\d+)$', OverdubCreateView.as_view(), name='create_overdub'),
     url(r'^overdub/edit/(?P<pk>\d+)$', OverdubUpdateView.as_view(), name='edit_overdub'),

@@ -300,8 +300,21 @@ def fileUpload(request):
     response = {'files': []}
     # Loop through our files in the files list
     for singleFile in request.FILES.getlist('file'):
+        filename = singleFile.name
+        fileExtention = filename.split(".")[-1].lower();
+        video_extensions = ["m4v", "mp4", "avi", "flv", "mov", "wmv", "rmvb"]
+        doc_extensions = ["doc", "pdf", "docx", "txt"]
+        image_extensions = ["png", "jpg", "jpeg", "tiff", "bmp", "bpg"]
+        if fileExtention in video_extensions:
+            file_type = 'video'
+        elif fileExtention in doc_extensions:
+            file_type = 'doc'
+        elif fileExtention in image_extensions:
+            file_type = 'image'
+        else:
+            file_type = ''
         # Create a new entry in our database
-        new_file = Document(file_upload=singleFile)
+        new_file = Document(file_upload=singleFile, file_type=file_type)
         new_file.save()
         # Grab the file
         obj = getattr(new_file, "file_upload")

@@ -10,10 +10,8 @@ from unipath import Path
 
 PROJECT_DIR = Path(__file__).ancestor(3)  # Points to <project root> (e.g. clt-langlabs-dev-py)
 
-#MEDIA_URL = '/media/'
-#MEDIA_ROOT = PROJECT_DIR.child('media')
-MEDIA_URL = '/media/cltlanglabs/'
-MEDIA_ROOT = '/web/media/cltlanglabs/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = PROJECT_DIR.child('media')
 
 # Disable this when static directories are managed outside of individual apps
 # E.g., in the project root as we are doing in this project.
@@ -21,11 +19,9 @@ MEDIA_ROOT = '/web/media/cltlanglabs/'
 
 STATICFILES_DIRS = (
     PROJECT_DIR.child('static'),
-#    '/web/static/cltlanglabs/',
 )
 
-STATIC_URL = '/static/cltlanglabs/'
-STATIC_ROOT = '/web/static/cltlanglabs/'
+STATIC_URL = '/static/'
 TEMPLATE_DIRS = (PROJECT_DIR.child('templates'),)
 
 # Application definition

@@ -210,6 +210,7 @@ class Document(models.Model):
             | **created**      -- Record created time.
             | **content_type** -- File content types.
             | **accessURL**    -- The url link to files and is created when file is saved.
+            | **file_type**    -- The format of the file.
 
     '''
 
@@ -222,6 +223,9 @@ class Document(models.Model):
     content_object = GenericForeignKey('content_type', 'object_id')
     # The url link to this file
     accessURL = models.URLField(max_length=200, blank=True, null=True)
+    # The file format, such as video, image, or doc.
+    file_type = models.CharField(max_length=50, blank=True, null=True)
+
 
     def get_absolute_url(self):
         ''' :returns: Absolute URL of Document. '''

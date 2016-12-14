@@ -11,12 +11,26 @@
 <div class="container-fluid" style='height:100%;'>
     <div class="row " >
         <div class="col-md-10 col-md-offset-1" >
-            {{ activity.content | safe}}
+	    <div class="col-md-10">
+                {{ activity.content | safe}}
+	    </div>
             {% if activity.get_documents %}
-                <div id="AttachmentsArea" style="background:#ffe; margin-top: 30px;">
+                <div class="col-md-10"  id="AttachmentsArea" style="background:#ffe; margin-top: 30px;">
                     <h4 style="margin-top:0;margin-bottom:15px;"> Attachments</h4>
                     {% for document in activity.get_documents %}
-                        <span><a class="fileLink text-muted" href="{{ document.accessURL }}" target="_blank"><i class="fa fa-files-o" style="padding-right: 3px;"></i> {{ document }} </a></br></span>
+                        {% if document.file_type == 'video' %}
+                        <div class="videoAttachmentArea">
+                            <a class="fileLink text-muted videoAttachment" href="javascript:;" ><i class="fa fa-file-video-o " style="padding-right: 3px;"></i> {{ document }} <a><br />
+			    <div class="videoPlayDiv" style="display:none;">
+                                <video class="videoPlay" width="100%" height="auto" controls>
+                                    <source src="{{ document.accessURL }}" type="video/mp4">
+                                </video>
+				<br />
+		            </div>
+                        </div>
+                        {% else %}
+                            <div><a class="fileLink text-muted" href="{{ document.accessURL }}" target="_blank">{% if document.file_type == 'image' %}<i class="fa fa-file-image-o" style="padding-right: 3px;"></i>{% else %}<i class="fa fa-file-text-o" style="padding-right: 3px;"></i>{% endif %}{{ document }} </a><br /></div>
+                        {% endif %}
                     {% endfor %}
                 </div>
             {% endif %}
