@@ -145,8 +145,8 @@ class ActivityViewPermissionMixin(object):
         # just check if user can course_view.
         if not user.has_perm('edit_course', course):
             if activity.permission_control == True:
-                print get_perms(user, course)
-                print get_perms(user, activity)
+                print (get_perms(user, course))
+                print (get_perms(user, activity))
                 if not user.has_perm("view_activity", activity):
                     raise PermissionDenied()
             else:

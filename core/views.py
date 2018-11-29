@@ -5,8 +5,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from urllib import urlencode
-from urlparse import urljoin
+from urllib.parse import urlencode, urljoin
 from django.conf import settings
 
 from braces.views import LoginRequiredMixin, CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin
@@ -17,7 +16,7 @@ from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
 from django.views.generic import DetailView, CreateView, View
 from django.views.generic.edit import UpdateView, DeleteView
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render_to_response
 from django.template import RequestContext

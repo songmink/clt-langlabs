@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic import DetailView, CreateView
 from django.views.generic.edit import FormView, UpdateView, DeleteView
 from django.forms import ModelChoiceField
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 
 from core.models import ActivityCollection, AbstractActivity, Post, Lesson
 from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, RecorderMixin, CreateActivity4UpdateMixin, UsersWithPermsMixin, ActivityEditPermissionMixin, ActivityViewPermissionMixin, UserPostNumMixin, FakeDeleteMixin, ChatServerMixin, PostsListMixin

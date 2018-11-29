@@ -11,21 +11,21 @@ from django import forms
 
 
 class ProfileDetailView(LoginRequiredMixin, CourseListMixin, DetailView):
-	''' Profile detail page. '''
-        model = UserProfile
-        template_name = 'user_profile/profile_detail.html'
-        context_object_name = 'profile_instance'
+    ''' Profile detail page. '''
+    model = UserProfile
+    template_name = 'user_profile/profile_detail.html'
+    context_object_name = 'profile_instance'
 
-        def get_object(self, queryset=None):
-                slug = self.kwargs.get(self.slug_url_kwarg, None)
-                if self.request.user.username == slug:
-                        obj, created = self.model.objects.get_or_create(user=self.request.user)
-                else:
-                        try:
-                                obj = self.model.objects.get(slug=slug)
-                        except ObjectDoesNotExist:
-                                raise Http404('Profile Not Found')
-                return obj
+    def get_object(self, queryset=None):
+        slug = self.kwargs.get(self.slug_url_kwarg, None)
+        if self.request.user.username == slug:
+                obj, created = self.model.objects.get_or_create(user=self.request.user)
+        else:
+                try:
+                        obj = self.model.objects.get(slug=slug)
+                except ObjectDoesNotExist:
+                        raise Http404('Profile Not Found')
+        return obj
 
 class ProfileUpdateView(LoginRequiredMixin, CourseListMixin, UpdateView):
 	''' Profile edit page. '''

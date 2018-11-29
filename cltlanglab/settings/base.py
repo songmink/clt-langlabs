@@ -15,13 +15,14 @@ MEDIA_ROOT = PROJECT_DIR.child('media')
 
 # Disable this when static directories are managed outside of individual apps
 # E.g., in the project root as we are doing in this project.
-# STATIC_ROOT = PROJECT_DIR.child('static')
+STATIC_ROOT = PROJECT_DIR.child('static')
 
-STATICFILES_DIRS = (
-    PROJECT_DIR.child('static'),
-)
+# STATICFILES_DIRS = (
+#     PROJECT_DIR.child('static'),
+# )
 
 STATIC_URL = '/static/'
+
 TEMPLATE_DIRS = (PROJECT_DIR.child('templates'),)
 
 # Application definition

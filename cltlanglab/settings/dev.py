@@ -31,8 +31,8 @@ INSTALLED_APPS += (
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'cltlangdb',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'cltlanglabs',
         'USER': 'djangodbuser',
         'PASSWORD': '1',
         'HOST': 'localhost',

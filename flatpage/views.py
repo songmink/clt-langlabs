@@ -26,11 +26,10 @@ class FlatpageCreateView(CourseListMixin, CreateActivityMixin, CreateView):
     activity_type = 'flatpage'
 
     def get_form(self, form_class):
-        form = super(FlatpageCreateView, self).get_form(
-            form_class) 
+        form = super(FlatpageCreateView, self).get_form(form_class) 
         form.fields['lesson'].queryset = Lesson.objects.filter(
             collection=get_object_or_404(ActivityCollection, pk=self.kwargs['pk']))
-	form.fields['content'] = forms.CharField(widget = forms.Textarea(attrs={'id':'flatpageTextarea', 'rows': 20}))
+        form.fields['content'] = forms.CharField(widget = forms.Textarea(attrs={'id':'flatpageTextarea', 'rows': 20}))
         return form
 
     def form_valid(self, form):
