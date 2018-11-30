@@ -8,21 +8,11 @@ Django dev settings for cltlanglab project.
 
 from .base import *
 
-# NEEDED for CAS logins on dev systems with OPENSSL < 1
-import uhauth.tls_patch
-
-#SECRET_KEY = os.environ['SECRET_KEY']
-SECRET_KEY = '1asex8n(jcb1xump+ir@xn+1!(xcyxoif*xi@oy#9pyt-90le=@--da21'
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = '&#m+uzyu315+bpp7yhb$gsj%3d&d0p1gnw0qe@o@qd=r3e%8#m'
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 DEBUG = True
-
 TEMPLATE_DEBUG = True
-
-# Added by Hao
-DEBUG_TOOLBAR_PATCH_SETTINGS = False
-
-ALLOWED_HOSTS = []
-
-ROOT_URLCONF = 'cltlanglab.urls-dev'
 
 # Append apps used in development not production.
 INSTALLED_APPS += (
@@ -31,12 +21,13 @@ INSTALLED_APPS += (
 
 DATABASES = {
     'default': {
+        'CONN_MAX_AGE': 0,
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'cltlanglabs',
-        'USER': 'djangodbuser',
-        'PASSWORD': '1',
         'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': 'cltlanglabs',
+        'PASSWORD': 'song5127',
+        'PORT': '',
+        'USER': 'cltit'
     }
 }
 
@@ -70,7 +61,7 @@ RECORDER_LICENSE = ''
 # END CAS #
 
 
-LOGIN_URL = '/cltlanglab/accounts/login/'
+LOGIN_URL = '/accounts/login/'
 LOGOUT_URL = '/accounts/logout'
 
 LOGIN_REDIRECT_URL = '/cltlanglab/home'

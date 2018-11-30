@@ -1,4 +1,4 @@
-{% load staticfiles %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -9,93 +9,76 @@
 
 
     <!-- Bootstrap -->
-    <link href="{% static "bootstrap/dist/css/bootstrap.min.css" %}" rel="stylesheet">
-
-    <!-- Extensions - Experimenting with these -->
-    <!-- <link href="{% static "css/base.css" %}" rel="stylesheet"> -->
+    <link href="{% static "bootstrap-4/css/bootstrap.min.css" %}" rel="stylesheet">
+ 
+    <!-- Fontawesome -->
+    <link href="{% static "fontawesome-free-5.5.0-web/css/all.css" %}" rel="stylesheet">
+    <script defer src="{% static "fontawesome-free-5.5.0-web/js/all.js" %}"></script>
 
     <!-- The Bootstrap template named "Starter Template barebones " -->
     <link href="{% static "css/dashboard.css" %}" rel="stylesheet">
     <link href="{% static "css/footer.css" %}" rel="stylesheet">
 
-    {% block stylesheets %} {% endblock stylesheets%}
+    <!-- Extensions - Experimenting with these -->
+    <link href="{% static "css/base.css" %}" rel="stylesheet">
 
   </head>
+
   <body>
-    {% block navbar %}
-    <!-- Fixed navbar -->
-    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="{% url 'home' %}">CLT Lang Labs</a>
-        </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
+    <div class="container-fullwidth">
+        <!-- New navbar -->
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <a class="navbar-brand" href="/home">CLT Lang Labs</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-          </ul>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/home">Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Courses
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                {% load guardian_tags %}
+                                {% for course_item in course_list %}
+                                    {% get_obj_perms user for course_item as "course_temp_perms" %}
+                                    {% if course_item.is_active or "edit_course" in course_temp_perms %}
+                                        <a class="dropdown-item" href="{{ course_item.get_absolute_url }}">{{ course_item.title }}</a>
+                                    {% endif %}
+                                {% endfor %}
+                                <div class="dropdown-divider"></div>
+                                {% if perms.core.create_course %}
+                                    <a class="dropdown-item" href="{% url 'create_collection' %}">New Course</a>
+                                {% endif %}
+                                <a class="dropdown-item" href="{% url 'course_list' %}"><small><span class="glyphicon glyphicon-search"></span> Search Course</small></a>
+                                <a class="dropdown-item"><small data-toggle="modal" data-target=".courseSubscribe" style="cursor:pointer;"><i class="fa fa-book"></i> Subscribe with code</small></a>
+                            </div>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item dropdown pull-righ">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> {{ user.username }}</a>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{% url 'profile:detail' slug=user.username %}">My Profile</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url 'logout' %}">logout</a>
+                            </div>
+                        </li>
+                    </ul>
 
-
-          <!-- CONTEXT MENU -->
-          <ul class="nav navbar-nav navbar-right">
-          {% block activitynav %} <!-- CONTEXT MENU - Activities --> {% endblock activitynav %}
-
-          {% block coursenav %}
-          <!-- CONTEXT MENU - Courses -->
-
-            <li class="dropdown">
-              <a href="." class="dropdown-toggle" data-toggle="dropdown"> {% block course_button_label %} Courses <b class="caret"></b>{% endblock course_button_label %}</a>
-              <ul class="dropdown-menu">
-              {% block course_item_list %}
-              {% load guardian_tags %}
-                {% for course_item in course_list %}
-                  {% get_obj_perms user for course_item as "course_temp_perms" %}
-                  {% if course_item.is_active or "edit_course" in course_temp_perms %}
-                  <li {% if course_item == course %} class="bg-primary" {% endif %}><a href="{{ course_item.get_absolute_url }}">{{ course_item.title }}</a></li>
-                  {% endif %}
-                {% endfor %}
-              {% endblock course_item_list %}
-              <li class="divider"></li>
-
-              {% if perms.core.create_course %}
-              <li><a href="{% url 'create_collection' %}"><small><span class="glyphicon glyphicon-plus-sign"></span> New Course</small></a></li>
-              {% endif %}
-
-              <li><a href="{% url 'course_list' %}"><small><span class="glyphicon glyphicon-search"></span> Search Course</small></a></li>
-              <li ><a><small data-toggle="modal" data-target=".courseSubscribe" style="cursor:pointer;"><i class="fa fa-book"></i> Subscribe with code</small></a></li>
-              </ul>
-            </li>
-          {% endblock coursenav %}
-            <li class="dropdown">
-            {% if not user.is_authenticated %}
-              <a href="{% url 'login' %}" class="dropdown-toggle"> login </a>
-            {% else %}
-              <a href="." class="dropdown-toggle" data-toggle="dropdown"> {{ user.username }}</a>
-              <ul class="dropdown-menu">
-                <li><a href="{% url 'profile:detail' slug=user.username %}">My Profile</a></li>
-		<li class="divider"></li>
-                <li><a href="{% url 'logout' %}">logout</a></li>
-              </ul>
-            </li>
-            {% endif %}
-          </ul>
-          <!-- End of CONTEXT MENU ITEMS -->
-
-        </div><!--/.nav-collapse -->
-      </div>
+                </div>
+            </nav>
+        <!-- Navbar end -->
     </div>
-    {% endblock navbar %}
-
 
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-12">
-          {% block contentwrap %}{% endblock contentwrap %}
+          {% block contentwrap %}{% endblock %}
         </div>
       </div>
     </div><!-- /.container-fluid -->
@@ -127,14 +110,14 @@
     <!-- footer -->
     {% include 'footer.html' %}
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://code.jquery.com/jquery-1.9.0.min.js"></script>
+    <!-- jQuery -->
+    <script src="{% static "jquery/jquery-3.3.1.min.js" %}"></script>
 
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="{% static "bootstrap/dist/js/bootstrap.min.js" %}"></script>
+    <script src="{% static "bootstrap-4/js/bootstrap.min.js" %}"></script>
     <script src="{% static "js/base.js" %}"></script>
 
-    {% block more_javascript %} {% endblock more_javascript %}
+    {% block more_javascript %} {% endblock %}
 
   </body>
 </html>

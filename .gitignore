@@ -41,9 +41,9 @@ Thumbs.db
 # Project specific exclusions #
 ############
 sftp-config.json
-prod-*.py
+prod*.py
+dev*.py
 _build/
-*.conf
 
 # VSCODE
 .vscode/

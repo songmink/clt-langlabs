@@ -2,32 +2,14 @@
 Django base settings for cltlanglab project.
 """
 import os
-from unipath import Path
 
-
-# Secret key stored in environment variable not here.
-#SECRET_KEY = os.environ['SECRET_KEY']
-
-PROJECT_DIR = Path(__file__).ancestor(3)  # Points to <project root> (e.g. clt-langlabs-dev-py)
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = PROJECT_DIR.child('media')
-
-# Disable this when static directories are managed outside of individual apps
-# E.g., in the project root as we are doing in this project.
-STATIC_ROOT = PROJECT_DIR.child('static')
-
-# STATICFILES_DIRS = (
-#     PROJECT_DIR.child('static'),
-# )
-
-STATIC_URL = '/static/'
-
-TEMPLATE_DIRS = (PROJECT_DIR.child('templates'),)
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Application definition
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -48,28 +30,56 @@ INSTALLED_APPS = (
     'guardian',
     'uhauth',
     'django_cas_ng',
-)
+]
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.auth.context_processors.auth',
-    'django.core.context_processors.request',
-)
-
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-
-)
+]
 
 ROOT_URLCONF = 'cltlanglab.urls'
 
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': ['templates/'],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
 WSGI_APPLICATION = 'cltlanglab.wsgi.application'
 
+# Password validation
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
+# Internationalization
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Pacific/Honolulu'
@@ -96,7 +106,6 @@ AUTHENTICATION_BACKENDS = (
 )
 
 ANONYMOUS_USER_ID = -1
-
 
 LOGGING = {
     'version': 1,
@@ -129,4 +138,17 @@ LOGGING = {
         },
     },
 }
-#########################
+
+# Static files
+MEDIA_URL = '/media/'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(PROJECT_DIR, "static"),
+]
+MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media')
+# STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
+
+# CAS Login
+# Set 'True' only if you use CAS login system
+# If it is 'True' the django user login will be disabled
+CAS = False

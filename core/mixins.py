@@ -69,7 +69,7 @@ class UsersWithPermsMixin(object):
             anyperm = get_users_with_perms(
                 self.get_object().collection, attach_perms=True, with_superusers=False)
             result = User.objects.filter(is_superuser=True).all()
-            for user, perms in anyperm.iteritems():
+            for user, perms in anyperm.items():
                 if 'edit_course' in perms:
                     result = chain(result, User.objects.filter(username=user))
             result = list(result)
@@ -85,7 +85,7 @@ class UsersWithPermsMixin(object):
         anyperm = get_users_with_perms(
             self.get_object().collection, attach_perms=True, with_superusers=False)
         result = User.objects.filter(is_superuser=True).all()
-        for user, perms in anyperm.iteritems():
+        for user, perms in anyperm.items():
             if permission in perms:
                 result = chain(result, User.objects.filter(username=user))
 

@@ -55,7 +55,7 @@ class ActivityCollection(models.Model):
         anyperm = get_users_with_perms(
             self, attach_perms=True, with_superusers=False)
         result = ''
-        for user, perms in anyperm.iteritems():
+        for user, perms in anyperm.items():
             if 'edit_course' in perms:
                 result = chain(result, User.objects.filter(username=user))
         result = list(result)

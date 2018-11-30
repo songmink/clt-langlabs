@@ -1,11 +1,6 @@
-body {
-  padding-top: 50px;
+.navbar-brand {
+    color: #777;
 }
-
-.navbar {
-	background-color: white;
-}
-
 .starter-template {
   padding: 40px 15px;
   text-align: center;
