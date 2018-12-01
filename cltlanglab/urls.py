@@ -2,8 +2,7 @@
 
 from django.conf import settings
 from django.conf.urls import re_path, include, url
-from django.contrib import admin
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib import admin, auth
 
 
 admin.autodiscover()
@@ -57,7 +56,7 @@ urlpatterns = [
     #re_path(r'^socket\.io', include(socketio.sdjango.urls)),
 
     re_path(r'^home/$', HomeView.as_view(), name='home'),
-    re_path(r'^$', IndexView.as_view(), name='landing'),
+    re_path(r'^$', IndexView.as_view(), name='index'),
     re_path(r'^profile/', include('user_profile.urls', namespace='profile')),
 
 ]
@@ -73,6 +72,5 @@ if settings.CAS:
     ]
 else:
     urlpatterns += [
-        re_path(r'^accounts/login/$', LoginView, name='login'),
-        re_path(r'^accounts/logout/$', LogoutView, name='logout'),
+        re_path(r'^accounts/', include('django.contrib.auth.urls')),
     ]

@@ -1,0 +1,69 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CLT Language Labs</title>
+
+
+    <!-- Bootstrap -->
+    <link href="{% static "bootstrap-4/css/bootstrap.min.css" %}" rel="stylesheet">
+ 
+    <!-- Fontawesome -->
+    <link href="{% static "fontawesome-free-5.5.0-web/css/all.css" %}" rel="stylesheet">
+    <script defer src="{% static "fontawesome-free-5.5.0-web/js/all.js" %}"></script>
+
+    <!-- The Bootstrap template named "Starter Template barebones " -->
+    <link href="{% static "css/dashboard.css" %}" rel="stylesheet">
+    <link href="{% static "css/footer.css" %}" rel="stylesheet">
+
+    <!-- Extensions - Experimenting with these -->
+    <link href="{% static "css/base.css" %}" rel="stylesheet">
+
+  </head>
+
+  <body>
+
+
+
+    <!-- access code input for subscribtion -->
+    <div class="modal fade courseSubscribe" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h5 class="modal-title">Enter your accesscode below</h5>
+          </div>
+          <div class="modal-body">
+            <form role="form">
+              <div class="form-group">
+                <input type="text" class="form-control" id="accesscodearea" placeholder="accesscode ...">
+              </div>
+              <div class="btn-group btn-group-justified">
+                <div class="btn-group">
+                  <button id='courseSubscribeButton' class="btn btn-default btn-sm" data-subscribeurl="{% url 'subscribe_course' 'ToReplace' %}">Subscribe</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- footer -->
+    {% include 'footer.html' %}
+
+    <!-- jQuery -->
+    <script src="{% static "jquery/jquery-3.3.1.min.js" %}"></script>
+
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="{% static "bootstrap-4/js/bootstrap.min.js" %}"></script>
+    <script src="{% static "js/base.js" %}"></script>
+
+    {% block more_javascript %} {% endblock %}
+
+  </body>
+</html>

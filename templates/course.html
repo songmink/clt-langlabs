@@ -1,7 +1,8 @@
+<!-- TODO: Modify the base_activity navigation -->
 {% extends "base_activity.html" %}
-{% load staticfiles %}
+{% load static %}
 
-{% block contentwrap %}
+{% block contents %}
 {% load guardian_tags %}
 {% get_obj_perms user for course as "course_perms" %}
 
@@ -174,7 +175,7 @@
     </div>
 </div>
 
-{% endblock contentwrap %}
+{% endblock contents %}
 
 {% block stylesheets %}
 <link href="{% static "font-awesome/css/font-awesome.css" %}" rel="stylesheet">

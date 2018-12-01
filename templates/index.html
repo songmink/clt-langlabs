@@ -1,58 +1,18 @@
-<!-- landing.html -->
-{% load staticfiles %}
+<!-- index.html -->
+{% extends "base.html" %}
+{% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<!-- Google Font -->
-		<link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,300' rel='stylesheet' type='text/css'>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>CLT Language Labs</title>
+{% block contents %}
+    <div class="jumbotron">
+        <a href="{% url 'index' %}"><img src="{% static 'img/Langlab-logo.png' %}" class="img-responsive wau-logo" width=350px></a>
+        <br><br>
+        <h1 class="display-4">Welcome!</h1>
+        <p class="lead">The Web Audio Utility (WAU). WAU allows students to post voice recordings to online discussion forums. Instructors create a course site in WAU and populate it with various listening and speaking activities. </p>
+        <hr class="my-4">
+        <p>University of Hawaii username and password required.</p>
+        <p class="lead">
+            <a class="btn btn-primary btn-lg" href="{% url 'home' %}" role="button">Let's start</a>
+        </p>
+    </div>
+{% endblock %}
 
-		<!-- Bootstrap -->
-		<link href="{% static "bootstrap/dist/css/bootstrap.min.css" %}" rel="stylesheet">
-
-		<!-- The Bootstrap template named "Starter Template barebones " -->
-		<link href="{% static "css/index.css" %}" rel="stylesheet">
-		<link href="{% static "css/footer.css" %}" rel="stylesheet">
-
-	</head>
-	<body>
-
-		<!-- header -->
-		<div class="row">
-			<div class="col-md-12">
-				<a href="{% url 'landing' %}">
-					<img  src="{% static 'img/Langlab-logo.png' %}" class="img-responsive" width=350px>
-				</a>	
-			</div>	
-		</div>
-
-		<!-- content -->
-	 	<div class="row" style="padding-bottom: 40px;">
-			<div class="col-md-12 text-center">
-				<div class="lead title" style="font-size: 3em;">
-				</div>
-			</div>
-			
-			<div class="col-md-12">
-				<div class="btn-group btn-group-justified center-block" style="width: 100px;">
-					<a href="{% url 'home' %}" class="btn btn-success">Get Started</a>
-				</div>
-			</div>
-			<p>&nbsp;</p>
-			<div class="col-md-12">
-				<div class="center-block text-center">University of Hawaii username and password required.</div>
-			</div>
-
-			<div class="col-md-12">
-				<div class="center-block text-center">Welcome</div>
-			</div>
-		</div>
-		
-		<!-- footer -->
-		{% include 'footer.html' %}
-
-	</body>

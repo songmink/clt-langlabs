@@ -1,123 +1,62 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CLT Language Labs</title>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>CLT Language Labs</title>
 
+        <!-- Google Font --> 
+        <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,300' rel='stylesheet' type='text/css'>
 
-    <!-- Bootstrap -->
-    <link href="{% static "bootstrap-4/css/bootstrap.min.css" %}" rel="stylesheet">
- 
-    <!-- Fontawesome -->
-    <link href="{% static "fontawesome-free-5.5.0-web/css/all.css" %}" rel="stylesheet">
-    <script defer src="{% static "fontawesome-free-5.5.0-web/js/all.js" %}"></script>
+        <!-- Bootstrap -->
+        <link href="{% static "bootstrap-4/css/bootstrap.min.css" %}" rel="stylesheet">
 
-    <!-- The Bootstrap template named "Starter Template barebones " -->
-    <link href="{% static "css/dashboard.css" %}" rel="stylesheet">
-    <link href="{% static "css/footer.css" %}" rel="stylesheet">
+        <!-- Fontawesome -->
+        <link href="{% static "fontawesome-free-5.5.0-web/css/all.css" %}" rel="stylesheet">
+        <script defer src="{% static "fontawesome-free-5.5.0-web/js/all.js" %}"></script>
 
-    <!-- Extensions - Experimenting with these -->
-    <link href="{% static "css/base.css" %}" rel="stylesheet">
+        <!-- The Bootstrap template named "Starter Template barebones " -->
+        <link href="{% static "css/dashboard.css" %}" rel="stylesheet">
 
-  </head>
+        <!-- Extensions - Experimenting with these -->
+        <link href="{% static "css/wau.css" %}" rel="stylesheet">
+    </head>
 
-  <body>
-    <div class="container-fullwidth">
-        <!-- New navbar -->
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <a class="navbar-brand" href="/home">CLT Lang Labs</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav mr-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/home">Home <span class="sr-only">(current)</span></a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Courses
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                {% load guardian_tags %}
-                                {% for course_item in course_list %}
-                                    {% get_obj_perms user for course_item as "course_temp_perms" %}
-                                    {% if course_item.is_active or "edit_course" in course_temp_perms %}
-                                        <a class="dropdown-item" href="{{ course_item.get_absolute_url }}">{{ course_item.title }}</a>
-                                    {% endif %}
-                                {% endfor %}
-                                <div class="dropdown-divider"></div>
-                                {% if perms.core.create_course %}
-                                    <a class="dropdown-item" href="{% url 'create_collection' %}">New Course</a>
-                                {% endif %}
-                                <a class="dropdown-item" href="{% url 'course_list' %}"><small><span class="glyphicon glyphicon-search"></span> Search Course</small></a>
-                                <a class="dropdown-item"><small data-toggle="modal" data-target=".courseSubscribe" style="cursor:pointer;"><i class="fa fa-book"></i> Subscribe with code</small></a>
-                            </div>
-                        </li>
-                    </ul>
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item dropdown pull-righ">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> {{ user.username }}</a>
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="{% url 'profile:detail' slug=user.username %}">My Profile</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{% url 'logout' %}">logout</a>
-                            </div>
-                        </li>
-                    </ul>
-
-                </div>
-            </nav>
-        <!-- Navbar end -->
-    </div>
-
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-12">
-          {% block contentwrap %}{% endblock %}
+    <body>
+        <!-- Nav Bar Start -->
+        <div class="container-fullwidth">
+            {% if user.is_authenticated and request.get_full_path != "/" %}
+                {% include "navbar.html"%}
+            {% endif %}
+                
         </div>
-      </div>
-    </div><!-- /.container-fluid -->
-
-    <!-- access code input for subscribtion -->
-    <div class="modal fade courseSubscribe" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            <h5 class="modal-title">Enter your accesscode below</h5>
-          </div>
-          <div class="modal-body">
-            <form role="form">
-              <div class="form-group">
-                <input type="text" class="form-control" id="accesscodearea" placeholder="accesscode ...">
-              </div>
-              <div class="btn-group btn-group-justified">
-                <div class="btn-group">
-                  <button id='courseSubscribeButton' class="btn btn-default btn-sm" data-subscribeurl="{% url 'subscribe_course' 'ToReplace' %}">Subscribe</button>
-                </div>
-              </div>
-            </form>
-          </div>
+        <!-- Nav Bar End -->
+        
+        <div class="container">
+            <!-- Main Contents Start -->
+            {% block contents %}{% endblock %}
+            <!-- Main Contents End -->
         </div>
-      </div>
-    </div>
+        
+        <footer>
+            <div class="">
+                <!-- Footer Start -->
+                {% include 'footer.html' %}
+                <!-- Footer End -->
+            </div>
+        </footer>
 
-    <!-- footer -->
-    {% include 'footer.html' %}
+        <!-- jQuery -->
+        <script src="{% static "jquery/jquery-3.3.1.min.js" %}"></script>
 
-    <!-- jQuery -->
-    <script src="{% static "jquery/jquery-3.3.1.min.js" %}"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="{% static "bootstrap-4/js/bootstrap.min.js" %}"></script>
+        <script src="{% static "js/base.js" %}"></script>
 
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="{% static "bootstrap-4/js/bootstrap.min.js" %}"></script>
-    <script src="{% static "js/base.js" %}"></script>
-
-    {% block more_javascript %} {% endblock %}
-
-  </body>
+        <!-- Extra Scripts Start -->
+        {% block more_javascript %} {% endblock %}
+        <!-- Extra Scripts End -->
+    </body>
 </html>

@@ -33,7 +33,7 @@ from overdub_discussions.models import OverdubActivity
 
 
 class IndexView(TemplateView):
-    ''' -- Landing page of cltlanglabs '''
+    ''' -- Index page of cltlanglabs '''
     template_name = 'index.html'
 
     def get_context_data(self, **kwargs):
