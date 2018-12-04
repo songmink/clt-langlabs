@@ -2,17 +2,18 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block contents %}
+{% block contentwrap %}
     <div class="jumbotron">
         <a href="{% url 'index' %}"><img src="{% static 'img/Langlab-logo.png' %}" class="img-responsive wau-logo" width=350px></a>
         <br><br>
         <h1 class="display-4">Welcome!</h1>
-        <p class="lead">The Web Audio Utility (WAU). WAU allows students to post voice recordings to online discussion forums. Instructors create a course site in WAU and populate it with various listening and speaking activities. </p>
-        <hr class="my-4">
-        <p>University of Hawaii username and password required.</p>
+        <h3> The Web Audio Utility (WAU) of CLT Lang Labs.</h3>
+        <p class="lead"> WAU allows students to post voice recordings to online discussion forums. Instructors create a course site in WAU and populate it with various listening and speaking activities. </p>
+        <hr class="my-3">
         <p class="lead">
             <a class="btn btn-primary btn-lg" href="{% url 'home' %}" role="button">Let's start</a>
         </p>
+        {% comment %} <p class="font-weight-bold font-italic">(University of Hawaii username and password required.)</p> {% endcomment %}
     </div>
 {% endblock %}
 

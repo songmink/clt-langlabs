@@ -6,49 +6,41 @@
   {% load guardian_tags %}
   {% get_obj_perms user for course as "course_perms" %}
 	<!-- CONTEXT MENU - Activities --> 
-    <li class="dropdown">
-              <a id="more_activities" data-toggle="dropdown" class="dropdown-toggle tour-step tour-step-six" href="#">More Activities <b class="caret"></b></a>
-              <ul class="dropdown-menu">
-
-                {% for activity_item in activity_list %}
-
+    <li class="nav-item dropdown">
+        <a id="more_activities" data-toggle="dropdown" class="nav-link dropdown-toggle tour-step tour-step-six" href="#">More Activities <b class="caret"></b></a>
+        <ul class="nav-item dropdown-menu">
+            <!-- TODO: Needs comment -->
+            {% for activity_item in activity_list %}
                 {% ifchanged activity_item.lesson %}
-                <li><a href=""  style='cursor:text;'><span class="text-primary ">{{ activity_item.lesson.title }}</span></a></li>
+                    <li><a class="dropdown-item" href=""  style='cursor:text;'>{{ activity_item.lesson.title }}</a></li>
                 {% endifchanged %}
+                <li><a href="{{activity_item.get_absolute_url}}"><small>{{activity_item.title}}</small></a></li>
+            {% empty %}
+                <li><a class="dropdown-item" href=""  style='cursor:text;'><span class="text-primary "> No activities available </span></a></li>
+            {% endfor %}
 
-                    <li><a href="{{activity_item.get_absolute_url}}"><small>{{activity_item.title}}</small></a></li>
-
-                {% empty %}
-                <li><a href=""  style='cursor:text;'><span class="text-primary "> No activities available </span></a></li>
-
-                {% endfor %}
-
-          
-			    <li class="divider"></li>
-			    {% if course %}
-			      <li><a href="{% url 'course' course.id %}">course home</a></li>
-            {% if "edit_course" in course_perms %}
-			      <li><a href="{% url 'create_lesson' course.id %}"><small><span class="glyphicon glyphicon-plus-sign"></span> New Lesson</small></a></li>
-            <li><a href="{% url 'create_activity' course.id %}"><small><span class="glyphicon glyphicon-plus-sign"></span> New Activity</small></a></li>
-  			    {% endif %}
-          {% endif %}
-
-              </ul>
+            <!-- TODO: Needs comment -->
+            <div class="dropdown-divider"></div>
+            {% if course %}
+                <li><a class="dropdown-item" href="{% url 'course' course.id %}">course home</a></li>
+                {% if "edit_course" in course_perms %}
+                    <li><a class="dropdown-item" href="{% url 'create_lesson' course.id %}"><small><i class="far fa-plus-square"></i> New Lesson</small></a></li>
+                    <li><a class="dropdown-item" href="{% url 'create_activity' course.id %}"><small><i class="far fa-plus-square"></i> New Activity</small></a></li>
+                {% endif %}
+            {% endif %} 
+        </ul>  
     </li>
-
 {% endblock activitynav %}
 
 {% block activity_item_list %} 
-	    {% for activity_item in activity_list %}
-	      	<li {% if activity_item.id == activity.id %} class="bg-primary" {% endif %}><a href="{{ activity_item.get_absolute_url }}">{{ activity_item.title }}</a></li>
-	    {% endfor %}
+    {% for activity_item in activity_list %}
+        <li {% if activity_item.id == activity.id %} class="bg-primary" {% endif %}><a href="{{ activity_item.get_absolute_url }}">{{ activity_item.title }}</a></li>
+    {% endfor %}
 {% endblock activity_item_list %}
 
 {% block course_button_label %} {{ course.title }} {% endblock course_button_label %}
 
 {% block contentwrap %}
-
 	<h1 class="page-header">{{ activity.title }}</h1>
 	<p class="sub-header"><span class="text-muted">{{ activity.instructions }}</span></p>
-
-{% endblock contentwrap %}
+{% endblock %}

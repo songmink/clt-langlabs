@@ -14,13 +14,7 @@ img.profile-img {
 }
 </style>
 
-<link href="{% static "font-awesome/css/font-awesome.css" %}" rel="stylesheet">
-<link href="{% static "bootstrap3-editable/css/bootstrap-editable.css" %}" rel="stylesheet">
-<link href="{% static "bootstrap/dist/css/bootstrap-tour.min.css" %}" rel="stylesheet">
-
-{% endblock stylesheets%}
-
-{% block contentwrap %}
+{% block contents %}
 {% if user == profile_instance.user %}
 	<h1 class="page-header">My Profile
 		<span class="tour-step tour-step-one">
@@ -60,11 +54,5 @@ img.profile-img {
 </div>
 
 
-{% endblock contentwrap %}
+{% endblock %}
 
-
-{% block more_javascript %}
-<script src="{% static "bootstrap3-editable/js/bootstrap-editable.js" %}"></script>
-<script src="{% static "bootstrap/dist/js/bootstrap-tour.min.js" %}"></script>
-<script src="{% static "js/course.js" %}"></script>
-{% endblock more_javascript %}

@@ -34,7 +34,7 @@ $(document).ready(function(){
 
     //turn to inline mode
     $.fn.editable.defaults.mode = 'inline';
-    if($(".editable_lesson_title").size()!=0){
+    if($(".editable_lesson_title").length!=0){
 
       $(".editable_lesson_title").each(function(){
         $(this).editable({
