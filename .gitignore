@@ -44,3 +44,7 @@ sftp-config.json
 prod-*.py
 _build/
 
+# local extra
+.envrc
+prod.py
+.vscode
