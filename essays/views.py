@@ -26,7 +26,7 @@ class EssayUpdateView(ActivityEditPermissionMixin, CourseListMixin, CreateActivi
               'lesson', 'is_active', 'required_revisions', 'display_order']
     activity_type = 'essay'
 
-    def get_form(self, form_class):
+    def get_form(self, form_class=None):
         ''' :returns: A list of lessons the course has into *"form"*. '''
 
         form = super(EssayUpdateView, self).get_form(
@@ -44,7 +44,7 @@ class EssayCreateView(ActivityEditPermissionMixin, CourseListMixin, CreateActivi
               'is_active', 'required_revisions', 'display_order']
     activity_type = 'essay'
 
-    def get_form(self, form_class):
+    def get_form(self, form_class=None):
         form = super(EssayCreateView, self).get_form(
             form_class)  # instantiate using parent
         form.fields['lesson'].queryset = Lesson.objects.filter(

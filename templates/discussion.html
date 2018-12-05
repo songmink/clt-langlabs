@@ -2,89 +2,89 @@
 {% extends "base_activity.html" %}
 {% load staticfiles %}
 
+<!-- Contentwrap start -->
 {% block contentwrap %}
-{% load guardian_tags %}
-{% get_obj_perms user for course as "course_perms" %}
-{% get_obj_perms user for activity as "activity_perms" %}
+    {% load guardian_tags %}
+    {% get_obj_perms user for course as "course_perms" %}
+    {% get_obj_perms user for activity as "activity_perms" %}
+    {% include 'activity_header_template.html' %} 
 
-{% include 'activity_header_template.html' %} 
+    <div class="container-fluid" style='height:100%;'>
+        <div class="row " >
+            <div class="col-md-4" > <!-- style="border-right: 1px solid #ccc;" -->
+                <h2>Instructions:</h2>
+                {{ activity.instructions|safe }}
+            </div>
+            <div id='connectingDIV' class='row col-md-8 show' data-port="{{ chatserver_port}}" data-host="{{ chatserver_host }}" data-protocol="{{ chatserver_protocol }}">
+                <div id='sysMessage' class="col-md-4 col-md-offset-4"><i class="fas fa-spinner fa-pulse fa-5x"></i> Connecting to server ...</div>
+            </div>
+            <div id="connectedDIV" class="col-md-8 hidden">
 
-<div class="container-fluid" style='height:100%;'>
-    <div class="row " >
-        <div class="col-md-4" > <!-- style="border-right: 1px solid #ccc;" -->
-            <h2>Instructions:</h2>
-            {{ activity.instructions|safe }}
-        </div>
-        <div id='connectingDIV' class='row col-md-8 show' data-port="{{ chatserver_port}}" data-host="{{ chatserver_host }}" data-protocol="{{ chatserver_protocol }}">
-            <div id='sysMessage' class="col-md-4 col-md-offset-4"><i class="fa fa-spinner fa-pulse fa-5x"></i> Connecting to server ...</div>
-        </div>
-        <div id="connectedDIV" class="col-md-8 hidden">
+                {% include 'discussion_form_template.html' %}
 
-            {% include 'discussion_form_template.html' %}
+                <br>
 
-            <br>
-
-            <!-- discussion posts -->
-            <div id='posts' data-ajaxurl="{% url 'delete_post' %}" data-saveajaxurl="{% url 'save_post' %}">
-                {% if user_post_num != 0 or not activity.read_after_post or user.is_superuser or user in private_users %}
-                    <ul id='posts2' class="chat">
-                        {% for post in posts reversed%}
-                            {% if not activity.private_mode or user in private_users or post.creator in private_users or post.creator == user %}
-                                {% if not post.parent_post %}
-                                    <!-- Other's posts -->
-                                    {% include 'post_template.html' with ativity_type=activity.activity_type %}
+                <!-- discussion posts -->
+                <div id='posts' data-ajaxurl="{% url 'delete_post' %}" data-saveajaxurl="{% url 'save_post' %}">
+                    {% if user_post_num != 0 or not activity.read_after_post or user.is_superuser or user in private_users %}
+                        <ul id='posts2' class="chat">
+                            {% for post in posts reversed%}
+                                {% if not activity.private_mode or user in private_users or post.creator in private_users or post.creator == user %}
+                                    {% if not post.parent_post %}
+                                        <!-- Other's posts -->
+                                        {% include 'post_template.html' with ativity_type=activity.activity_type %}
+                                    {% endif %}
                                 {% endif %}
-                            {% endif %}
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Small modal -->
-<div>
-    <button class="btn btn-primary hide notificationButton" data-toggle="modal" data-target=".bs-example-modal-sm">Small modal</button>
-    <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-header" style='padding:9px;'>
-                    <h5 class="modal-title" id="myModalLabel">Help Text</h5>
-                </div>
-                <div class="modal-body">
-                    Please <kbd>save</kbd> recording before sending post or click <kbd>cancel</kbd>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<br>
+    <!-- Small modal -->
+    <div>
+        <button class="btn btn-primary hide notificationButton" data-toggle="modal" data-target=".bs-example-modal-sm">Small modal</button>
+        <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header" style='padding:9px;'>
+                        <h5 class="modal-title" id="myModalLabel">Help Text</h5>
+                    </div>
+                    <div class="modal-body">
+                        Please <kbd>save</kbd> recording before sending post or click <kbd>cancel</kbd>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-{% endblock contentwrap %}
+    <br>
+{% endblock %}
+<!-- Contentwrap end-->
 
 {% block stylesheets %} 
-<link href="{% static "css/discussion.css" %}" rel="stylesheet">
-<link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
-<!-- *****************video player(need to be put in head to load audio)******************* -->
-<script src="https://jwpsrv.com/library/RJueXGxbEeOB1SIACi0I_Q.js"></script>
-{% endblock stylesheets%}
-{% block more_javascript %} 
-<!-- *****************upload libs******************** -->
-<script src="{% static "jqueryUpload/jquery.ui.widget.js" %}"></script>
-<script src="{% static "jqueryUpload/jquery.iframe-transport.js" %}"></script>
-<script src="{% static "jqueryUpload/jquery.fileupload.js" %}"></script>
-<script src="{% static "jqueryUpload/jquery.cookie.js" %}"></script>
-<!-- *****************Chat libs******************** -->
-<script src="{% static "js/socket.io.js" %}"></script>
-<script src="{% static "js/tinymce/tinymce.min.js" %}"></script>
-<script>WEB_SOCKET_SWF_LOCATION="{{ STATIC_URL }}flashsocket/WebSocketMain.swf"; window.room = "{{ room.id }}";</script>
-<script src="{% static "js/utils.js" %}"></script>
-<script src="{% static "js/global.js" %}"></script>
-<script src="{% static "js/sockets.js" %}"></script>
-<script src="{% static "js/discussion.js" %}"></script>
-<!-- ******************Recorder libs****************** -->
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
-<!-- ************************************* -->
-{% endblock more_javascript %}
+    <link href="{% static "css/discussion.css" %}" rel="stylesheet">
+    <!-- *****************video player(need to be put in head to load audio)******************* -->
+    <script src="https://jwpsrv.com/library/RJueXGxbEeOB1SIACi0I_Q.js"></script>
+{% endblock %}
+
+{% block javascripts %} 
+    <!-- *****************upload libs******************** -->
+    <script src="{% static "jqueryUpload/jquery.ui.widget.js" %}"></script>
+    <script src="{% static "jqueryUpload/jquery.iframe-transport.js" %}"></script>
+    <script src="{% static "jqueryUpload/jquery.fileupload.js" %}"></script>
+    <script src="{% static "jqueryUpload/jquery.cookie.js" %}"></script>
+    <!-- *****************Chat libs******************** -->
+    <script src="{% static "js/socket.io.js" %}"></script>
+    <script src="{% static "js/tinymce/tinymce.min.js" %}"></script>
+    <script>WEB_SOCKET_SWF_LOCATION="{{ STATIC_URL }}flashsocket/WebSocketMain.swf"; window.room = "{{ room.id }}";</script>
+    <script src="{% static "js/utils.js" %}"></script>
+    <script src="{% static "js/global.js" %}"></script>
+    <script src="{% static "js/sockets.js" %}"></script>
+    <script src="{% static "js/discussion.js" %}"></script>
+    <!-- ******************Recorder libs****************** -->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+    <!-- ************************************* -->
+{% endblock %}

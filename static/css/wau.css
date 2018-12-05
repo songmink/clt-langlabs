@@ -25,10 +25,14 @@ footer .address {
 }
 
 footer a:hover {
-	color: rgb(87, 87, 87));
+	color: rgb(87, 87, 87);
 	text-decoration: none;
 }
 
 footer .copyright a {
     color: rgb(119, 119, 119)
+}
+
+.alert {
+    margin: 0.2em;
 }

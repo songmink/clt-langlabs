@@ -44,7 +44,7 @@ class OverdubCreateView(CourseListMixin, CreateActivityMixin, CreateView):
     fields = ['title', 'instructions', 'lesson', 'is_active', 'read_after_post', 'private_mode', 'display_order', 'media']
     activity_type = 'overdub'
 
-    def get_form(self, form_class):
+    def get_form(self, form_class=None):
         form = super(OverdubCreateView, self).get_form(
             form_class)  # instantiate using parent
         form.fields['lesson'].queryset = Lesson.objects.filter(
@@ -83,7 +83,7 @@ class OverdubUpdateView(ActivityEditPermissionMixin, CourseListMixin, CreateActi
     fields = ['title', 'instructions', 'lesson', 'is_active', 'read_after_post', 'private_mode', 'display_order', 'media']
     activity_type = 'overdub'
 
-    def get_form(self, form_class):
+    def get_form(self, form_class=None):
         form = super(OverdubUpdateView, self).get_form(
             form_class)  # instantiate using parent
         form.fields['lesson'].queryset = Lesson.objects.filter(

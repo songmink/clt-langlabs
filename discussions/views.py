@@ -29,7 +29,7 @@ class DiscussionCreateView(CourseListMixin, CreateActivityMixin, CreateView):
               'lesson', 'is_active', 'read_after_post', 'private_mode', 'display_order']
     activity_type = 'discussion'
 
-    def get_form(self, form_class):
+    def get_form(self, form_class=None):
         ''' :returns: A list of lessons the course has into *"form"*. '''
 
         form = super(DiscussionCreateView, self).get_form(
@@ -55,7 +55,7 @@ class DiscussionUpdateView(ActivityEditPermissionMixin, CourseListMixin, CreateA
               'lesson', 'is_active', 'read_after_post', 'private_mode', 'display_order']
     activity_type = 'discussion'
 
-    def get_form(self, form_class):
+    def get_form(self, form_class=None):
         ''' :returns: A list of lessons the course has into *"form"*. '''
 
         form = super(DiscussionUpdateView, self).get_form(

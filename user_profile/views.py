@@ -41,7 +41,7 @@ class ProfileUpdateView(LoginRequiredMixin, CourseListMixin, UpdateView):
 			raise PermissionDenied()
 		return obj
 
-	def get_form(self, form_class):
+	def get_form(self, form_class=None):
 		form = super(ProfileUpdateView, self).get_form(form_class)
 		form.fields['image'] = forms.ImageField(
 			required=False,

@@ -25,7 +25,7 @@ class FlatpageCreateView(CourseListMixin, CreateActivityMixin, CreateView):
     fields = ['title', 'content', 'lesson', 'is_active', 'display_order']
     activity_type = 'flatpage'
 
-    def get_form(self, form_class):
+    def get_form(self, form_class=None):
         form = super(FlatpageCreateView, self).get_form(form_class) 
         form.fields['lesson'].queryset = Lesson.objects.filter(
             collection=get_object_or_404(ActivityCollection, pk=self.kwargs['pk']))
@@ -57,7 +57,7 @@ class FlatpageUpdateView(ActivityEditPermissionMixin, CourseListMixin, CreateAct
     fields = ['title', 'content', 'lesson', 'is_active', 'display_order']
     activity_type = 'flatpage'
 
-    def get_form(self, form_class):
+    def get_form(self, form_class=None):
         form = super(FlatpageUpdateView, self).get_form(
             form_class)  
         form.fields['lesson'].queryset = Lesson.objects.filter(
