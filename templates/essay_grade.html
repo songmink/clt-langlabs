@@ -26,10 +26,10 @@
 <link href="{% static "css/rte_instructions.css" %}" rel="stylesheet">
 <link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
 {% endblock stylesheets%}
-{% block more_javascript %} 
+{% block javascripts %} 
 <script type="text/javascript"> 
    var courseID = "{{course.id}}";
 </script>
 <script src="{% static "js/tinymce/tinymce.min.js" %}"></script>
 <script src="{% static "js/grade_essay.js" %}"></script>
-{% endblock more_javascript %}
+{% endblock %}

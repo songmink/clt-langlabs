@@ -641,7 +641,7 @@
         showUserResponses: function() {
             console.log("show user responses");
             var tempShow = $(this).data('userdraft');
-            if($("#"+tempShow).size()>0) {
+            if($("#"+tempShow).length>0) {
                 $(".allUserResponses").each(function() {
                     $(this).hide();
                 });

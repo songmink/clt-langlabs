@@ -25,18 +25,18 @@ $( document ).ready(function() {
     });
 
   // Add explaination to private mode
-  if($('#div_id_private_mode').size()==1){
+  if($('#div_id_private_mode').length==1){
     $('#div_id_private_mode').append(' <small><i class="fa questionMark fa-question" style="cursor:pointer;" data-toggle="tooltip" data-placement="right" title="In Private mode student only interact with instructors and their posts will not be viewable by other students."></i></small>')
     
   }
 
   // Add explaination to read_after_post
-  if($('#div_id_read_after_post').size()==1){
+  if($('#div_id_read_after_post').length==1){
     $('#div_id_read_after_post').append(' <small><i class="fa questionMark fa-question " style="cursor:pointer;" data-toggle="tooltip" data-placement="right" title="In Read After Post mode a student cannot view other students\' posts until they have published a post of their own."></i></small>')
   }
 
   // Add explaination to read_after_post
-  if($('#div_id_is_active').size()==1){
+  if($('#div_id_is_active').length==1){
     $('#div_id_is_active').append(' <small><i class="fa questionMark fa-question " style="cursor:pointer;" data-toggle="tooltip" data-placement="right" title="Students can participate in the activity only while it is active. On the other hand, students cannot access an inactive activity and it will not appear in their activity list. For example, deactivate an activity after an assignment deadline or while you are populating the activity content."></i></small>')
   }
 

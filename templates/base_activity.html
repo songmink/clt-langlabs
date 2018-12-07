@@ -9,20 +9,30 @@
     <li class="nav-item dropdown">
         <a id="more_activities" data-toggle="dropdown" class="nav-link dropdown-toggle tour-step tour-step-six" href="#">More Activities <b class="caret"></b></a>
         <ul class="nav-item dropdown-menu">
-            <!-- TODO: Needs comment -->
             {% for activity_item in activity_list %}
                 {% ifchanged activity_item.lesson %}
                     <li><a class="dropdown-item" href=""  style='cursor:text;'>{{ activity_item.lesson.title }}</a></li>
                 {% endifchanged %}
-                <li><a href="{{activity_item.get_absolute_url}}"><small>{{activity_item.title}}</small></a></li>
+                <li>
+                    <a class="dropdown-item" href="{{activity_item.get_absolute_url}}">
+                        {% if activity_item.activity_type in "discussion" %}
+                            <i class="fas fa-comments"></i>
+                        {% elif activity_item.activity_type in "overdub" %}
+                            <i class="fas fa-closed-captioning"></i>
+                        {% elif activity_item.activity_type in "essay" %}
+                            <i class="fas fa-edit"></i>
+                        {% elif activity_item.activity_type in "flatpage" %}
+                            <i class="fas fa-file-alt"></i>
+                        {% endif %}
+                        {{activity_item.title}}
+                    </a>
+                    </li>
             {% empty %}
                 <li><a class="dropdown-item" href=""  style='cursor:text;'><span class="text-primary "> No activities available </span></a></li>
             {% endfor %}
-
-            <!-- TODO: Needs comment -->
             <div class="dropdown-divider"></div>
             {% if course %}
-                <li><a class="dropdown-item" href="{% url 'course' course.id %}">course home</a></li>
+                <li><a class="dropdown-item" href="{% url 'course' course.id %}"><i class="fas fa-home"></i> course home</a></li>
                 {% if "edit_course" in course_perms %}
                     <li><a class="dropdown-item" href="{% url 'create_lesson' course.id %}"><small><i class="far fa-plus-square"></i> New Lesson</small></a></li>
                     <li><a class="dropdown-item" href="{% url 'create_activity' course.id %}"><small><i class="far fa-plus-square"></i> New Activity</small></a></li>

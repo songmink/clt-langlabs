@@ -195,10 +195,10 @@
         _.mixin(LruCache.prototype, {
             set: function set(key, val) {
                 var tailItem = this.list.tail, node;
-                if (this.size >= this.maxSize) {
+                if (this.length >= this.maxSize) {
                     this.list.remove(tailItem);
                     delete this.hash[tailItem.key];
-                    this.size--;
+                    this.length--;
                 }
                 if (node = this.hash[key]) {
                     node.val = val;
@@ -207,7 +207,7 @@
                     node = new Node(key, val);
                     this.list.add(node);
                     this.hash[key] = node;
-                    this.size++;
+                    this.length++;
                 }
             },
             get: function get(key) {
@@ -218,7 +218,7 @@
                 }
             },
             reset: function reset() {
-                this.size = 0;
+                this.length = 0;
                 this.hash = {};
                 this.list = new List();
             }

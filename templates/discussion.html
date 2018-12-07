@@ -10,35 +10,48 @@
     {% include 'activity_header_template.html' %} 
 
     <div class="container-fluid" style='height:100%;'>
-        <div class="row " >
+        <div class="row">
+            <h2>Instructions:</h2>
+        </div>
+        <div class="row" >
             <div class="col-md-4" > <!-- style="border-right: 1px solid #ccc;" -->
-                <h2>Instructions:</h2>
                 {{ activity.instructions|safe }}
             </div>
-            <div id='connectingDIV' class='row col-md-8 show' data-port="{{ chatserver_port}}" data-host="{{ chatserver_host }}" data-protocol="{{ chatserver_protocol }}">
-                <div id='sysMessage' class="col-md-4 col-md-offset-4"><i class="fas fa-spinner fa-pulse fa-5x"></i> Connecting to server ...</div>
-            </div>
-            <div id="connectedDIV" class="col-md-8 hidden">
+            <div class="col-md-8">
+                <div class="row mb-3">
 
-                {% include 'discussion_form_template.html' %}
+                    <!-- TODO: Implement chatting -->
+                    <h4><i class="fas fa-comments"></i> Live Chat </h4>
+                    {% include 'discussionroom.html' %} 
 
-                <br>
 
-                <!-- discussion posts -->
-                <div id='posts' data-ajaxurl="{% url 'delete_post' %}" data-saveajaxurl="{% url 'save_post' %}">
-                    {% if user_post_num != 0 or not activity.read_after_post or user.is_superuser or user in private_users %}
-                        <ul id='posts2' class="chat">
-                            {% for post in posts reversed%}
-                                {% if not activity.private_mode or user in private_users or post.creator in private_users or post.creator == user %}
-                                    {% if not post.parent_post %}
-                                        <!-- Other's posts -->
-                                        {% include 'post_template.html' with ativity_type=activity.activity_type %}
-                                    {% endif %}
-                                {% endif %}
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
+                    {% comment %} <div class='col-md-12 mb-1 show' id='connectingDIV'  data-port="{{ chatserver_port}}" data-host="{{ chatserver_host }}" data-protocol="{{ chatserver_protocol }}">
+                        <div class="text-center" id='sysMessage' ><i class="fas fa-spinner fa-pulse fa-2x"></i> Connecting to server ...</div>
+                    </div> {% endcomment %}
+
+
+
                 </div>
+                <div class="row">
+                    <div class="col-md-12 hidden" id="connectedDIV" >
+                        {% include 'discussion_form_template.html' %}
+                    </div>
+                </div>
+            </div>
+            <!-- discussion posts -->
+            <div id='posts' data-ajaxurl="{% url 'delete_post' %}" data-saveajaxurl="{% url 'save_post' %}">
+                {% if user_post_num != 0 or not activity.read_after_post or user.is_superuser or user in private_users %}
+                    <ul id='posts2' class="chat">
+                        {% for post in posts reversed%}
+                            {% if not activity.private_mode or user in private_users or post.creator in private_users or post.creator == user %}
+                                {% if not post.parent_post %}
+                                    <!-- Other's posts -->
+                                    {% include 'post_template.html' with ativity_type=activity.activity_type %}
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -82,7 +95,6 @@
     <script>WEB_SOCKET_SWF_LOCATION="{{ STATIC_URL }}flashsocket/WebSocketMain.swf"; window.room = "{{ room.id }}";</script>
     <script src="{% static "js/utils.js" %}"></script>
     <script src="{% static "js/global.js" %}"></script>
-    <script src="{% static "js/sockets.js" %}"></script>
     <script src="{% static "js/discussion.js" %}"></script>
     <!-- ******************Recorder libs****************** -->
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>

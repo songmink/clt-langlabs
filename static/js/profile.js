@@ -2,7 +2,7 @@ $(document).ready(function() {
     // Limit upload size of all file inputs with a data-max-file-size attribute.
     $('input[type=file][data-max-file-size]').bind('change', function() {
         var max_file_size = $(this).data('maxFileSize');
-        var current_file_size = this.files[0].size; // in MB
+        var current_file_size = this.files[0].length; // in MB
         var parent = $(this).parent();
        
         // Remove any existing file errors

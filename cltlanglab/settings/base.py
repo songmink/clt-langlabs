@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'guardian',
     'uhauth',
     'django_cas_ng',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -47,7 +48,7 @@ ROOT_URLCONF = 'cltlanglab.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates/'],
+        'DIRS': ['templates/', ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -152,3 +153,6 @@ MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media')
 # Set 'True' only if you use CAS login system
 # If it is 'True' the django user login will be disabled
 CAS = False
+
+# chat
+ASGI_APPLICATION = "discussions.routing.application"

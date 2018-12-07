@@ -203,7 +203,7 @@
                         $("#readafterpost_div").remove();
                     }
                     
-                    if(s.posts.size()=== 0 && $('#activity_title').data('readafterpost')=='True') {
+                    if(s.posts.length=== 0 && $('#activity_title').data('readafterpost')=='True') {
                         $( "#posts" ).load( window.location.pathname+" #posts2", function( response, status, xhr ) {
                           if ( status == "error" ) {
                             var msg = "Sorry but there was an error: ";

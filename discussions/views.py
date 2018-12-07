@@ -9,6 +9,9 @@ from django.urls import reverse_lazy
 from core.models import ActivityCollection, AbstractActivity, Post, Lesson
 from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, RecorderMixin, CreateActivity4UpdateMixin, UsersWithPermsMixin, ActivityEditPermissionMixin, ActivityViewPermissionMixin, UserPostNumMixin, FakeDeleteMixin, ChatServerMixin, PostsListMixin
 
+from django.utils.safestring import mark_safe
+import json
+
 from .models import DiscussionActivity
 
 
@@ -77,11 +80,4 @@ class DiscussionDeleteView(ActivityEditPermissionMixin, CourseListMixin, FakeDel
         else:
             raise ImproperlyConfigured(
                 "No URL to redirect to. Provide a success_url.")
-
-
-
-
-
-
-
 

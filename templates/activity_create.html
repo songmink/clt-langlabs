@@ -1,4 +1,4 @@
-<!-- discussion_create.html -->
+<!-- activity_create.html -->
 {% extends "base.html" %}
 {% load staticfiles %}
 {% load crispy_forms_tags %}
@@ -54,7 +54,7 @@
 <link href="{% static "css/rte_instructions.css" %}" rel="stylesheet">
 <link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
 {% endblock stylesheets%}
-{% block more_javascript %} 
+{% block javascripts %} 
 <script type="text/javascript"> 
    var courseID = "{{course.id}}";
 </script>
@@ -73,5 +73,5 @@
 {% if activity_type == 'flatpage' %}
 <script src="{% static "js/flatpage_create.js" %}"></script>
 {% endif %}
-{% endblock more_javascript %}
+{% endblock %}
 
