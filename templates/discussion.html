@@ -19,18 +19,10 @@
             </div>
             <div class="col-md-8">
                 <div class="row mb-3">
-
-                    <!-- TODO: Implement chatting -->
+                    <!-- live chatting -->
                     <h4><i class="fas fa-comments"></i> Live Chat </h4>
+                    <!-- chat room -->
                     {% include 'discussionroom.html' %} 
-
-
-                    {% comment %} <div class='col-md-12 mb-1 show' id='connectingDIV'  data-port="{{ chatserver_port}}" data-host="{{ chatserver_host }}" data-protocol="{{ chatserver_protocol }}">
-                        <div class="text-center" id='sysMessage' ><i class="fas fa-spinner fa-pulse fa-2x"></i> Connecting to server ...</div>
-                    </div> {% endcomment %}
-
-
-
                 </div>
                 <div class="row">
                     <div class="col-md-12 hidden" id="connectedDIV" >
@@ -95,7 +87,7 @@
     <script>WEB_SOCKET_SWF_LOCATION="{{ STATIC_URL }}flashsocket/WebSocketMain.swf"; window.room = "{{ room.id }}";</script>
     <script src="{% static "js/utils.js" %}"></script>
     <script src="{% static "js/global.js" %}"></script>
-    <script src="{% static "js/discussion.js" %}"></script>
+    {% comment %} <script src="{% static "js/discussion.js" %}"></script> {% endcomment %}
     <!-- ******************Recorder libs****************** -->
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
     <!-- ************************************* -->
