@@ -31,7 +31,7 @@ class UserProfile(models.Model):
     bio = models.TextField(verbose_name='About Me', default='', blank=True)
     image = models.ImageField(upload_to=upload_location, null=True, blank=True)
  
-    def __unicode__(self):
+    def __str__(self):
         return self.user.username
  
     def get_absolute_url(self):

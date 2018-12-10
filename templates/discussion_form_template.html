@@ -1,5 +1,5 @@
 {% load static %}
-    <h4><i class="fas fa-microphone-alt"></i> Post your record with a comment</h4>
+    <h4><i class="fas fa-microphone-alt"></i> Post</h4>
     <form role="form">{% csrf_token %}
         <input id='activityType' type="hidden" name="activityTypes" value='{{ activity.activity_type }}'>
         <input id='activityID' type="hidden" name="activityIDs" value='{{ activity.id }}'>

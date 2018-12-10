@@ -70,5 +70,5 @@ class EssayResponse(models.Model):
     flagged = models.BooleanField(default=False, blank=True)
     posts = models.ManyToManyField(Post, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.draft_title

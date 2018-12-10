@@ -8,7 +8,7 @@
 var recordingFlag = false;
 $(document).ready(function() {
 
-    ChatClient.init();
+    // ChatClient.init();
     ActivityCopy.init();
     ActivityPermissionsAdmin.init();
     RichTextEditor.init('discussion');

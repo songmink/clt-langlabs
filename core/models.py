@@ -73,7 +73,7 @@ class ActivityCollection(models.Model):
 
         return reverse('course', args=[str(self.id)])
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title + " (" + self.nickname + ")"
 
 
@@ -97,7 +97,7 @@ class Lesson(models.Model):
     def get_absolute_url(self):
         return reverse('lesson', args=[str(self.id)])
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
 
@@ -125,7 +125,7 @@ class Post(models.Model):
 
         return reverse('post', args=[str(self.id)])
 
-    def __unicode__(self):
+    def __str__(self):
         return self.text
 
     def get_documents(self):
@@ -196,7 +196,7 @@ class AbstractActivity(models.Model):
 
         return reverse(self.activity_type, args=[str(self.id)])
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
 
@@ -231,7 +231,7 @@ class Document(models.Model):
 
         return self.file_upload.url
 
-    def __unicode__(self):
+    def __str__(self):
         return os.path.basename(self.file_upload.name)
 
     def save(self, *args, **kwargs):
