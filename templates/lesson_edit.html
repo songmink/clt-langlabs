@@ -4,8 +4,11 @@
 {% load staticfiles %}
 {% load crispy_forms_tags %}
 
-{% block contentwrap %}
+{% block stylesheets %}
+    <link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
+{% endblock %}
 
+{% block contentwrap %}
 <h1 class="page-header">Modify Lesson info...</h1>
 <div class="row">
     <div class="col-md-3"></div>
@@ -18,11 +21,7 @@
     <div class="col-md-3"></div>
 </div>
 
-{% endblock contentwrap %}
-
-{% block stylesheets %}
-<link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
-{% endblock stylesheets %}
+{% endblock %}
 
 {% block javascripts %}
 <script src="{% static 'js/collection_edit.js' %}"></script>

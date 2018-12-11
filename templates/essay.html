@@ -1,6 +1,11 @@
 <!-- essay.html -->
 {% extends "base_activity.html" %}
-{% load staticfiles %}
+{% load static %}
+
+{% block stylesheets %} 
+<link href="{% static "css/essay.css" %}" rel="stylesheet">
+<link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
+{% endblock %}
 
 {% block contentwrap %}
 {% load guardian_tags %}
@@ -213,12 +218,8 @@
 </div>
 <!-- Essay application ends here -->
 
-{% endblock contentwrap %}
+{% endblock %}
 
-{% block stylesheets %} 
-<link href="{% static "css/essay.css" %}" rel="stylesheet">
-<link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
-{% endblock stylesheets%}
 {% block javascripts %} 
 <script src="{% static "js/tinymce/tinymce.min.js" %}"></script>
 <script src="{% static "js/utils.js" %}"></script>

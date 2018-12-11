@@ -3,6 +3,11 @@
 {% load staticfiles %}
 {% load crispy_forms_tags %}
 
+{% block stylesheets %} 
+    <link href="{% static "css/rte_instructions.css" %}" rel="stylesheet">
+    <link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
+{% endblock %}
+
 {% block contentwrap %}
 <!-- Review for a Draft -->
 <h1 class="page-header">{{ response.essay_activity }}<span class="text-muted">{{ response.essay_activity.collection.title }} </span></h1>
@@ -20,16 +25,12 @@
 
 <br>
 <!-- Modal Experiment -->
-{% endblock contentwrap %}
+{% endblock %}
 
-{% block stylesheets %} 
-<link href="{% static "css/rte_instructions.css" %}" rel="stylesheet">
-<link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
-{% endblock stylesheets%}
 {% block javascripts %} 
-<script type="text/javascript"> 
-   var courseID = "{{course.id}}";
-</script>
-<script src="{% static "js/tinymce/tinymce.min.js" %}"></script>
-<script src="{% static "js/grade_essay.js" %}"></script>
+    <script type="text/javascript"> 
+    var courseID = "{{course.id}}";
+    </script>
+    <script src="{% static "js/tinymce/tinymce.min.js" %}"></script>
+    <script src="{% static "js/grade_essay.js" %}"></script>
 {% endblock %}

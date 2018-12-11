@@ -1,10 +1,14 @@
 <!-- activity_create.html -->
 {% extends "base.html" %}
-{% load staticfiles %}
+{% load static %}
 {% load crispy_forms_tags %}
 
-{% block contentwrap %}
+{% block stylesheets %} 
+    <link href="{% static "css/rte_instructions.css" %}" rel="stylesheet">
+    <link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
+{% endblock %}
 
+{% block contentwrap %}
 <h1 class="page-header">{{ course.nickname }}<span class="text-muted">{{ course.title }} </span></h1>
 <div class="row">
 	<div class="col-md-3"></div>
@@ -50,28 +54,26 @@
 <!-- Modal Experiment -->
 
 {% endblock contentwrap %}
-{% block stylesheets %} 
-<link href="{% static "css/rte_instructions.css" %}" rel="stylesheet">
-<link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
-{% endblock stylesheets%}
+    
 {% block javascripts %} 
-<script type="text/javascript"> 
-   var courseID = "{{course.id}}";
-</script>
-<script src="{% static "js/tinymce/tinymce.min.js" %}"></script>
-<script src="{% static "js/activity_create.js" %}"></script>
-<!-- *****************upload libs******************** -->
-<script src="{% static "jqueryUpload/jquery.ui.widget.js" %}"></script>
-<script src="{% static "jqueryUpload/jquery.iframe-transport.js" %}"></script>
-<script src="{% static "jqueryUpload/jquery.fileupload.js" %}"></script>
-<script src="{% static "jqueryUpload/jquery.cookie.js" %}"></script>
-<script src="{% static "js/global.js" %}"></script>
-<script src="{% static "js/utils.js" %}"></script>
-{% if activity_type == 'overdub' %}
-<script src="{% static "js/overdub_create.js" %}"></script>
-{% endif %}
-{% if activity_type == 'flatpage' %}
-<script src="{% static "js/flatpage_create.js" %}"></script>
-{% endif %}
+    <script type="text/javascript"> 
+    var courseID = "{{course.id}}";
+    </script>
+    <script src="{% static "js/tinymce/tinymce.min.js" %}"></script>
+    <script src="{% static "js/activity_create.js" %}"></script>
+    <!-- *****************upload libs******************** -->
+    <script src="{% static "jqueryUpload/jquery.ui.widget.js" %}"></script>
+    <script src="{% static "jqueryUpload/jquery.iframe-transport.js" %}"></script>
+    <script src="{% static "jqueryUpload/jquery.fileupload.js" %}"></script>
+    <script src="{% static "jqueryUpload/jquery.cookie.js" %}"></script>
+    <script src="{% static "js/global.js" %}"></script>
+    <script src="{% static "js/utils.js" %}"></script>
+
+    {% if activity_type == 'overdub' %}
+        <script src="{% static "js/overdub_create.js" %}"></script>
+    {% endif %}
+    {% if activity_type == 'flatpage' %}
+        <script src="{% static "js/flatpage_create.js" %}"></script>
+    {% endif %}
 {% endblock %}
 

@@ -7,8 +7,11 @@
 {% get_obj_perms user for course as "course_perms" %}
 {% get_obj_perms user for activity as "activity_perms" %}
 
-{% include 'activity_header_template.html' %}
+{% block stylesheets %}
+    <link href="{% static "css/overdub.css" %}" rel="stylesheet">
+{% endblock %}
 
+{% include 'activity_header_template.html' %}
 <div class="container-fluid" style='height:100%;'>
     <div class="row">
         <h2>Instructions:</h2>
@@ -135,30 +138,26 @@
     </div>
 </div>
 
-{% endblock contentwrap %}
-
-{% block stylesheets %}
-<link href="{% static "css/overdub.css" %}" rel="stylesheet">
-{% endblock stylesheets%}
+{% endblock %}
 
 {% block javascripts %}
-<!-- Video player -->
-<script src="https://jwpsrv.com/library/RJueXGxbEeOB1SIACi0I_Q.js"></script>
-<script src="https://www.youtube.com/iframe_api"></script>
-<!-- *****************upload libs******************** -->
-<script src="{% static "jqueryUpload/jquery.ui.widget.js" %}"></script>
-<script src="{% static "jqueryUpload/jquery.iframe-transport.js" %}"></script>
-<script src="{% static "jqueryUpload/jquery.fileupload.js" %}"></script>
-<script src="{% static "jqueryUpload/jquery.cookie.js" %}"></script>
-<!-- *****************Chat libs******************** -->
-<script src="{% static "js/socket.io.js" %}"></script>
-<script src="{% static "js/tinymce/tinymce.min.js" %}"></script>
-<script>WEB_SOCKET_SWF_LOCATION="{{ STATIC_URL }}flashsocket/WebSocketMain.swf"; window.room = "{{ room.id }}";</script>
-<script src="{% static "js/utils.js" %}"></script>
-<script src="{% static "js/global.js" %}"></script>
-<script src="{% static "js/sockets.js" %}"></script>
-<script src="{% static "js/overdub.js" %}"></script>
-<!-- ******************Recorder libs****************** -->
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
-<!-- ************************************* -->
+    <!-- Video player -->
+    <script src="https://jwpsrv.com/library/RJueXGxbEeOB1SIACi0I_Q.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <!-- *****************upload libs******************** -->
+    <script src="{% static "jqueryUpload/jquery.ui.widget.js" %}"></script>
+    <script src="{% static "jqueryUpload/jquery.iframe-transport.js" %}"></script>
+    <script src="{% static "jqueryUpload/jquery.fileupload.js" %}"></script>
+    <script src="{% static "jqueryUpload/jquery.cookie.js" %}"></script>
+    <!-- *****************Chat libs******************** -->
+    <script src="{% static "js/socket.io.js" %}"></script>
+    <script src="{% static "js/tinymce/tinymce.min.js" %}"></script>
+    <script>WEB_SOCKET_SWF_LOCATION="{{ STATIC_URL }}flashsocket/WebSocketMain.swf"; window.room = "{{ room.id }}";</script>
+    <script src="{% static "js/utils.js" %}"></script>
+    <script src="{% static "js/global.js" %}"></script>
+    <script src="{% static "js/sockets.js" %}"></script>
+    <script src="{% static "js/overdub.js" %}"></script>
+    <!-- ******************Recorder libs****************** -->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+    <!-- ************************************* -->
 {% endblock %}

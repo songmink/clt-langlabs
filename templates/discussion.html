@@ -1,6 +1,12 @@
 <!-- discussion.html -->
 {% extends "base_activity.html" %}
-{% load staticfiles %}
+{% load static %}
+
+{% block stylesheets %} 
+    <link href="{% static "css/discussion.css" %}" rel="stylesheet">
+    <!-- *****************video player(need to be put in head to load audio)******************* -->
+    <script src="https://jwpsrv.com/library/RJueXGxbEeOB1SIACi0I_Q.js"></script>
+{% endblock %}
 
 <!-- Contentwrap start -->
 {% block contentwrap %}
@@ -74,12 +80,6 @@
     <br>
 {% endblock %}
 <!-- Contentwrap end-->
-
-{% block stylesheets %} 
-    <link href="{% static "css/discussion.css" %}" rel="stylesheet">
-    <!-- *****************video player(need to be put in head to load audio)******************* -->
-    <script src="https://jwpsrv.com/library/RJueXGxbEeOB1SIACi0I_Q.js"></script>
-{% endblock %}
 
 {% block javascripts %} 
     <!-- *****************upload libs******************** -->

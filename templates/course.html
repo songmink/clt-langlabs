@@ -1,6 +1,11 @@
 {% extends "base_activity.html" %}
 {% load static %}
 
+{% block stylesheets %}
+    <link href="{% static "bootstrap3-editable/css/bootstrap-editable.css" %}" rel="stylesheet">
+    <link href="{% static "bootstrap-tour-0.12.0/css/bootstrap-tour-standalone.min.css" %}" rel="stylesheet">
+{% endblock %}
+
 <!-- Contentwrap start -->
 {% block contentwrap %}
     {% load guardian_tags %}
@@ -177,13 +182,8 @@
 {% endblock %}
 <!-- Contentwrap end -->
 
-{% block stylesheets %}
-<link href="{% static "bootstrap3-editable/css/bootstrap-editable.css" %}" rel="stylesheet">
-<link href="{% static "bootstrap-tour-0.12.0/css/bootstrap-tour-standalone.min.css" %}" rel="stylesheet">
-{% endblock %}
-
 {% block javascripts %}
-<script src="{% static "bootstrap3-editable/js/bootstrap-editable.js" %}"></script>
-<script src="{% static "bootstrap-tour-0.12.0/js/bootstrap-tour-standalone.min.js" %}"></script>
-<script src="{% static "js/course.js" %}"></script>
+    <script src="{% static "bootstrap3-editable/js/bootstrap-editable.js" %}"></script>
+    <script src="{% static "bootstrap-tour-0.12.0/js/bootstrap-tour-standalone.min.js" %}"></script>
+    <script src="{% static "js/course.js" %}"></script>
 {% endblock %}

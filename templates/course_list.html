@@ -1,6 +1,11 @@
 {% extends "base.html" %}
-{% load staticfiles %}
+{% load static %}
 
+{% block stylesheets %}
+    <script src="{% static "taffydb/taffy.js" %}"></script>
+    <link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
+    <link href="{% static "css/course_list.css" %}" rel="stylesheet">
+{% endblock %}
 
 {% block contentwrap %}
 {% load guardian_tags %}
@@ -66,14 +71,9 @@ var courses = TAFFY(courses_json)
 	</table>
 </div>
 
-{% endblock contentwrap %}
+{% endblock %}
 
-{% block stylesheets %}
-<script src="{% static "taffydb/taffy.js" %}"></script>
-<link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
-<link href="{% static "css/course_list.css" %}" rel="stylesheet">
-{% endblock stylesheets%}
 {% block javascripts %}
-<script src="{% static "js/typeahead.bundle.js" %}"></script>
-<script src="{% static "js/course_list.js" %}"></script>
+    <script src="{% static "js/typeahead.bundle.js" %}"></script>
+    <script src="{% static "js/course_list.js" %}"></script>
 {% endblock %}

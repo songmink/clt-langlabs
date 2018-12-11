@@ -23,7 +23,9 @@
         <!-- Extensions - Experimenting with these -->
         <link href="{% static "css/wau.css" %}" rel="stylesheet">
 
-        {% block stylesheets %}{% endblock %}
+        <!-- This block stylesheet will be override from any child stylesheet block. If you want to override some stylesheet put inside this block -->
+        {% block stylesheets %}
+        {% endblock %}
 
     </head>
 
@@ -133,7 +135,8 @@
         <script src="{% static "bootstrap-4/js/bootstrap.min.js" %}"></script>
         <script src="{% static "js/base.js" %}"></script>
 
-        <!-- Extra Scripts Start -->
+
+        <!--This block javascripts will override from any child's block javascripts. If you have javascripts that should be overriden by a child, put here  -->
         {% block javascripts %} {% endblock %}
         <!-- Extra Scripts End -->
     </body>

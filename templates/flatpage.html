@@ -1,10 +1,14 @@
 {% extends "base_activity.html" %}
-{% load staticfiles %}
+{% load static %}
 
 {% block contentwrap %}
 {% load guardian_tags %}
 {% get_obj_perms user for course as "course_perms" %}
 {% get_obj_perms user for activity as "activity_perms" %}
+
+{% block stylesheets %}
+    <link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
+{% endblock stylesheets%}
 
 {% include 'activity_header_template.html' %} 
 
@@ -37,14 +41,11 @@
         </div>
     </div>
 </div>
-{% endblock contentwrap %}
+{% endblock %}
 
-{% block stylesheets %}
-<link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
-{% endblock stylesheets%}
 {% block javascripts %}
-<script src="{% static "js/base.js" %}"></script>
-<script src="{% static "js/utils.js" %}"></script>
-<script src="{% static "js/global.js" %}"></script>
-<script src="{% static "js/flatpage.js" %}"></script>
+    <script src="{% static "js/base.js" %}"></script>
+    <script src="{% static "js/utils.js" %}"></script>
+    <script src="{% static "js/global.js" %}"></script>
+    <script src="{% static "js/flatpage.js" %}"></script>
 {% endblock %}
