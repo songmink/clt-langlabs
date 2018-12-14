@@ -11,11 +11,11 @@
         <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,300' rel='stylesheet' type='text/css'>
 
         <!-- Bootstrap -->
-        <link href="{% static "bootstrap-4/css/bootstrap.min.css" %}" rel="stylesheet">
+        <link href="{% static "vendors/bootstrap-4/css/bootstrap.min.css" %}" rel="stylesheet">
 
         <!-- Fontawesome -->
-        <link href="{% static "fontawesome-free-5.5.0-web/css/all.css" %}" rel="stylesheet">
-        <script defer src="{% static "fontawesome-free-5.5.0-web/js/all.js" %}"></script>
+        <link href="{% static "vendors/fontawesome-free-5.5.0-web/css/all.css" %}" rel="stylesheet">
+        <script defer src="{% static "vendors/fontawesome-free-5.5.0-web/js/all.js" %}"></script>
 
         <!-- The Bootstrap template named "Starter Template barebones " -->
         <link href="{% static "css/dashboard.css" %}" rel="stylesheet">
@@ -23,7 +23,7 @@
         <!-- Extensions - Experimenting with these -->
         <link href="{% static "css/wau.css" %}" rel="stylesheet">
 
-        <!-- This block stylesheet will be override from any child stylesheet block. If you want to override some stylesheet put inside this block -->
+        <!-- This block stylesheet will be override from any child stylesheet block stylesheets. If you want to override some stylesheet put inside this block -->
         {% block stylesheets %}
         {% endblock %}
 
@@ -58,7 +58,7 @@
                                     {% endfor %}
                                     <div class="dropdown-divider"></div>
                                     {% if perms.core.create_course %}
-                                        <a class="dropdown-item" href="{% url 'create_collection' %}">New Course</a>
+                                        <a class="dropdown-item" href="{% url 'create_collection' %}"><i class="fas fa-flag"></i> New Course</a>
                                     {% endif %}
                                     <a class="dropdown-item" href="{% url 'course_list' %}"><small><i class="fas fa-search"></i> Search Course</small></a>
                                     <a class="dropdown-item"><small data-toggle="modal" data-target=".courseSubscribe" style="cursor:pointer;"><i class="fas fa-book"></i> Subscribe with code</small></a>
@@ -91,35 +91,35 @@
             <!-- Main Contents End -->
         </div>
 
-
         <!-- access code input for subscribtion -->
-        <div class="modal fade courseSubscribe" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h5 class="modal-title">Enter your accesscode below</h5>
-            </div>
-            <div class="modal-body">
-                <form role="form">
-                <div class="form-group">
-                    <input type="text" class="form-control" id="accesscodearea" placeholder="accesscode ...">
-                </div>
-                <div class="btn-group btn-group-justified">
-                    <div class="btn-group">
-                    <button id='courseSubscribeButton' class="btn btn-default btn-sm" data-subscribeurl="{% url 'subscribe_course' 'ToReplace' %}">Subscribe</button>
+        <div class="modal courseSubscribe" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Subscribe with code</h3>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                        </button>
                     </div>
+
+                    <form role="form">
+                        <div class="form-group">
+                            <div class="modal-body">
+                                <input type="text" class="form-control" id="accesscodearea" placeholder="access code here..."><br>
+                                <p>If you don't know your course's code, please contact your teacher. 
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" id='courseSubscribeButton' class="btn btn-success btn-sm" data-subscribeurl="{% url 'subscribe_course' 'ToReplace' %}">Subscribe</button>
+                                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                </form>
-            </div>
             </div>
         </div>
-        </div>
-
-
         
         <footer>
-            <div class="">
+            <div class="footer">
                 <!-- Footer Start -->
                 {% include 'footer.html' %}
                 <!-- Footer End -->
@@ -127,15 +127,13 @@
         </footer>
 
         <!-- jQuery -->
-        <script src="{% static "jquery/jquery-3.3.1.min.js" %}"></script>
+        <script src="{% static "vendors/jquery/jquery-3.3.1.min.js" %}"></script>
 
         <!-- Include all compiled plugins (below), or include individual files as needed -->
         <!-- popper.js should be loaded before bootstrap-4 -->
-        <script src="{% static "popper/popper.min.js" %}"></script>
-        <script src="{% static "bootstrap-4/js/bootstrap.min.js" %}"></script>
-        <script src="{% static "js/base.js" %}"></script>
-
-
+        <script src="{% static "vendors/popper/popper.min.js" %}"></script>
+        <script src="{% static "vendors/bootstrap-4/js/bootstrap.min.js" %}"></script>
+        <script src="{% static "js/subscribe.js" %}"></script>
         <!--This block javascripts will override from any child's block javascripts. If you have javascripts that should be overriden by a child, put here  -->
         {% block javascripts %} {% endblock %}
         <!-- Extra Scripts End -->

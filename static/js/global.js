@@ -287,8 +287,7 @@
 //
 // Recorder:
 //   recorder for discussion/overdub rte
-//
-(function() {
+//(function() {
     var s; // cache
     Recorder = {
 
@@ -422,6 +421,7 @@
 
         overdubRecorderMessage: function(x,y) {
             switch(x) {
+
                 case 1:  recordingFlag = false; //no recording
                          initialPause = 1;
                          jwplayer("overdubVideo").play(true);

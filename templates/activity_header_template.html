@@ -1,25 +1,23 @@
 
 <h1 id="activity_title" class="page-header " data-userpostnum="{{user_post_num}}" data-readafterpost="{{activity.read_after_post}}"
     data-userisinstructor="{% if user in private_users or user.is_superuser %}true{% else %}false{% endif %}">
-    <span class="small"><a href="{{ activity.collection.get_absolute_url }}"><i class="fa fa-caret-left"></i> {{ activity.collection.nickname }}</a> {{ activity.title }}</span>
+    <span class="small"><a href="{{ activity.collection.get_absolute_url }}"><i class="fa fa-caret-left"></i> {{ activity.collection.nickname }}</a> <small>{{ activity.title }}</small></span>
     <input id='activityType' type="hidden" name="activityTypes" value='{{ activity.activity_type }}'>
 
     {% if "edit_course" in course_perms %}
-        <small><small>
             <a href="{% url 'edit_'|add:activity.activity_type activity.id %}" class="text-muted" style="text-decoration:none;">
-                <i class="aa-tooltip fas fa-edit" data-toggle="tooltip" data-placement="top" title="Edit Activity"></i></a></small></small>
-        <small><small>
+                <i class="aa-tooltip fas fa-edit fa-xs" data-toggle="tooltip" data-placement="top" title="Edit Activity"></i></a></small>
             <a href="{% url 'delete_'|add:activity.activity_type activity.id %}" class="text-muted" style="text-decoration:none;">
-                <i class="aa-tooltip fas fa-trash-alt" data-toggle="tooltip" data-placement="top" title="Delete Activity"></i></a></small></small>
-        <small><small>
+                <i class="aa-tooltip fas fa-trash-alt fa-xs" data-toggle="tooltip" data-placement="top" title="Delete Activity"></i></a>
+        
             <a class="text-muted activity_admin_togg" style="text-decoration:none; cursor: pointer;">
-                <i class="aa-tooltip fas fa-user" data-toggle="tooltip" data-placement="top" title="Activity Membership Administration"></i></a></small></small>
-        <small><small>
+                <i class="aa-tooltip fas fa-user fa-xs" data-toggle="tooltip" data-placement="top" title="Activity Membership Administration"></i></a>
+        
             <a class="text-muted activity_copy_togg" style="text-decoration:none;cursor:pointer;" >
-                <i class="aa-tooltip fas fa-copy" data-toggle="tooltip" data-placement="top" title="Copy Activity"></i></a></small></small>
+                <i class="aa-tooltip fas fa-copy fa-xs" data-toggle="tooltip" data-placement="top" title="Copy Activity"></i></a>
     {% else %}
         {% if activity.permission_control %}
-            <small><small><a class="text-muted activity_members_togg" style="text-decoration:none; cursor: pointer;"><i class="fas fa-users"></i></a></small></small>
+            <a class="text-muted activity_members_togg" style="text-decoration:none; cursor: pointer;"><i class="fas fa-users fa-xs"></i></a>
         {% endif %}
     {% endif %}
 

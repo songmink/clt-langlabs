@@ -2,20 +2,20 @@
 {% load static %}
 
 {% block contentwrap %}
-    <h1 class="page-header">{{ course.nickname }}<span class="text-muted">{{ course.title }}</span></h1>
+    <h1 class="page-header">{{ course.title }}<span class="text-muted"> <small>{{ course.nickname }}</small></span></h1>
 
     <div class="row">
         <div class="col-md-1">
         </div>
         <div class="alert alert-success col-md-5" role="alert" >
-            <img src="{% static 'img/discussion256.png' %}" alt="Generic placeholder" width="100px">
+            <i class="fas fa-comments fa-5x"></i>
             <h4 class="alert-heading">Discussion</h4>
             <p>A place where students and instructors discuss course related topics, submit homework and do recordings.</p>
             <hr>
             <p class="mb-0"><a href="{% url 'create_discussion' course.id %}" class="btn btn-primary " role="button">Create</a></p>
         </div>
         <div class="alert alert-success col-md-5" role="alert">
-            <img src="{% static 'img/essay256.png' %}" alt="Generic placeholder" width="100px">
+            <i class="fas fa-edit fa-5x"></i>
             <h4 class="alert-heading">Essay</h4>
             <p>Students perform essays and other writing related tasks. It provides revisions and commentings functions.</p>
             <hr>
@@ -26,16 +26,17 @@
         <div class="col-md-1">
         </div>
         <div class="alert alert-success col-md-5" role="alert">
-            <img src="{% static 'img/overdub256.png' %}" alt="Generic placeholder" width="100px">
+            <i class="fas fa-headset fa-5x"></i>
             <h4 class="alert-heading">Overdub</h4>
             <p>SA place where students and instructors discuss course related topics and practice video related speaking practices.</p>
             <hr>
             <p class="mb-0"><a href="{% url 'create_overdub' course.id %}" class="btn btn-primary" role="button">Create</a></p>
         </div>
         <div class="alert alert-success col-md-5" role="alert">
-            <img src="{% static 'img/flatpage256.png' %}" alt="Generic placeholder" width="100px">
+            <i class="fas fa-file-alt fa-5x"></i>
             <h4 class="alert-heading">Flatpage</h4>
             <p>A place where instructors share course related information or files.</p>
+            <p>&nbsp;</p>
             <hr>
             <p class="mb-0"><a href="{% url 'create_flatpage' course.id %}" class="btn btn-primary" role="button">Create</a></p>
         </div> 

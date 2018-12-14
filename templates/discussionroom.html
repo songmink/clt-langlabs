@@ -1,8 +1,18 @@
+{% load static %}
 <!-- TODO: Merge to discussion-form-template-->
+<!-- TODO: Chat or autoreload???-->
 <textarea class="full-width" id="chat-log" rows="5" readonly></textarea><br/>
-<input class="full-width" id="chat-message-input" type="text" /><br/>
-<input id="chat-message-submit" type="button" value="Send"/>
 
+
+<!-- Chat input area -->
+<form class="full-width">
+    <input class="full-width" id="chat-message-input" type="text" /><br/>
+    <input class="full-width" id="chat-message-submit" type="button" value="Send"/>
+</form>
+
+
+
+<!-- It should be loaded first -->
 <script>
     var roomName = "{{ activity.id }}";
 
@@ -37,3 +47,45 @@
         messageInputDom.value = '';
     };   
 </script>
+
+
+<!-- Test code for recorder with html5 and javascript -->
+
+<div class="audiorecord">
+
+    <h4>HTML5 Audio Recording Test</h4>
+
+    <script src="{% static "js/soundrecorder/js/audiodisplay.js" %}"></script>
+    <script src="{% static "js/soundrecorder/js/recorderjs/recorder.js" %}"></script>
+    <script src="{% static "js/soundrecorder/js/main.js" %}"></script>
+
+    <div id="viz">
+		<canvas id="analyser" width="1024" height="100"></canvas>
+		<canvas id="wavedisplay" width="1024" height="100"></canvas>
+	</div>
+	<div id="controls">
+		<img id="record" src="{% static "js/soundrecorder/img/mic128.png" %}" onclick="toggleRecording(this);">
+		<a id="save" href="#"><img src="{% static "js/soundrecorder/img/save.svg" %}"></a>
+	</div>
+</div>
+
+
+{% comment %} {% block javascripts %}
+<script src="{% static 'js/recorder/recorder.js' %}"></script>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+<!-- *******************file upload****************** -->
+<!-- The file input field used as target for the file upload widget -->
+<input id="fileupload" type="file" name="file" style="display:none;" multiple>
+    <!-- The global progress bar -->
+    <div id="progress" class="progress" style='height:1px;margin:0px;opacity:0.7;'>
+        <div class="progress-bar progress-bar-success"></div>
+    </div>
+    <!-- container for the uploaded files -->
+    <div id='inputAttachments'></div>
+    <!-- container for recorder -->
+    <div id='CLTREC_container'><div id='CLTREC'></div></div>

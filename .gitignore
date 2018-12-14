@@ -45,8 +45,11 @@ prod*.py
 dev*.py
 _build/
 
+# npm
+/node_modules
+
 # VSCODE
-.vscode/
+/.vscode
 
 #direnv
 .envrc

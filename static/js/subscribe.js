@@ -1,5 +1,5 @@
+// Subscribe menu
 $(document).ready(function(){
-
 	// subscribe to a new course 
    var subscribeURL  =  $("#courseSubscribeButton").data('subscribeurl')
    $("#courseSubscribeButton").click(function(event){
@@ -7,5 +7,4 @@ $(document).ready(function(){
         var GOTOURL=subscribeURL.replace('ToReplace',$('#accesscodearea').val() )
         window.location.href = GOTOURL;
    })
-
 });
