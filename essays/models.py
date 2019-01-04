@@ -29,7 +29,11 @@ class EssayActivity(AbstractActivity):
 
     '''
     collection = models.ForeignKey(
-        ActivityCollection, blank=True, null=True, on_delete=models.SET_NULL, related_name='essays')
+        ActivityCollection,
+        blank=True, null=True,
+        on_delete=models.SET_NULL,
+        related_name='essays')
+        
     required_revisions = models.IntegerField(validators=[
         MinValueValidator(1),
         MaxValueValidator(50),         
