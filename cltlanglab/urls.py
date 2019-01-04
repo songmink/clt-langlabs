@@ -2,8 +2,8 @@
 
 from django.conf import settings
 from django.conf.urls import re_path, include, url
+from django.conf.urls.static import static
 from django.contrib import admin, auth
-
 
 admin.autodiscover()
 
@@ -61,14 +61,18 @@ urlpatterns = [
 
 ]
 
+# Development static files
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 # CAS login, else django login
 if settings.CAS:
-    from django_cas.views import loign as cas_login, logout as cas_logout, callback
+    from django_cas_ng import views as casviews
 
     urlpatterns += [
-        re_path(r'^accounts/login/$', cas_login, name='login'),
-        re_path(r'^accounts/logout/$', cas_logout, name='logout'),
-        re_path(r'^accounts/callback$', callback, name='cas_ng_proxy_callback'),
+        re_path(r'^accounts/login/$', casviews.LoginView, name='login'),
+        re_path(r'^accounts/logout/$', casviews.LogoutView, name='logout'),
+        re_path(r'^accounts/callback$', casviews.CallbackView, name='cas_ng_proxy_callback'),
     ]
 else:
     urlpatterns += [
