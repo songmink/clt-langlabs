@@ -41,17 +41,16 @@
                                 <a href="{{ course.get_absolute_url }}" class="card-link">
                                     <button type="button" class="btn btn-success">Let&apos;s go!</button>
                                 </a>
-                            {% endif %}
-                            
+                            {% endif %}  
                         </div>
                     </div>
                 </div>
             {% endif %}
         {% empty %}
             <div class="col-md-12">
-                <p class="center-block lead text-center">Hi, you do not appear to have any courses assigned to you. Try searching for your course <a href="{% url 'course_list' %}" class="btn btn-primary"><i class="fa fa-search"></i></a>.</p>
+                <p class="center-block lead text-center">Hi, you do not appear to have any courses assigned to you. Try searching for your course <a href="{% url 'course_list' %}" class="btn btn-primary btn-sm"><i class="fa fa-search"></i></a>.</p>
             {% if perms.core.create_course %}
-                <p class="center-block lead text-center"><a href="{% url 'create_collection' %}" class="btn btn-success"> <i class="fa fa-plus-square"></i> Or, create a new course!</a></p>
+                <p class="center-block lead text-center">Or, <a href="{% url 'create_collection' %}" class="btn btn-success"> <i class="fa fa-plus-square"></i> create a new course!</a></p>
             {% endif %}
             </div>
         {% endfor %}
