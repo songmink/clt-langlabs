@@ -1,3 +1,5 @@
+# flatpage/models.py
+
 from __future__ import unicode_literals
 
 from django.db import models
@@ -38,6 +40,7 @@ class FlatpageActivity(AbstractActivity):
         related_name='flatpages')
     content = models.TextField()
     slug = models.SlugField(unique=True, allow_unicode=True)
+    objects = models.Manager()
 
     def get_documents(self):
         ''' :returns: Documents that are related to this activity. '''
