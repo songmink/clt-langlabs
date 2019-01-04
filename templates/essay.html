@@ -1,227 +1,225 @@
 <!-- essay.html -->
 {% extends "base_activity.html" %}
 {% load static %}
+{% load guardian_tags %}
 
 {% block stylesheets %} 
 <link href="{% static "css/essay.css" %}" rel="stylesheet">
-<link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
 {% endblock %}
 
 {% block contentwrap %}
-{% load guardian_tags %}
-{% get_obj_perms user for course as "course_perms" %}
-{% get_obj_perms user for activity as "activity_perms" %}
-<!-- {{ block.super }} -->
+    {% get_obj_perms user for course as "course_perms" %}
+    {% get_obj_perms user for activity as "activity_perms" %}
+    <!-- {{ block.super }} -->
 
-{% include 'activity_header_template.html' %}
+    {% include 'activity_header_template.html' %}
 
-<!-- Essay application starts here -->
-<div class='row'>
-    {% if "edit_course" not in course_perms %}
-        <div id='essay_draftbook' class='col-xs-10 col-xs-offset-1'>
-            <div id='essay_draftbook2'>
-                <h3><small class='text-muted'> (<i>draft {{submitted_essay_responses.count|add:"1"}} </i>in progress)</small></h3>
-                <form role="form">{% csrf_token %}
-                    <input type="text" class="form-control" id="draft_title" style='border-radius:4px 4px 0px 0px;'
-                           value='{% if  progressing_essay_response %}{{progressing_essay_response.draft_title}}{% else %}draft title{% endif %}'>
-                    <textarea id='essayTextarea' style="height:410px;padding: 5px;overflow:auto;">{{progressing_essay_response.draft|safe}}</textarea>
-                </form>
-                {% if graded_essay_responses.count == submitted_essay_responses.count and graded_essay_responses.count < activity.required_revisions %}
-                    <!-- all drafts are graded -->
-                    <button id='draftSaveBtn' type="button" class="btn btn-default btn-sm pull-left draftEditBtn" style='width:50%;border-radius:0px 0px 0px 4px;' 
-                            data-ajaxurl="{% url 'edit_essay_draft' %}" data-operation="save" data-essayid="{{activity.id}}">
-                        <i class="fa fa-floppy-o"></i> save
-                    </button>
-                    <button id="draftSubmitBtn" type="button" class="btn btn-default btn-sm pull-right draftEditBtn" style='width:50%;border-radius:0px 0px 4px 0px;' 
-                            data-ajaxurl="{% url 'edit_essay_draft' %}" data-operation="submit" data-essayid="{{activity.id}}">
-                        <i class="fa fa-paper-plane-o"></i> submit
-                    </button>
-                {% else %}
-                    <!-- we have ungraded essay drafts -->
-                    <button id='draftSaveBtn' type="button" class="btn btn-default btn-sm pull-left draftEditBtn" style='width:100%;border-radius:0px 0px 4px 4px;' 
-                            data-ajaxurl="{% url 'edit_essay_draft' %}" data-operation="save" data-essayid="{{activity.id}}">
-                        <i class="fa fa-floppy-o"></i> Save
-                    </button>
-                {% endif %}
-
-                <br><br>
-        
-                <div id ='submittedDrafts'>
-                     <div id ='submittedDrafts2'>
-                         <h3><i class="fa fa-files-o"></i> Submitted Drafts</h3>
-                         {% for submitted in submitted_essay_responses %}
-                         <div class="panel panel-default">
-                             <div class="panel-heading">
-                                 {{submitted.draft_title}} 
-                                 <p class="pull-right text-muted">
-                                     <small>
-                                         &nbsp;&nbsp;<span class="glyphicon glyphicon-time"></span>
-                                         {{ submitted.modified }}
-                                     </small>
-                                 </p>
-                                 <span class="label label-default pull-right" style='line-height:1.5;'>{{submitted.status}}</span>
-                             </div>
-                         <div class="panel-body">
-                             {{submitted.draft|safe}}
-                         </div>
-                         {% if submitted.status == 'graded' %}
-                             <div class="well well-sm" style='margin-bottom:0px;background-color:#FDFDFD;border:0px;'>
-                                 <div class='lead' style='margin-bottom:10px;'>
-                                     <u>Reviews from <i>{{ submitted.reviewed_by }} :</i></u>
-                                 </div>
-                                 {{submitted.review|safe}}
-                             </div>
-                         {% endif %}
-                    </div>
-                    {% empty %}
-                        <p class='lead'> No submitted drafts so far. </p>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <br><br>
-
-        </div>
-    {% endif %}
-</div>
-
-<!-- Essay Discussion Section -->
-<div id='essay_discussion' class='col-xs-10 col-xs-offset-1' data-ajaxurl='{% url "save_post" %}' data-activityid='{{activity.id}}' 
-     data-activitytype='{{ activity.activity_type }}' {% if "edit_course" not in course_perms %} style='display:none;' {% endif %}>
-    <div id="essay_discussion2">
-        <h3>Instructions</h3>
-        <p>{{activity.instructions|safe}}</p>
-        <h3>Discussion</h3>
-
-        <!-- jump-to-user well -->
-	{% if user.is_superuser %}
-        <div  class='well well-sm' style='border:0px;'>
-            <span>Filter by User: </span>
-            {% for SingleUser, Permissions in object_course_users.items %}
-                {% if not SingleUser.is_superuser %}
-                    {# only print users who have permission to view activity #}
-                    {% get_obj_perms SingleUser for activity as 'activity_temp_perms' %}
-                    {% if activity.permission_control %}
-                         {% if "view_activity" in activity_temp_perms and SingleUser not in private_users %}
-                             &nbsp;<span class="label label-default userResponseToggle" style='cursor:pointer;' data-userdraft='user_{{SingleUser}}'>{{SingleUser}}</span>
-                         {% endif %} 
-                    {% elif SingleUser not in private_users %}
-                        &nbsp;<span class="label label-default userResponseToggle" style='cursor:pointer;' data-userdraft='user_{{SingleUser}}'>{{SingleUser}}</span>
-                    {% endif %}
-                {% endif %}
-            {% endfor %}
-            &nbsp;<span class="label label-default userResponseAllToggle" style='cursor:pointer;'>show all</span>
-        </div>
-	{% endif %}
-
-    <!-- essay responses by user -->
-    <div id="essay_responses" data-ajaxurl="{% url 'delete_post' %}">
-        {% regroup all_essay_responses by user as response_list %}
-            {% for responses in response_list %}
-	    {% if user == responses.grouper or user.is_superuser %}
-                <div id='user_{{responses.grouper}}' class='allUserResponses bs-callout bs-callout-info' style='margin-top:15px;'>
-                    {% if responses.grouper in private_users or post.creator.is_superuser %}
-                        <span>
-                            <i class="fa fa-graduation-cap fa-fw fa-2x text-info" style='font-size:2.1em;color:#39b3d7;'></i>
-                            <span class='lead' style='font-size:2.1em;color:#39b3d7;'>{{responses.grouper}}</span>
-                        </span>
+    <!-- Essay application starts here -->
+    <div class='row'>
+        {% if "edit_course" not in course_perms %}
+            <div id='essay_draftbook' class='col-xs-10 col-xs-offset-1'>
+                <div id='essay_draftbook2'>
+                    <h3><small class='text-muted'> (<i>draft {{submitted_essay_responses.count|add:"1"}} </i>in progress)</small></h3>
+                    <form role="form">{% csrf_token %}
+                        <input type="text" class="form-control" id="draft_title" style='border-radius:4px 4px 0px 0px;'
+                            value='{% if  progressing_essay_response %}{{progressing_essay_response.draft_title}}{% else %}draft title{% endif %}'>
+                        <textarea id='essayTextarea' style="height:410px;padding: 5px;overflow:auto;">{{progressing_essay_response.draft|safe}}</textarea>
+                    </form>
+                    {% if graded_essay_responses.count == submitted_essay_responses.count and graded_essay_responses.count < activity.required_revisions %}
+                        <!-- all drafts are graded -->
+                        <button id='draftSaveBtn' type="button" class="btn btn-default btn-sm pull-left draftEditBtn" style='width:50%;border-radius:0px 0px 0px 4px;' 
+                                data-ajaxurl="{% url 'edit_essay_draft' %}" data-operation="save" data-essayid="{{activity.id}}">
+                            <i class="fa fa-floppy-o"></i> save
+                        </button>
+                        <button id="draftSubmitBtn" type="button" class="btn btn-default btn-sm pull-right draftEditBtn" style='width:50%;border-radius:0px 0px 4px 0px;' 
+                                data-ajaxurl="{% url 'edit_essay_draft' %}" data-operation="submit" data-essayid="{{activity.id}}">
+                            <i class="fa fa-paper-plane-o"></i> submit
+                        </button>
                     {% else %}
-                        <span>
-                            <i class="fa fa-user fa-fw fa-2x text-info" style='font-size:2.1em;color:#39b3d7;'></i>
-                            <span class='lead' style='font-size:2.1em;color:#39b3d7;'>{{responses.grouper}}</span>
-                        </span>
+                        <!-- we have ungraded essay drafts -->
+                        <button id='draftSaveBtn' type="button" class="btn btn-default btn-sm pull-left draftEditBtn" style='width:100%;border-radius:0px 0px 4px 4px;' 
+                                data-ajaxurl="{% url 'edit_essay_draft' %}" data-operation="save" data-essayid="{{activity.id}}">
+                            <i class="fa fa-floppy-o"></i> Save
+                        </button>
                     {% endif %}
-             
-                    <!-- Draft Number Toggle -->
-                    <div class="btn-group progress_drafts pull-right" data-toggle="buttons" >
-                        {% for response in responses.list  reversed %}
-                            {% if forloop.last %}
-                                <label class="btn btn-info btn-xs draftToggle active" style='z-index: 2;'>
-                                    <input type="radio" name="options" id="option1" autocomplete="off" checked value='essayResponse{{response.id}}'> Draft {{forloop.counter}} 
-                                </label>
-                            {% else %}
-                                <label class="btn btn-info btn-xs draftToggle" style='margin-right:2em;z-index: 2;'>
-                                    <input type="radio" name="options" id="option1" autocomplete="off" value='essayResponse{{response.id}}'> Draft {{forloop.counter}} 
-                                </label>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
 
-                    <!-- Draft Content -->
-                    {% for response in responses.list %}
-                        <div id="essayResponse{{response.id}}" style="{% if forloop.first %}{% else %}display:none; {% endif %}border-radius:0px;margin-bottom:0px;">
-                            <div class="panel panel-default" style='margin-bottom:0px;border-color:#FFFFFF;border-radius:0px;border:0px;
-                                                                    background-image: url("{% static 'img/paper4.png' %}");background-repeat: repeat; '>
-                                <div class="panel-heading" style='background-color:transparent;border-color:transparent;'>
-                                    <span class='lead'>{{response.draft_title}}</span>
+                    <br><br>
+            
+                    <div id ='submittedDrafts'>
+                        <div id ='submittedDrafts2'>
+                            <h3><i class="fa fa-files-o"></i> Submitted Drafts</h3>
+                            {% for submitted in submitted_essay_responses %}
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    {{submitted.draft_title}} 
                                     <p class="pull-right text-muted">
                                         <small>
                                             &nbsp;&nbsp;<span class="glyphicon glyphicon-time"></span>
-                                            {{ response.modified }}
+                                            {{ submitted.modified }}
                                         </small>
                                     </p>
-                                    <span class="label label-default pull-right" style='line-height:1.5;'>{{response.status}}</span>
+                                    <span class="label label-default pull-right" style='line-height:1.5;'>{{submitted.status}}</span>
                                 </div>
-                                <hr style='border-top:1px solid #C5C5C5; margin-top:0px;margin-bottom:0px;margin-left:10px;margin-right:10px;'>
-                                <div class="panel-body" style='padding-bottom:7px;'>
-                                    {{response.draft|safe}}
-                                </div>
-
-                                 <!-- instructor review -->
-                                <div style='padding:15px;padding-top:5px;padding-bottom:5px;'>
-                                    {% if response.status == 'graded' %}
-                                        <hr style='border-top:1px solid #C5C5C5; margin-top:0px;margin-bottom:0px;'>
-                                            <div class='lead' style='margin-bottom:10px;'>
-                                                 Reviews from <i>{{ response.reviewed_by }} :</i> &nbsp;
-                                            </div>
-                                            {{response.review|safe}}
-                                            {% if 'edit_course' in course_perms %}
-                                                <div style='height:2.0em;'><span>&nbsp;</span>
-                                                    <span class='text-danger pull-right' style="">
-                                                        <i class="fa fa-wrench"></i>
-                                                        <a href="{% url 'grade_essay' response.id %}" style='text-decoration:none;' class='text-danger'> Edit Review</a>
-                                                    </span>
-                                                </div>
-                                            {% endif %}
-                                    {% elif 'edit_course' in course_perms %}
-                                        <div style='height:2.0em;'><span>&nbsp;</span>
-                                            <span class='text-danger pull-right' style="">
-                                                <i class="fa fa-gavel"></i>
-                                                <a href="{% url 'grade_essay' response.id %}" style='text-decoration:none;' class='text-danger'> Grade Essay</a>
-                                            </span>
-                                        </div> 
-                                    {% endif %}
-                                </div>
+                            <div class="panel-body">
+                                {{submitted.draft|safe}}
                             </div>
-                    
-                            <!-- Comment Section for Draft -->
-                            <div style='width:99%;margin-top:0px;margin-left:1%;'>
-                                <ul id="draft_comments{{ response.id }}"  style='list-style-type: none;padding:0; margin:0;' data-responseid="{{response.id}}">
-                                    {% for post in response.posts.all %}
-                                        {% if not post.is_deleted %}
-                                            {% include 'post_template.html' with activity_type=activity.activity_type %}
-                                        {% endif %}
-                                    {% endfor %}
-                                    <li class="left clearfix commentlist">
-                                        {% include 'textarea_template.html' %}
-                                    </li>
-                                </ul>
-                            </div>
+                            {% if submitted.status == 'graded' %}
+                                <div class="well well-sm" style='margin-bottom:0px;background-color:#FDFDFD;border:0px;'>
+                                    <div class='lead' style='margin-bottom:10px;'>
+                                        <u>Reviews from <i>{{ submitted.reviewed_by }} :</i></u>
+                                    </div>
+                                    {{submitted.review|safe}}
+                                </div>
+                            {% endif %}
                         </div>
-                    {% endfor %}
-                    <br>
+                        {% empty %}
+                            <p class='lead'> No submitted drafts so far. </p>
+                        {% endfor %}
+                    </div>
                 </div>
-	    {% endif %}
-            {% endfor %}
+
+                <br><br>
+
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Essay Discussion Section -->
+    <div id='essay_discussion' class='col-xs-10 col-xs-offset-1' data-ajaxurl='{% url "save_post" %}' data-activityid='{{activity.id}}' 
+        data-activitytype='{{ activity.activity_type }}' {% if "edit_course" not in course_perms %} style='display:none;' {% endif %}>
+        <div id="essay_discussion2">
+            <h3>Instructions</h3>
+            <p>{{ activity.instructions|safe }}</p>
+            <h3>Discussion</h3>
+
+            <!-- jump-to-user well -->
+        {% if user.is_superuser %}
+            <div  class='well well-sm' style='border:0px;'>
+                <span>Filter by User: </span>
+                {% for SingleUser, Permissions in object_course_users.items %}
+                    {% if not SingleUser.is_superuser %}
+                        {# only print users who have permission to view activity #}
+                        {% get_obj_perms SingleUser for activity as 'activity_temp_perms' %}
+                        {% if activity.permission_control %}
+                            {% if "view_activity" in activity_temp_perms and SingleUser not in private_users %}
+                                &nbsp;<span class="label label-default userResponseToggle" style='cursor:pointer;' data-userdraft='user_{{SingleUser}}'>{{SingleUser}}</span>
+                            {% endif %} 
+                        {% elif SingleUser not in private_users %}
+                            &nbsp;<span class="label label-default userResponseToggle" style='cursor:pointer;' data-userdraft='user_{{SingleUser}}'>{{SingleUser}}</span>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+                &nbsp;<span class="label label-default userResponseAllToggle" style='cursor:pointer;'>show all</span>
+            </div>
+        {% endif %}
+
+        <!-- essay responses by user -->
+        <div id="essay_responses" data-ajaxurl="{% url 'delete_post' %}">
+            {% regroup all_essay_responses by user as response_list %}
+                {% for responses in response_list %}
+            {% if user == responses.grouper or user.is_superuser %}
+                    <div id='user_{{responses.grouper}}' class='allUserResponses bs-callout bs-callout-info' style='margin-top:15px;'>
+                        {% if responses.grouper in private_users or post.creator.is_superuser %}
+                            <span>
+                                <i class="fa fa-graduation-cap fa-fw fa-2x text-info" style='font-size:2.1em;color:#39b3d7;'></i>
+                                <span class='lead' style='font-size:2.1em;color:#39b3d7;'>{{responses.grouper}}</span>
+                            </span>
+                        {% else %}
+                            <span>
+                                <i class="fa fa-user fa-fw fa-2x text-info" style='font-size:2.1em;color:#39b3d7;'></i>
+                                <span class='lead' style='font-size:2.1em;color:#39b3d7;'>{{responses.grouper}}</span>
+                            </span>
+                        {% endif %}
+                
+                        <!-- Draft Number Toggle -->
+                        <div class="btn-group progress_drafts pull-right" data-toggle="buttons" >
+                            {% for response in responses.list  reversed %}
+                                {% if forloop.last %}
+                                    <label class="btn btn-info btn-xs draftToggle active" style='z-index: 2;'>
+                                        <input type="radio" name="options" id="option1" autocomplete="off" checked value='essayResponse{{response.id}}'> Draft {{forloop.counter}} 
+                                    </label>
+                                {% else %}
+                                    <label class="btn btn-info btn-xs draftToggle" style='margin-right:2em;z-index: 2;'>
+                                        <input type="radio" name="options" id="option1" autocomplete="off" value='essayResponse{{response.id}}'> Draft {{forloop.counter}} 
+                                    </label>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <!-- Draft Content -->
+                        {% for response in responses.list %}
+                            <div id="essayResponse{{response.id}}" style="{% if forloop.first %}{% else %}display:none; {% endif %}border-radius:0px;margin-bottom:0px;">
+                                <div class="panel panel-default" style='margin-bottom:0px;border-color:#FFFFFF;border-radius:0px;border:0px;
+                                                                        background-image: url("{% static 'img/paper4.png' %}");background-repeat: repeat; '>
+                                    <div class="panel-heading" style='background-color:transparent;border-color:transparent;'>
+                                        <span class='lead'>{{response.draft_title}}</span>
+                                        <p class="pull-right text-muted">
+                                            <small>
+                                                &nbsp;&nbsp;<span class="glyphicon glyphicon-time"></span>
+                                                {{ response.modified }}
+                                            </small>
+                                        </p>
+                                        <span class="label label-default pull-right" style='line-height:1.5;'>{{response.status}}</span>
+                                    </div>
+                                    <hr style='border-top:1px solid #C5C5C5; margin-top:0px;margin-bottom:0px;margin-left:10px;margin-right:10px;'>
+                                    <div class="panel-body" style='padding-bottom:7px;'>
+                                        {{response.draft|safe}}
+                                    </div>
+
+                                    <!-- instructor review -->
+                                    <div style='padding:15px;padding-top:5px;padding-bottom:5px;'>
+                                        {% if response.status == 'graded' %}
+                                            <hr style='border-top:1px solid #C5C5C5; margin-top:0px;margin-bottom:0px;'>
+                                                <div class='lead' style='margin-bottom:10px;'>
+                                                    Reviews from <i>{{ response.reviewed_by }} :</i> &nbsp;
+                                                </div>
+                                                {{response.review|safe}}
+                                                {% if 'edit_course' in course_perms %}
+                                                    <div style='height:2.0em;'><span>&nbsp;</span>
+                                                        <span class='text-danger pull-right' style="">
+                                                            <i class="fa fa-wrench"></i>
+                                                            <a href="{% url 'grade_essay' response.id %}" style='text-decoration:none;' class='text-danger'> Edit Review</a>
+                                                        </span>
+                                                    </div>
+                                                {% endif %}
+                                        {% elif 'edit_course' in course_perms %}
+                                            <div style='height:2.0em;'><span>&nbsp;</span>
+                                                <span class='text-danger pull-right' style="">
+                                                    <i class="fa fa-gavel"></i>
+                                                    <a href="{% url 'grade_essay' response.id %}" style='text-decoration:none;' class='text-danger'> Grade Essay</a>
+                                                </span>
+                                            </div> 
+                                        {% endif %}
+                                    </div>
+                                </div>
+                        
+                                <!-- Comment Section for Draft -->
+                                <div style='width:99%;margin-top:0px;margin-left:1%;'>
+                                    <ul id="draft_comments{{ response.id }}"  style='list-style-type: none;padding:0; margin:0;' data-responseid="{{response.id}}">
+                                        {% for post in response.posts.all %}
+                                            {% if not post.is_deleted %}
+                                                {% include 'post_template.html' with activity_type=activity.activity_type %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        <li class="left clearfix commentlist">
+                                            {% include 'textarea_template.html' %}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <br>
+                    </div>
+            {% endif %}
+                {% endfor %}
+            </div>
         </div>
     </div>
-</div>
-<!-- Essay application ends here -->
-
+    <!-- Essay application ends here -->
 {% endblock %}
 
 {% block javascripts %} 
-<script src="{% static "js/tinymce/tinymce.min.js" %}"></script>
+<script src="{% static "vendors/tinymce/tinymce.min.js" %}"></script>
 <script src="{% static "js/utils.js" %}"></script>
 <script src="{% static "js/global.js" %}"></script>
 <script src="{% static "js/essay.js" %}"></script>
