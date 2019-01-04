@@ -13,7 +13,7 @@
 <script>
     var courses_json = {{courses_json|safe}};
     var single_instructors = {{ single_instructors|safe }};
-    var courses = TAFFY(courses_json)
+    var courses = TAFFY(courses_json);
 </script>
 
 <div class='row placeholders'>
@@ -27,47 +27,39 @@
 
 
 <div class="col-md-12 placeholders course_result_div" >
-<table class="table table-hover text-left lead">
-	<thead>
-		<tr>
-				<th>
-        <u><strong> Course </strong></u>
-			</th>
-			<th>
-        <u><strong> Instructor </strong></u>
-			</th>
-			<th>
-        <u><strong> Join </strong></u>
-			</th>
-	<tr>
-</thead>
-<tbody>
-{% for course in courses %}
-	<tr class='course_row' data-coursename="{{course.title}}">
-		<td> {{course.title}} </td>
-
-		<td><span><i class="fa fa-graduation-cap"></i>
-				{% for private_user in course.get_private_users %}
-                {{private_user}}&nbsp;
-				{% endfor %}
-                </span>
-		</td>
-	  <td>
-	        	{% get_obj_perms user for course as "temp_course_perms" %}
-	        	{% if course.is_public %}
-		        	{% if "view_course" in temp_course_perms or "edit_course" in temp_course_perms %}
-		        	    <a style='color:black;' href="{{ course.get_absolute_url }}">Subscribed</a>
-		        	{% else %}
-			        	<a href="{% url 'subscribe_course' course.accesscode %}" class="btn btn-success btn-sm" role="button"> &nbsp;JOIN NOW <span class="glyphicon glyphicon-chevron-right"></span>&nbsp; </a>
-		        	{% endif %}
-	        	{% else %}
-                    <a><small data-toggle="modal" data-target=".courseSubscribe" style="cursor:pointer;"> <i class="fa fa-book"></i> Subscribe (requires access code)</small></a>
-	        	{% endif %}
-	    </td>
-		</tr>
-
-	{% endfor %}
-	</tbody>
+	<table class="table table-hover text-left lead">
+		<thead>
+			<tr>
+				<th><u><strong> Course </strong></u></th>
+				<th><u><strong> Instructor </strong></u></th>
+				<th><u><strong> Join </strong></u></th>
+			<tr>
+		</thead>
+		<tbody>
+			{% for course in courses %}
+				<tr class='course_row' data-coursename="{{course.title}}">
+					<td> {{course.title}} </td>
+					<td><span><i class="fa fa-graduation-cap"></i>
+							{% for private_user in course.get_private_users %}
+							{{private_user}}&nbsp;
+							{% endfor %}
+							</span>
+					</td>
+					<td>
+							{% get_obj_perms user for course as "temp_course_perms" %}
+							{% if course.is_public %}
+								{% if "view_course" in temp_course_perms or "edit_course" in temp_course_perms %}
+									<a style='color:black;' href="{{ course.get_absolute_url }}">Subscribed</a>
+								{% else %}
+									<a href="{% url 'subscribe_course' course.accesscode %}" class="btn btn-success btn-sm" role="button"> &nbsp;JOIN NOW <span class="glyphicon glyphicon-chevron-right"></span>&nbsp; </a>
+								{% endif %}
+							{% else %}
+								<a><small data-toggle="modal" data-target=".courseSubscribe" style="cursor:pointer;"> <i class="fa fa-book"></i> Subscribe (requires access code)</small></a>
+							{% endif %}
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
 	</table>
 </div>
 
