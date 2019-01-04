@@ -9,14 +9,6 @@ from itertools import chain
 
 import os
 
-ACTIVITY_TYPES = (
-    ('DiscussionActivity',  'Discussion Activity'),
-    ('EssayActivity',       'Essay Activity'),
-    ('OverdubActivity',     'Overdub Media Activity'),
-    ('FlatpageActivity',    'Flatpage Activity'),
-)
-
-
 class ActivityCollection(models.Model):
     '''-- ActivityCollection(course) is used to manage lessons and activities .
 
@@ -41,6 +33,7 @@ class ActivityCollection(models.Model):
     is_active = models.BooleanField(default=True)
     is_public = models.BooleanField(default=False, blank=True)
     is_deleted = models.BooleanField(default=False, blank=True)
+    objects = models.Manager()
 
     class Meta:
         permissions = (
@@ -76,7 +69,6 @@ class ActivityCollection(models.Model):
     def __str__(self):
         return self.title + " (" + self.nickname + ")"
 
-
 class Lesson(models.Model):
     '''-- Lesson Model is used to manage activities but activities can belong to a collection/course without a lesson associated with it.
 
@@ -93,6 +85,7 @@ class Lesson(models.Model):
     display_order = models.IntegerField(default=0)
     collection = models.ForeignKey(
         ActivityCollection, blank=True, null=True, on_delete=models.SET_NULL)
+    objects = models.Manager()
 
     def get_absolute_url(self):
         return reverse('lesson', args=[str(self.id)])
@@ -119,6 +112,7 @@ class Post(models.Model):
     parent_post = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
     audio_URL = models.URLField(max_length=200, blank=True, null=True)
     is_deleted = models.BooleanField(default=False, blank=True)
+    objects = models.Manager()
 
     def get_absolute_url(self):
         ''' :returns: Absolute URL of a. '''
@@ -133,7 +127,6 @@ class Post(models.Model):
 
         # issue_id=issue.id, issue_ct=ContentType.objects.get_for_model(issue)
         return Document.objects.filter(object_id=self.id, content_type=ContentType.objects.get_for_model(self))
-
 
 class AbstractActivity(models.Model):
     '''-- AbstractActivity is abstract class for *Discussion*, *Essay* and *Overdub*.
@@ -178,6 +171,7 @@ class AbstractActivity(models.Model):
     posts = models.ManyToManyField(Post, blank=True)
     permission_control = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False, blank=True)
+    objects = models.Manager()
 
     class Meta:
 
@@ -224,7 +218,7 @@ class Document(models.Model):
     accessURL = models.URLField(max_length=200, blank=True, null=True)
     # The file format, such as video, image, or doc.
     file_type = models.CharField(max_length=50, blank=True, null=True)
-
+    objects = models.Manager()
 
     def get_absolute_url(self):
         ''' :returns: Absolute URL of Document. '''
