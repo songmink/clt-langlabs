@@ -10,15 +10,18 @@
 {% block contentwrap %}
 <h1 class="page-header">{{ course.title }}<span class="text-muted"> <small>{{ course.nickname }}</small> </span></h1>
 <div class="row">
-	<div class="col-md-3"></div>
-	<div class="col-md-6">
+	<div class="col-md-2"></div>
+	<div class="col-md-8">
 		<h3 class="sub-header">Create a new <span class="text-muted">{{ activity_type|capfirst }}</span> in {{ course.nickname }}:</h3>
-		<form action="" method="post" role="form" {% if activity_type == 'overdub' or activity_type == 'flatpage' %}enctype='multipart/form-data'{% endif %}>{% csrf_token %}
-			{{ form|crispy }}
+		<form action="" method="post" role="form" {% if activity_type == 'overdub' or activity_type == 'flatpage' %} enctype='multipart/form-data' {% endif %} novalidate>
+            {% csrf_token %}
+			{{ form | crispy }}
+            
+            <!-- flatpage attachments -->
             {% if activity_type == 'flatpage' %}
-                <div id="AttachmentsArea" class="form-group" style="background:#ffe">
+                <div id="AttachmentsArea" class="form-group" style="">
                     <span><label style="margin-top:0;margin-bottom:15px; display:inline;"> Attachments</label>&nbsp;&nbsp;&nbsp;
-                    <button id='uploadTrigger'" type="button" class="btn btn-default btn-xs" ><span class="glyphicon glyphicon-plus"></span>Add</button></span>
+                    <button id='uploadTrigger'" type="button" class="btn btn-primary btn-sm" ><span class="fas fa-plus"></span> Add</button></span>
                     <div id="inputAttachments" data-ajaxurl="{% url 'delete_attachment' %}" style="margin-top: 15px;">
                         
                     </div>
@@ -27,10 +30,11 @@
                     data-url="{% url 'file_upload' %}"
                     data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
             {% endif %}
-			<br /><input type="submit" value="Create" />
+			<br />
+            <input type="submit" value="Create" />
 		</form>		
 	</div>
-	<div class="col-md-3"></div>
+	<div class="col-md-2"></div>
 </div>
 
 <!-- Modal for adding a lesson on the fly -->
@@ -52,7 +56,7 @@
 
 <!-- Modal Experiment -->
 
-{% endblock contentwrap %}
+{% endblock %}
     
 {% block javascripts %} 
     <script type="text/javascript"> 
