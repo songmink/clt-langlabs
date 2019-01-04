@@ -24,10 +24,10 @@ DATABASES = {
         'CONN_MAX_AGE': 0,
         'ENGINE': 'django.db.backends.postgresql',
         'HOST': 'localhost',
-        'NAME': 'cltlanglabs',
-        'PASSWORD': 'song5127',
+        'NAME': 'clt_langlabs',
+        'PASSWORD': '',
         'PORT': '',
-        'USER': 'cltit'
+        'USER': 'songmink'
     }
 }
 
