@@ -35,7 +35,7 @@
                 <li><a class="dropdown-item" href="{% url 'course' course.id %}"><i class="fas fa-home"></i> course home</a></li>
                 {% if "edit_course" in course_perms %}
                     <li><a class="dropdown-item" href="{% url 'create_lesson' course.id %}"><small><i class="far fa-plus-square"></i> New Lesson</small></a></li>
-                    <li><a class="dropdown-item" href="{% url 'create_activity' course.id %}"><small><i class="far fa-plus-square"></i> New Activity</small></a></li>
+                    <li><a class="dropdown-item" href="{% url 'create_activity' course.id %}"><small>&#9492; <i class="far fa-plus-square"></i> New Activity</small></a></li>
                 {% endif %}
             {% endif %} 
         </ul>  
