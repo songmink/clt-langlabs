@@ -284,184 +284,185 @@
 })();
 
 
-//
-// Recorder:
-//   recorder for discussion/overdub rte
-//(function() {
-    var s; // cache
-    Recorder = {
+// TODO: Rebuild the recorder
+// //
+// // Recorder:
+// //   recorder for discussion/overdub rte
+// //(function() {
+//     var s; // cache
+//     Recorder = {
 
-        /***[ module settings ]***/
-        settings: {
-            activity_type: $('#activityType').val(),
-            recorder_container: $('#CLTREC_container'),
-            recorder_trigger: $('#recordTrigger'),
-            container_is_hidden: true,
-            audioName: '',
-            recorderID: 'recorder',
-            recorderServer:  $("#recordTrigger").data('recorderserver'),
-            recorderHandler: $("#recordTrigger").data('recorderhandler'),
-            recorderDirectory: $("#recordTrigger").data('recorderdirectory'),
-            recorderLicense: $("#recordTrigger").data('recorderlicense'),
-            userinfo: $("#recordTrigger").data('userinfo'),
-            swfobjectURL: $("#recordTrigger").data('swfurl'),
-        },
+//         /***[ module settings ]***/
+//         settings: {
+//             activity_type: $('#activityType').val(),
+//             recorder_container: $('#CLTREC_container'),
+//             recorder_trigger: $('#recordTrigger'),
+//             container_is_hidden: true,
+//             audioName: '',
+//             recorderID: 'recorder',
+//             recorderServer:  $("#recordTrigger").data('recorderserver'),
+//             recorderHandler: $("#recordTrigger").data('recorderhandler'),
+//             recorderDirectory: $("#recordTrigger").data('recorderdirectory'),
+//             recorderLicense: $("#recordTrigger").data('recorderlicense'),
+//             userinfo: $("#recordTrigger").data('userinfo'),
+//             swfobjectURL: $("#recordTrigger").data('swfurl'),
+//         },
 
-        init: function() {
-            s = this.settings;
-            Recorder.startRecorder();
-            s.recorder_container.hide('fast');
-            this.bindUIActions();
-        },
+//         init: function() {
+//             s = this.settings;
+//             Recorder.startRecorder();
+//             s.recorder_container.hide('fast');
+//             this.bindUIActions();
+//         },
 
-        bindUIActions: function() {
-            s.recorder_trigger.click(Recorder.recordButtonToggle);
-            if (s.activity_type == "discussion") {
-               recorderMessage =  Recorder.discussionRecorderMessage;
-            }else {
-               recorderMessage = Recorder.overdubRecorderMessage;
-            }
-            thisMovie = Recorder.thisMovie;
-        },
+//         bindUIActions: function() {
+//             s.recorder_trigger.click(Recorder.recordButtonToggle);
+//             if (s.activity_type == "discussion") {
+//                recorderMessage =  Recorder.discussionRecorderMessage;
+//             }else {
+//                recorderMessage = Recorder.overdubRecorderMessage;
+//             }
+//             thisMovie = Recorder.thisMovie;
+//         },
 
-        /***[ module functions ]***/
-        recordButtonToggle: function () {
-            s.recorder_container.toggle('fast');
-            if (s.container_is_hidden) {
-                Recorder.startRecorder();
-                s.container_is_hidden = false;
-            }else {
-                s.container_is_hidden = true;
-                recordingFlag = false; // wtf is this?
-            }
-        },
+//         /***[ module functions ]***/
+//         recordButtonToggle: function () {
+//             s.recorder_container.toggle('fast');
+//             if (s.container_is_hidden) {
+//                 Recorder.startRecorder();
+//                 s.container_is_hidden = false;
+//             }else {
+//                 s.container_is_hidden = true;
+//                 recordingFlag = false; // wtf is this?
+//             }
+//         },
 
-        startRecorder: function() {
-            var recMessageArray = new Array();
-            recMessageArray[0] = "entering demo mode.";
-            recMessageArray[1] = "Ready to go!";
-            recMessageArray[2] = "Recording";
-            recMessageArray[3] = "Stopped recording";
-            recMessageArray[4] = "Stopped playing";
-            recMessageArray[5] = "Moved to beginning";
-            recMessageArray[6] = "Playing";
-            recMessageArray[7] = "Starting to save";
-            recMessageArray[8] = "hmm. nothing to save";
-            recMessageArray[9] = "Truncating the file to 10 seconds";
-            recMessageArray[10] = "Encoding to MP3";
-            recMessageArray[11] = "...";
-            recMessageArray[12] = "Encoding error";
-            recMessageArray[13] = "Encode complete";
-            recMessageArray[14] = "Uploading...";
-            recMessageArray[15] = "Upload complete";
-            recMessageArray[16] = "Pause recording";
-            recMessageArray[17] = "Pause playing";
+//         startRecorder: function() {
+//             var recMessageArray = new Array();
+//             recMessageArray[0] = "entering demo mode.";
+//             recMessageArray[1] = "Ready to go!";
+//             recMessageArray[2] = "Recording";
+//             recMessageArray[3] = "Stopped recording";
+//             recMessageArray[4] = "Stopped playing";
+//             recMessageArray[5] = "Moved to beginning";
+//             recMessageArray[6] = "Playing";
+//             recMessageArray[7] = "Starting to save";
+//             recMessageArray[8] = "hmm. nothing to save";
+//             recMessageArray[9] = "Truncating the file to 10 seconds";
+//             recMessageArray[10] = "Encoding to MP3";
+//             recMessageArray[11] = "...";
+//             recMessageArray[12] = "Encoding error";
+//             recMessageArray[13] = "Encode complete";
+//             recMessageArray[14] = "Uploading...";
+//             recMessageArray[15] = "Upload complete";
+//             recMessageArray[16] = "Pause recording";
+//             recMessageArray[17] = "Pause playing";
 
-            if (swfobject.hasFlashPlayerVersion("10")) {
+//             if (swfobject.hasFlashPlayerVersion("10")) {
 
-                // check if SWF hasn't been removed, if this is the case, create a new alternative content container
-                if ( $('#'+s.recorderID) ) swfobject.removeSWF(s.recorderID);
+//                 // check if SWF hasn't been removed, if this is the case, create a new alternative content container
+//                 if ( $('#'+s.recorderID) ) swfobject.removeSWF(s.recorderID);
 
-                /**SWF Container: Bare Bones Recorder*/
-                $('<div/>', {id: s.recorderID}).appendTo('#CLTREC_container');
+//                 /**SWF Container: Bare Bones Recorder*/
+//                 $('<div/>', {id: s.recorderID}).appendTo('#CLTREC_container');
 
-                var d = new Date();
-                var timestamp = d.getFullYear()+""
-                                +(d.getMonth()+1)+""
-                                +d.getDate()+""
-                                +d.getHours()+""
-                                +d.getMinutes()+""
-                                +d.getSeconds()+"";
+//                 var d = new Date();
+//                 var timestamp = d.getFullYear()+""
+//                                 +(d.getMonth()+1)+""
+//                                 +d.getDate()+""
+//                                 +d.getHours()+""
+//                                 +d.getMinutes()+""
+//                                 +d.getSeconds()+"";
 
-                var att = {
-                    id          : s.recorderID,
-                    name        : s.recorderID,
-                    data        : s.swfobjectURL,
-                    width       : "430",
-                    height      : "180"
-                };
+//                 var att = {
+//                     id          : s.recorderID,
+//                     name        : s.recorderID,
+//                     data        : s.swfobjectURL,
+//                     width       : "430",
+//                     height      : "180"
+//                 };
 
-                s.audioName = s.userinfo+"_"+timestamp;
+//                 s.audioName = s.userinfo+"_"+timestamp;
 
-                var barebones  = "myFilename="  + s.audioName;
-                    barebones += "&myServer="   + s.recorderServer;
-                    barebones += "&myHandler="  + s.recorderHandler;
-                    barebones += "&myDirectory="+ s.recorderDirectory;
-                    barebones += "&licensekey=" + s.recorderLicense;
-                    barebones += "&timeLimit="  + "300";
-                    barebones += "&showLink="   + "N";
-                    barebones += "&hideFlash"   + "Y";
+//                 var barebones  = "myFilename="  + s.audioName;
+//                     barebones += "&myServer="   + s.recorderServer;
+//                     barebones += "&myHandler="  + s.recorderHandler;
+//                     barebones += "&myDirectory="+ s.recorderDirectory;
+//                     barebones += "&licensekey=" + s.recorderLicense;
+//                     barebones += "&timeLimit="  + "300";
+//                     barebones += "&showLink="   + "N";
+//                     barebones += "&hideFlash"   + "Y";
 
-                var params = {flashvars: barebones};
+//                 var params = {flashvars: barebones};
 
-                // Now create the new (or reinitialized) scrubber
-                swfobject.createSWF(att, params, s.recorderID);
-            }
-        },
+//                 // Now create the new (or reinitialized) scrubber
+//                 swfobject.createSWF(att, params, s.recorderID);
+//             }
+//         },
 
-        discussionRecorderMessage: function(x,y) {
-            switch(x) {
-                case 1:  recordingFlag = false; //no recording
-                         break;
-                case 2:  recordingFlag = true;  //there is recording
-                         break;
-                case 15: var attFile = '<span class="attachedAudio" style="cursor:pointer;"><a class="audioLink text-muted" href='
-                                       + s.recorderServer
-                                       + s.recorderDirectory
-                                       + "/" + s.audioName
-                                       + ".mp3" + '><i class="icon-file-alt"></i> <span class="audioName">'
-                                       + s.audioName + ".mp3"
-                                       + '</span></a> <small> <i class="icon-remove removeIcon" style="color:grey; opacity:0.01;"></i></small></span>';
-                         $('#inputAttachments').append(attFile);
-                         s.recorder_trigger.trigger( "click" );
-                         recordingFlag = false; //no recording pending
-                         break;
-            };
-        },
+//         discussionRecorderMessage: function(x,y) {
+//             switch(x) {
+//                 case 1:  recordingFlag = false; //no recording
+//                          break;
+//                 case 2:  recordingFlag = true;  //there is recording
+//                          break;
+//                 case 15: var attFile = '<span class="attachedAudio" style="cursor:pointer;"><a class="audioLink text-muted" href='
+//                                        + s.recorderServer
+//                                        + s.recorderDirectory
+//                                        + "/" + s.audioName
+//                                        + ".mp3" + '><i class="icon-file-alt"></i> <span class="audioName">'
+//                                        + s.audioName + ".mp3"
+//                                        + '</span></a> <small> <i class="icon-remove removeIcon" style="color:grey; opacity:0.01;"></i></small></span>';
+//                          $('#inputAttachments').append(attFile);
+//                          s.recorder_trigger.trigger( "click" );
+//                          recordingFlag = false; //no recording pending
+//                          break;
+//             };
+//         },
 
-        overdubRecorderMessage: function(x,y) {
-            switch(x) {
+//         overdubRecorderMessage: function(x,y) {
+//             switch(x) {
 
-                case 1:  recordingFlag = false; //no recording
-                         initialPause = 1;
-                         jwplayer("overdubVideo").play(true);
-                         break;
-                case 2:  jwplayer("overdubVideo").play(true);
-                         recordingFlag = true;  //there is recording
-                         break;
-                case 5:  jwplayer("overdubVideo").stop(true);
-                         initialPause = 1
-                         jwplayer("overdubVideo").play(true);
-                         break;
-                case 6:  jwplayer("overdubVideo").play(true);
-                         break;
-                case 15: var attFile = '<span class="attachedAudio" style="cursor:pointer;"><a class="audioLink text-muted" href='
-                                       + s.recorderServer
-                                       + s.recorderDirectory
-                                       + "/" + s.audioName + ".mp3"
-                                       + '><i class="icon-file-alt"></i> <span class="audioName">'
-                                       + s.audioName + ".mp3"
-                                       + '</span></a> <small> <i class="icon-remove removeIcon" style="color:grey; opacity:0.01;"></i></small></span>';
-                         $('#inputAttachments').append(attFile);
-                         s.recorder_trigger.trigger( "click" );
-                         recordingFlag = false; //no recording pending
-                         break;
-                case 16: jwplayer('overdubVideo').play(false);
-                         break;
-                case 17: jwplayer('overdubVideo').play(true);
-                         break;
-            };
-        },
+//                 case 1:  recordingFlag = false; //no recording
+//                          initialPause = 1;
+//                          jwplayer("overdubVideo").play(true);
+//                          break;
+//                 case 2:  jwplayer("overdubVideo").play(true);
+//                          recordingFlag = true;  //there is recording
+//                          break;
+//                 case 5:  jwplayer("overdubVideo").stop(true);
+//                          initialPause = 1
+//                          jwplayer("overdubVideo").play(true);
+//                          break;
+//                 case 6:  jwplayer("overdubVideo").play(true);
+//                          break;
+//                 case 15: var attFile = '<span class="attachedAudio" style="cursor:pointer;"><a class="audioLink text-muted" href='
+//                                        + s.recorderServer
+//                                        + s.recorderDirectory
+//                                        + "/" + s.audioName + ".mp3"
+//                                        + '><i class="icon-file-alt"></i> <span class="audioName">'
+//                                        + s.audioName + ".mp3"
+//                                        + '</span></a> <small> <i class="icon-remove removeIcon" style="color:grey; opacity:0.01;"></i></small></span>';
+//                          $('#inputAttachments').append(attFile);
+//                          s.recorder_trigger.trigger( "click" );
+//                          recordingFlag = false; //no recording pending
+//                          break;
+//                 case 16: jwplayer('overdubVideo').play(false);
+//                          break;
+//                 case 17: jwplayer('overdubVideo').play(true);
+//                          break;
+//             };
+//         },
 
-        thisMovie: function(movieName) {
-            if (navigator.appName.indexOf("Microsoft") != -1) {
-                return window[movieName];
-            }else {
-                return document[movieName];
-            }
-        },
-    };
-})();
+//         thisMovie: function(movieName) {
+//             if (navigator.appName.indexOf("Microsoft") != -1) {
+//                 return window[movieName];
+//             }else {
+//                 return document[movieName];
+//             }
+//         },
+//     };
+// })();
 
 
 //
