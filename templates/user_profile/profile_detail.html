@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% load staticfiles %}
-{% load crispy_forms_tags %}
 
 {% block stylesheets %}
 <style type="text/css">
@@ -13,26 +12,25 @@ img.profile-img {
 	height: auto;
 }
 </style>
+{% endblock %}
 
-{% block contents %}
-{% if user == profile_instance.user %}
-	<h1 class="page-header">My Profile
-		<span class="tour-step tour-step-one">
-	        <small><small>
-	        <a href="{% url 'profile:update' slug=user.username %}" class="text-muted tour-step tour-step-three" style='text-decoration:none;'>
-	        <i class="ca-tooltip fa fa-pencil-square-o" data-toggle="tooltip" data-placement="top" title="Edit Profile"></i></a>
-	        </small></small>
-	    </span>
-    </h1>
-{% else %}
-<h1 class="page-header">{{ profile_instance.user.username }}'s Profile</h1>
-{% endif %}
 
-<div class="container-fluid">
-	<div class="row">
+{% block contentwrap %}
+	{% if user == profile_instance.user %}
+		<h1 class="page-header">My Profile
+			<span class="tour-step tour-step-one">
+				<small><small>
+				<a href="{% url 'profile:update' slug=user.username %}" class="text-muted tour-step tour-step-three" style='text-decoration:none;'>
+				<i class="ca-tooltip fas fa-edit" data-toggle="tooltip" data-placement="top" title="Edit Profile"></i></a>
+				</small></small>
+			</span>
+		</h1>
+	{% else %}
+		<h1 class="page-header">{{ profile_instance.user.username }}'s Profile</h1>
+	{% endif %}
 		<br>
 		<div class="row">
-			<div class="col-md-3">
+			<div class="col-md-2">
 				{% if profile_instance.image %}
 					<img src="{{ profile_instance.image.url }}" class="img-thumbnail profile-img">
 				{% else %}
@@ -40,19 +38,11 @@ img.profile-img {
 				{% endif %}	
 			</div>
 
-			<div class="col-md-6 offset-md-3">
-				<div class="row">
-				<h4><span><label style="font-size: 1.2em">Username:&nbsp;&nbsp;&nbsp;</label></span>{{profile_instance.user.username}}</h4>
-				</div>
-				<div class="row">
-				<div class="col-xs-2" style="padding-left:0"><label style="font-size: 1.2em">Bio:</label></div>
-				<div class="col-xs-10"><h4 style="margin-top:0">{{ profile_instance.bio }}</h4>
-				</div>
+			<div class="col-md-8">
+				<h5>Username:&nbsp;&nbsp;&nbsp;{{profile_instance.user.username}} ({{profile_instance.user.email}})</h5>
+				<h5>Bio:</h5>
+				<p>&nbsp; {{ profile_instance.bio }}</p>
 			</div>
 		</div>
-	</div>
-</div>
-
-
 {% endblock %}
 
