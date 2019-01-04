@@ -1,46 +1,42 @@
 {% extends "base_activity.html" %}
 {% load static %}
+{% load guardian_tags %}
 
 {% block contentwrap %}
-{% load guardian_tags %}
-{% get_obj_perms user for course as "course_perms" %}
-{% get_obj_perms user for activity as "activity_perms" %}
+    {% get_obj_perms user for course as "course_perms" %}
+    {% get_obj_perms user for activity as "activity_perms" %}
+    {% include 'activity_header_template.html' %} 
 
-{% block stylesheets %}
-    <link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
-{% endblock stylesheets%}
-
-{% include 'activity_header_template.html' %} 
-
-<div class="container-fluid" style='height:100%;'>
-    <div class="row " >
-        <div class="col-md-10 col-md-offset-1" >
-	    <div class="col-md-10">
+    <div>
+        <div class="row " >
+            <div class="col-md-2"></div>
+            <div class="col-md-10 col-md-offset-1" >
                 {{ activity.content | safe}}
-	    </div>
-            {% if activity.get_documents %}
-                <div class="col-md-10"  id="AttachmentsArea" style="background:#ffe; margin-top: 30px;">
-                    <h4 style="margin-top:0;margin-bottom:15px;"> Attachments</h4>
-                    {% for document in activity.get_documents %}
-                        {% if document.file_type == 'video' %}
-                        <div class="videoAttachmentArea">
-                            <a class="fileLink text-muted videoAttachment" href="javascript:;" ><i class="fa fa-file-video-o " style="padding-right: 3px;"></i> {{ document }} <a><br />
-			    <div class="videoPlayDiv" style="display:none;">
-                                <video class="videoPlay" width="100%" height="auto" controls>
-                                    <source src="{{ document.accessURL }}" type="video/mp4">
-                                </video>
-				<br />
-		            </div>
-                        </div>
-                        {% else %}
-                            <div><a class="fileLink text-muted" href="{{ document.accessURL }}" target="_blank">{% if document.file_type == 'image' %}<i class="fa fa-file-image-o" style="padding-right: 3px;"></i>{% else %}<i class="fa fa-file-text-o" style="padding-right: 3px;"></i>{% endif %}{{ document }} </a><br /></div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            {% endif %}
+                {% if activity.get_documents %}
+                    <div class="col-md-10"  id="AttachmentsArea" style="background:#ffe; margin-top: 30px;">
+                        <h4 style="margin-top:0;margin-bottom:15px;"> Attachments</h4>
+                        {% for document in activity.get_documents %}
+                            {% if document.file_type == 'video' %}
+                            <div class="videoAttachmentArea">
+                                    <a class="fileLink text-muted videoAttachment" href="javascript:;" ><i class="fas fa-file-video fa-lg " style="padding-right: 3px;"></i> {{ document }} <a><br />
+                                <div class="videoPlayDiv" style="display:none;">
+                                    <video class="videoPlay" width="100%" height="auto" controls>
+                                        <source src="{{ document.accessURL }}" type="video/mp4">
+                                    </video>
+                                    <br />
+                                </div>
+                            </div>
+                            {% else %}
+                                <div><a class="fileLink text-muted" href="{{ document.accessURL }}" target="_blank">
+                                    {% if document.file_type == 'image' %}<i class="fas fa-file-image fa-lg" style="padding-right: 3px;"></i>{% else %}<i class="fas fa-file fa-lg" style="padding-right: 3px;"></i>{% endif %}{{ document }} </a><br />
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}
 
 {% block javascripts %}
