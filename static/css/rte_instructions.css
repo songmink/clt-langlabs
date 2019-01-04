@@ -18,3 +18,8 @@
   padding: 6px 12px;
   overflow:auto;
 }
+
+.hidden {
+  visibility: hidden;
+  display: none;
+}
