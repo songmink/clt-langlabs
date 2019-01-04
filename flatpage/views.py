@@ -22,7 +22,7 @@ class FlatpageCreateView(CourseListMixin, CreateActivityMixin, CreateView):
 
     model = FlatpageActivity
     template_name = 'activity_create.html'
-    fields = ['title', 'content', 'lesson', 'is_active', 'display_order']
+    fields = ['title', 'instructions', 'content', 'lesson', 'is_active', 'display_order']
     activity_type = 'flatpage'
 
     def get_form(self, form_class=None):
@@ -54,7 +54,7 @@ class FlatpageUpdateView(ActivityEditPermissionMixin, CourseListMixin, CreateAct
     model= FlatpageActivity
     context_object_name = 'activity'
     template_name = 'activity_edit.html'
-    fields = ['title', 'content', 'lesson', 'is_active', 'display_order']
+    fields = ['title', 'instructions', 'content', 'lesson', 'is_active', 'display_order']
     activity_type = 'flatpage'
 
     def get_form(self, form_class=None):
