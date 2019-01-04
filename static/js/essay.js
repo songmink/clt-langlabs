@@ -36,7 +36,7 @@ $(document).ready(function(){
     });
 
     // toggle between draftbook and discussion
-    if($(".essaySectionToggle").size()>0){
+    if($(".essaySectionToggle").length>0){
         $( ".essaySectionToggle" ).on( "click", '.sectionToggle',function(event) {
             event.preventDefault();
             $(this).closest("div").find(".sectionToggle").removeClass('active')
