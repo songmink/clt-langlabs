@@ -1,11 +1,11 @@
 $( document ).ready(function() {
   // Handler for .ready() called.
 
-  $("#div_id_lesson").find('label').after('&nbsp;&nbsp;&nbsp;<button id="modalFire" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span>New</button>');
+  $("#div_id_lesson").find('label').after('&nbsp;&nbsp;&nbsp;<button id="modalFire" type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"></span>New</button>');
   
   // toggle modal using the '+' sign
   $( "#modalFire" ).click(function() {
-	    $('#myModal').modal('toggle')
+	    $('#myModal').modal('toggle');
 	});
   
   $('#myModal').on('hide.bs.modal', function (e) {
@@ -60,12 +60,12 @@ $( document ).ready(function() {
 function rteInit()
     {
         tinymce.init({
-            selector: "#InstructionTextArea",
-            inline: true,
-            schema: 'html5',
-            element_format: 'html',
+            selector                    : "#InstructionTextArea",
+            inline                      : true,
+            schema                      : 'html5',
+            element_format              : 'html',
             end_container_on_empty_block: true,
-            skin : 'flat_design_tinymce',
+            skin                        : 'flat_design_tinymce',
 
             style_formats: [
             {title: 'Headers', items: [
@@ -109,12 +109,12 @@ function rteInit()
                 {title: 'Justify', icon: 'alignjustify', format: 'alignjustify'}
             ]}
         ],
-            plugins: [ "link image emoticons textcolor" ],
-            toolbar1: "insertfile undo redo | styleselect | forecolor backcolor emoticons | link image",
-            image_advtab: true,
+            plugins          : [ "link image emoticons textcolor" ],
+            toolbar1         : "insertfile undo redo | styleselect | forecolor backcolor emoticons | link image",
+            image_advtab     : true,
             forced_root_block: false,
-            entity_encoding: 'raw',
-            menubar: false
+            entity_encoding  : 'raw',
+            menubar          : false
         }); 
 }
 

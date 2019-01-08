@@ -10,7 +10,7 @@ from .base import *
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '&#m+uzyu315+bpp7yhb$gsj%3d&d0p1gnw0qe@o@qd=r3e%8#m'
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 DEBUG = True
 TEMPLATE_DEBUG = True
 

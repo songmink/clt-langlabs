@@ -27,17 +27,17 @@
                     </form>
                     {% if graded_essay_responses.count == submitted_essay_responses.count and graded_essay_responses.count < activity.required_revisions %}
                         <!-- all drafts are graded -->
-                        <button id='draftSaveBtn' type="button" class="btn btn-default btn-sm pull-left draftEditBtn" style='width:50%;border-radius:0px 0px 0px 4px;' 
+                        <button id='draftSaveBtn' type="button" class="btn btn-primary btn-sm pull-left draftEditBtn" style='width:50%;border-radius:0px 0px 0px 4px;' 
                                 data-ajaxurl="{% url 'edit_essay_draft' %}" data-operation="save" data-essayid="{{activity.id}}">
                             <i class="fa fa-floppy-o"></i> save
                         </button>
-                        <button id="draftSubmitBtn" type="button" class="btn btn-default btn-sm pull-right draftEditBtn" style='width:50%;border-radius:0px 0px 4px 0px;' 
+                        <button id="draftSubmitBtn" type="button" class="btn btn-primary btn-sm pull-right draftEditBtn" style='width:50%;border-radius:0px 0px 4px 0px;' 
                                 data-ajaxurl="{% url 'edit_essay_draft' %}" data-operation="submit" data-essayid="{{activity.id}}">
                             <i class="fa fa-paper-plane-o"></i> submit
                         </button>
                     {% else %}
                         <!-- we have ungraded essay drafts -->
-                        <button id='draftSaveBtn' type="button" class="btn btn-default btn-sm pull-left draftEditBtn" style='width:100%;border-radius:0px 0px 4px 4px;' 
+                        <button id='draftSaveBtn' type="button" class="btn btn-primary btn-sm pull-left draftEditBtn" style='width:100%;border-radius:0px 0px 4px 4px;' 
                                 data-ajaxurl="{% url 'edit_essay_draft' %}" data-operation="save" data-essayid="{{activity.id}}">
                             <i class="fa fa-floppy-o"></i> Save
                         </button>
@@ -135,11 +135,11 @@
                         <div class="btn-group progress_drafts pull-right" data-toggle="buttons" >
                             {% for response in responses.list  reversed %}
                                 {% if forloop.last %}
-                                    <label class="btn btn-info btn-xs draftToggle active" style='z-index: 2;'>
+                                    <label class="btn btn-info btn-sm draftToggle active" style='z-index: 2;'>
                                         <input type="radio" name="options" id="option1" autocomplete="off" checked value='essayResponse{{response.id}}'> Draft {{forloop.counter}} 
                                     </label>
                                 {% else %}
-                                    <label class="btn btn-info btn-xs draftToggle" style='margin-right:2em;z-index: 2;'>
+                                    <label class="btn btn-info btn-sm draftToggle" style='margin-right:2em;z-index: 2;'>
                                         <input type="radio" name="options" id="option1" autocomplete="off" value='essayResponse{{response.id}}'> Draft {{forloop.counter}} 
                                     </label>
                                 {% endif %}

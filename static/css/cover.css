@@ -10,9 +10,9 @@ a:hover {
 }
 
 /* Custom default button */
-.btn-default,
-.btn-default:hover,
-.btn-default:focus {
+.btn-primary,
+.btn-primary:hover,
+.btn-primary:focus {
   color: #333;
   text-shadow: none; /* Prevent inheritence from `body` */
   background-color: #fff;

@@ -4719,7 +4719,7 @@ Editableform based on Twitter Bootstrap 3
       '<button type="submit" class="btn btn-primary btn-sm editable-submit">'+
         '<i class="glyphicon glyphicon-ok"></i>'+
       '</button>'+
-      '<button type="button" class="btn btn-default btn-sm editable-cancel">'+
+      '<button type="button" class="btn btn-primary btn-sm editable-cancel">'+
         '<i class="glyphicon glyphicon-remove"></i>'+
       '</button>';         
     
