@@ -21,11 +21,6 @@
                     </a>
                 </small>
                 <small>
-                    <a href="{% url 'delete_collection' course.id %}" class="text-muted tour-step tour-step-three" style='text-decoration:none;'>
-                        <i class="ca-tooltip fas fa-trash-alt fa-xs" data-toggle="tooltip" data-placement="top" title="Delete Course"></i>
-                    </a>
-                </small>
-                <small>
                     <a class="text-muted course_admin_togg tour-step tour-step-four" style='text-decoration:none; cursor: pointer;'>
                         <i class="ca-tooltip fas fa-user fa-xs" data-toggle="tooltip" data-placement="top" title="Course Membership Administration"></i>
                     </a>
@@ -35,6 +30,11 @@
                         <i class="ca-tooltip fas fa-copy fa-xs" data-toggle="tooltip" data-placement="top" title="Copy Course"></i>
                     </a>
                 </small>
+                <small>
+                    <a href="{% url 'delete_collection' course.id %}" class="text-muted tour-step tour-step-three" style='text-decoration:none;'>
+                        <i class="ca-tooltip fas fa-trash-alt fa-xs" data-toggle="tooltip" data-placement="top" title="Delete Course"></i>
+                    </a>
+                </small>
             </span>
         {% endif %}
     </h1>
@@ -42,51 +42,54 @@
     <!-- TODO: Do here first -->
     <!-- Course Administration -->
     {% if "edit_course" in course_perms %}
-        <div id='course_admin_div' class='well' style='display:none;'>
-            <h2 id='course_admin' data-ajaxURL="{% url 'change_perm' %}" data-courseid="{{course.id}}">Course Membership Administration</h2>
-            <div class='row'>
-                {% csrf_token %}
-                <div class='col-xs-3 col-xs-offset-1 text-left lead Bold'>
-                    <u><strong> User Name </strong></u>
-                </div>
-                <div class='col-xs-4 text-center lead bold'>
-                    <u><strong> Instructor </strong></u>
-                </div>
-                <div class='col-xs-4 text-center lead'>
-                    <u><strong> Student </strong></u>
-                </div>
-                {% for SingleUser, Permissions in object_users.items %}
-                    {% if SingleUser != user and not SingleUser.is_superuser %}
-                        <div class='admin_row' data-username='{{SingleUser}}'>
-                            <div class='col-xs-3 col-xs-offset-1 text-left lead'>
-                            <p>{{SingleUser}}</p>
-                            </div>
-                            <div class='col-xs-4 text-center lead edit_course' data-codename="core.edit_course">
-                                <p>
-                                    {% if "edit_course" in Permissions %}
-                                        <i class="fa fa-toggle-on text-primary fa-lg perm_togg" style='cursor:pointer;'></i>
-                                    {% else %}
-                                        <i class="fa fa-toggle-off text-muted fa-lg perm_togg" style='cursor:pointer;'></i>
-                                    {% endif %}
-                                </p>
-                            </div>
-                            <div class='col-xs-4 text-center lead view_course' data-codename="core.view_course">
-                                <p>
-                                {% if "view_course" in Permissions %}
-                                    <i class="fa fa-toggle-on text-primary fa-lg perm_togg" style='cursor:pointer;'></i>
-                                {% else %}
-                                    <i class="fa fa-toggle-off text-muted fa-lg perm_togg" style='cursor:pointer;'></i>
-                                {% endif %}
-                                </p>
-                            </div>
-                        </div>
-                    {% endif %}
-                {% endfor %}
+        {% csrf_token %}
+        <div id='course_admin_div' class='card card-body bg-light' style='display:none;'>
+            <div class="card-header">
+                <h2 id='course_admin' data-ajaxURL="{% url 'change_perm' %}" data-courseid="{{ course.id }}">Course Membership Administration</h2>
             </div>
+            <table class="table table-striped">
+                <thead class="thead-dark">
+                    <th scope="col">#</th>
+                    <th scope="col">User Name</th>
+                    <th scope="col">Instructor</th>
+                    <th scope="col">Student</th>
+                </thead>
+                <tbody>
+                    {% for SingleUser, Permissions in object_users.items %}
+                        {% if SingleUser != user and not SingleUser.is_superuser %}
+                            <tr class="admin-row" data-username="{{ SingleUser }}"">
+                                <th scope="row"></th>
+                                <td>
+                                    {{ SingleUser }}
+                                </td>
+                                <td class='edit_course' data-codename="core.edit_course">
+                                    <div class="perm-togg">
+                                        {% if "edit_course" in Permissions %}
+                                            <i class="fas fa-toggle-on text-primary fa-lg" style='cursor:pointer;' pointer-events = 'none;'></i>
+                                        {% else %}
+                                            <i class="fas fa-toggle-off text-muted fa-lg" style='cursor:pointer;' pointer-events = 'none;'></i>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td class='view_course' data-codename="core.view_course">
+                                    <div class="perm-togg">
+                                        {% if "view_course" in Permissions %}
+                                            <i class="fas fa-toggle-on text-primary fa-lg" style='cursor:pointer;' pointer-events = 'none;'></i>
+                                        {% else %}
+                                            <i class="fas fa-toggle-off text-muted fa-lg" style='cursor:pointer;' pointer-events = 'none;'></i>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     {% endif %}
-    <!--End of Course Administration -->
 
+    <!--End of Course Administration -->
+    <br />
     {% for lessonkey, lessondata in activity_list_course.items %}
         <div class="col-md-12 col-xs-offset-2 text-left " style='font-size:1.3em;background-color:#f3f3f3;border: 1px solid #d4d4d4;box-shadow:inset 0 1px 1px -1px #bbb;height:2.4em; padding-top:0.5em;'>
 
@@ -183,26 +186,26 @@
     </div>
     <!-- End of Orphaned List of Activities -->
 
-
-
-
-
     {% if 'edit_course' in course_perms and orphan_num == 0 and not activity_list_course %}
         <div id="no_activities" style="display: none;" data-username='{{ user }}'></div>
     {% endif %}
 
-    <div id="has_created_lesson" class="modal fade" data-flag="{{ has_created_lesson }}">
-        <div class="modal-dialog">
+    <!-- After creating a lesson, display an infomation -->
+    <div id="has_created_lesson" class="modal fade in" data-flag="{{ has_created_lesson }}">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">Your lesson was successfully created!</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-body">
                     <p>Create a new activity and your lesson will appear in the lessons list.</p>
                     <p>Alternatively, you can edit an existing activity and assign it to your newly created lesson.</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -211,7 +214,7 @@
 <!-- Contentwrap end -->
 
 {% block javascripts %}
-    <script src="{% static "vendors/bootstrap3-editable/js/bootstrap-editable.js" %}"></script>
-    <script src="{% static "vendors/bootstrap-tour-0.12.0/js/bootstrap-tour-standalone.min.js" %}"></script>
-    <script src="{% static "js/course.js" %}"></script>
+    <script src="{% static 'vendors/bootstrap3-editable/js/bootstrap-editable.js' %}"></script>
+    <script src="{% static 'vendors/bootstrap-tour-0.12.0/js/bootstrap-tour-standalone.min.js' %}"></script>
+    <script src="{% static 'js/course.js' %}"></script>
 {% endblock %}
