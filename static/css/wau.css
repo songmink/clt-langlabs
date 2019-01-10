@@ -3,13 +3,13 @@
 */
 
 body {
-    font-size: 14px !important; 
+    font-size : 14px !important;
     margin-top: 4.25em;
 }
 
 footer {
-	font-size:1em;
-	overflow: hidden;
+	font-size: 1em;
+	overflow : hidden;
 }
 footer a {
 	color: rgb(10, 90, 180);
@@ -19,13 +19,13 @@ footer .uhm-logo {
     float: left;
 }
 footer .address {
-    color: rgb(25, 0, 0);
-    position: relative;
+    color      : rgb(25, 0, 0);
+    position   : relative;
     margin-left: 6.12em;
 }
 
 footer a:hover {
-	color: rgb(87, 87, 87);
+	color          : rgb(87, 87, 87);
 	text-decoration: none;
 }
 
