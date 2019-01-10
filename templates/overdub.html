@@ -17,7 +17,7 @@
         <h2>Instructions:</h2>
     </div>
     <div class="row" >
-        <div class="col-md-6" > <!-- style="border-right: 1px solid #ccc;" -->   
+        <div class="col-md-6">
             {% if activity.media or activity.upload_video %}
                 <div id="overdubVideo" class='videoDiv'></div>
                 <!-- Video player script -->
@@ -84,6 +84,7 @@
 
                 </script>
             {% endif %}
+
             {{ activity.instructions|safe }}
         </div>
 
@@ -94,20 +95,22 @@
                     {% include 'discussionroom.html' %} 
                 </div>
 
-        <!-- TODO: Implement a web socket for live chat -->
+        <!-- TODO: Implement a web live chat socket -->
         {% comment %} <div id='connectingDIV' class='row col-md-6 show' data-port="{{ chatserver_port}}" data-host="{{ chatserver_host }}" data-protocol="{{ chatserver_protocol }}">
             <div id='sysMessage' ><i class="fas fa-spinner fa-pulse"></i> Connecting to server ...</div>
         </div> {% endcomment %}
+
         <div id="connectedDIV" class="col-md-6 hidden">
             {% include 'discussion_form_template.html' %}
         </div>        
     </div>
+
     <div class="row">
         <!-- overdub posts -->
-        <div class="col-md-12 id='posts' data-ajaxurl='{% url 'delete_post' %}' data-saveajaxurl="{% url 'save_post' %}">
+        <div class="col-md-12" id='posts' data-ajaxurl="{% url 'delete_post' %}" data-saveajaxurl="{% url 'save_post' %}">
             {% if user_post_num != 0 or not activity.read_after_post or user.is_superuser or user in private_users %}
-                <ul id='posts2' class="chat">
-                    {% for post in posts reversed%}
+                <ul id='posts2' class='chat'>
+                    {% for post in posts reversed %}
                         {% if not activity.private_mode or user in private_users or post.creator in private_users or post.creator == user %}
                             {% if not post.parent_post %}
                                 <!-- Other's posts -->
@@ -151,7 +154,7 @@
     <script src="{% static "jqueryUpload/jquery.cookie.js" %}"></script>
     <!-- *****************Chat libs******************** -->
     <script src="{% static "js/socket.io.js" %}"></script>
-    <script src="{% static "js/tinymce/tinymce.min.js" %}"></script>
+    <script src="{% static "vendors/tinymce/tinymce.min.js" %}"></script>
     <script>WEB_SOCKET_SWF_LOCATION="{{ STATIC_URL }}flashsocket/WebSocketMain.swf"; window.room = "{{ room.id }}";</script>
     <script src="{% static "js/utils.js" %}"></script>
     <script src="{% static "js/global.js" %}"></script>
