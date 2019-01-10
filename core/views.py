@@ -385,6 +385,7 @@ def CourseCopyView(request, course_id):
 
     return  redirect(courseToCopy)
 
+# TODO: fix change perm with ajax
 # change user object permission
 @login_required
 def changePerm(request):
@@ -397,6 +398,7 @@ def changePerm(request):
             perm_user = User.objects.get(username=user_name)
         except:
             pass
+
         perm_codename = request.POST.get("codename", '')
         perm_object_type = request.POST.get("object_type", '')
         perm_object_id = request.POST.get("object_id", '')
@@ -416,6 +418,7 @@ def changePerm(request):
                 return HttpResponse('wrong object type')
         except:
             return HttpResponse('no such object')
+            
         if perm_operation_type == 'assign_perm':
             assign_perm(perm_codename, perm_user, target_object)
             return HttpResponse('successful change')
