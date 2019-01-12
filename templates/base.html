@@ -134,9 +134,11 @@
 
         <!-- Include all compiled plugins (below), or include individual files as needed -->
         <!-- popper.js should be loaded before bootstrap-4 -->
-        <script src="{% static "vendors/popper/popper.min.js" %}"></script>
-        <script src="{% static "vendors/bootstrap-4/js/bootstrap.min.js" %}"></script>
-        <script src="{% static "js/subscribe.js" %}"></script>
+        <script src="{% static 'vendors/popper/popper.min.js' %}"></script>
+        <script src="{% static 'vendors/bootstrap-4/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'js/subscribe.js' %}"></script>
+        <script src="{% static 'js/base.js' %}"></script>
+
         <!--This block javascripts will override from any child's block javascripts. If you have javascripts that should be overriden by a child, put here  -->
         {% block javascripts %} {% endblock %}
         <!-- Extra Scripts End -->

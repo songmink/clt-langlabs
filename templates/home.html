@@ -5,59 +5,68 @@
     <link href="{% static "css/home.css" %}" rel="stylesheet">
 {% endblock %}
 {% block contentwrap %}
-<h2 class="sub-header">Current Courses</h2>
-
+<h2 class="sub-header">Courses</h2>
+<div class="form-group pull-right">
+    <input type="text" class="search form-control" placeholder="What you looking for?">
+</div>
 <div class="row" >
-    <div class="grid" >
+    <table class="table table-hover table-bordered results" id="course">
+        <thead class="thead-dark text-center">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Title</th>
+                <th scope="col">Nickname</th>
+                <th scope="col">Status</th>
+                <th scope="col">Description</th>
+                <th scope="col"><i class="fas fa-chalkboard-teacher"></i></th>
+                <th scope="col"><i class="fas fa-users"></i></th>
+                <th scope="col"></th>
+            </tr>
+             <tr class="warning no-result">
+                <td colspan="8"><i class="fas fa-exclamation-triangle"></i> No result</td>
+            </tr>
+        </thead>
+        <tbody>
         {% for course in course_list %}
             {% get_obj_perms user for course as "course_temp_perms" %}
             {% if course.is_active or "edit_course" in course_temp_perms %}
-                <div class="grid-item">
-                    <div class="card">
-                        <div class="card-header">
-                            {% if not course.is_active %}
-                                <h4 class="card-title text-muted">{{ course.title }}</h4>
-                                <h6 class="card-subtitle mb-2 text-muted">(DEACTIVATED)</h6>
-                            {% else %}
-                                <h4 class="card-title">{{ course.title }}</h4>
-                                <h6 class="card-subtitle  mb-2 text-muted">{{ course.nickname }}<h6>
+                <tr "{% if not course.is_active %} class='text-muted' bgcolor='#E6E6E6' {% else %} bgcolor='#86DAEF' {% endif %}">
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ course.title }}</td>
+                    <td>{{ course.nickname }}</td>
+                    <td>{% if course.is_active %}Active{% else %}Deactivated{% endif %}</td>
+                    <td>{{ course.description }}</td>
+                    <td>
+                        {% for courseInstructor in course.get_private_users %}
+                            {% if not courseInstructor.is_superuser %}
+                                <b>{{ courseInstructor }}</b>
                             {% endif %}
-                        </div>
-                        <div class="card-body">
-                            <p>{{ course.description }}</p>
-                            <p>-with <i class="fas fa-graduation-cap"></i> 
-                                {% for courseInstructor in course.get_private_users %}
-                                    {% if not  courseInstructor.is_superuser %}
-                                        <u>{{ courseInstructor }}&nbsp;</u>
-                                    {% endif %}
-                                {% endfor %}
-                                <i class="fas fa-user"></i>&nbsp;{{ course.get_user_num }}
-                            </p>
-                            {% if not course.is_active %}
-                               <a href="{{ course.get_absolute_url }}" class="card-link">
-                                <button type="button" class="btn btn-warning text-muted">Check it</button>
+                        {% endfor %}
+                    </td>
+                    <td>{{ course.get_user_num }}</td>
+                    <td>
+                        {% if not course.is_active %}
+                            <a href="{{ course.get_absolute_url }}">
+                                <button type="button" class="btn btn-warning text-muted"><i class="fas fa-check"></i> Check it</button>
                             </a>
-                            {% else %}
-                                <a href="{{ course.get_absolute_url }}" class="card-link">
-                                    <button type="button" class="btn btn-success">Let&apos;s go!</button>
-                                </a>
-                            {% endif %}  
-                        </div>
-                    </div>
-                </div>
+                        {% else %}
+                            <a href="{{ course.get_absolute_url }}">
+                                <button type="button" class="btn btn-success"><i class="fas fa-hand-point-right"></i> Let&apos;s go!</button>
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>   
             {% endif %}
-        {% empty %}
-            <div class="col-md-12">
+        {% endfor %}
+        </tbody>
+    </table>
+    {% if not course_list %}
+        <div class="col-md-12">
                 <p class="center-block lead text-center">Hi, you do not appear to have any courses assigned to you. Try searching for your course <a href="{% url 'course_list' %}" class="btn btn-primary btn-sm"><i class="fa fa-search"></i></a>.</p>
             {% if perms.core.create_course %}
                 <p class="center-block lead text-center">Or, <a href="{% url 'create_collection' %}" class="btn btn-success"> <i class="fa fa-plus-square"></i> create a new course!</a></p>
             {% endif %}
             </div>
-        {% endfor %}
-    </div>
+    {% endif %}
 </div>
-{% endblock %}
-
-{% block javascripts %}
-    <script src="{% static "vendors/masonry/masonry.pkgd.min.js" %}"></script>
 {% endblock %}
