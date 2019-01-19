@@ -3,9 +3,11 @@
 {% load static %}
 
 {% block stylesheets %} 
-    <link href="{% static "css/discussion.css" %}" rel="stylesheet">
+    <link href="{% static 'css/discussion.css' %}" rel="stylesheet">
+    <link href="{% static 'css/overdub.css' %}" rel="stylesheet">
     <!-- *****************video player(need to be put in head to load audio)******************* -->
     <script src="https://jwpsrv.com/library/RJueXGxbEeOB1SIACi0I_Q.js"></script>
+   
 {% endblock %}
 
 <!-- Contentwrap start -->
@@ -15,7 +17,7 @@
     {% get_obj_perms user for activity as "activity_perms" %}
     {% include 'activity_header_template.html' %} 
 
-    <div class="container-fluid" style='height:100%;'>
+    <div class="" style='height:100%;'>
         <div class="row">
             <h2>Instructions:</h2>
         </div>
@@ -24,22 +26,9 @@
                 {{ activity.instructions|safe }}
             </div>
             <div class="col-md-8">
-                <div class="row mb-3">
-                    <!-- live chatting -->
-                    <h4><i class="fas fa-comments"></i> Live Chat </h4>
-                    <!-- chat room -->
+                <div class="col-mb-3">
                     {% include 'discussionroom.html' %}
                 </div>
-
-
-                    <!-- old chat -->
-                {% comment %} <div class="row">
-                    <div id='connectingDIV' class='row col-md-8 show' data-port="{{ chatserver_port}}" data-host="{{ chatserver_host }}" data-protocol="{{ chatserver_protocol }}">
-                        <div id='sysMessage' class="col-md-4 col-md-offset-4"><i class="fa fa-spinner fa-pulse fa-5x"></i> Connecting to server ...</div>
-                    </div>  
-                </div> {% endcomment %}
-
-
                 <div class="row">
                     <div class="col-md-12 hidden" id="connectedDIV" >
                         {% include 'discussion_form_template.html' %}
@@ -48,7 +37,7 @@
             </div>
 
 
-            
+            <!-- TODO: display posts without refreshing the page -->
             <!-- discussion posts -->
             <div id='posts' data-ajaxurl="{% url 'delete_post' %}" data-saveajaxurl="{% url 'save_post' %}">
                 {% if user_post_num != 0 or not activity.read_after_post or user.is_superuser or user in private_users %}
@@ -64,6 +53,8 @@
                     </ul>
                 {% endif %}
             </div>
+
+            
         </div>
     </div>
 
@@ -90,18 +81,22 @@
 
 {% block javascripts %} 
     <!-- *****************upload libs******************** -->
-    <script src="{% static "vendors/jqueryUpload/jquery.ui.widget.js" %}"></script>
-    <script src="{% static "vendors/jqueryUpload/jquery.iframe-transport.js" %}"></script>
-    <script src="{% static "vendors/jqueryUpload/jquery.fileupload.js" %}"></script>
-    <script src="{% static "vendors/jqueryUpload/jquery.cookie.js" %}"></script>
+    <script src="{% static 'vendors/jqueryUpload/jquery.ui.widget.js' %}"></script>
+    <script src="{% static 'vendors/jqueryUpload/jquery.iframe-transport.js' %}"></script>
+    <script src="{% static 'vendors/jqueryUpload/jquery.fileupload.js' %}"></script>
+    <script src="{% static 'vendors/jqueryUpload/jquery.cookie.js' %}"></script>
     <!-- *****************Chat libs******************** -->
-    <script src="{% static "js/socket.io.js" %}"></script>
-    <script src="{% static "vendors/tinymce/tinymce.min.js" %}"></script>
-    <script>WEB_SOCKET_SWF_LOCATION="{{ STATIC_URL }}flashsocket/WebSocketMain.swf"; window.room = "{{ room.id }}";</script>
-    <script src="{% static "js/utils.js" %}"></script>
-    <script src="{% static "js/global.js" %}"></script>
-    <script src="{% static "js/discussion.js" %}"></script>
+    <script src="{% static 'vendors/tinymce/tinymce.min.js' %}"></script>
+    <script src="{% static 'js/utils.js' %}"></script>
+    <script src="{% static 'js/global.js' %}"></script>
+    {% comment %} <script src="{% static 'js/discussion.js' %}"></script> {% endcomment %}
     <!-- ******************Recorder libs****************** -->
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+    <script src="{% static 'js/recorder.js' %}"></script>
+    <script src="{% static 'js/recorderControl.js' %}"></script>
+    <script src="{% static 'js/recorderDisplay.js' %}"></script>
+    <script src="{% static 'js/overdub.js' %}"></script>
+
+    <!-- Live Chat-->
+     <script src="{% static 'js/discussionroom.js' %}"></script>
     <!-- ************************************* -->
 {% endblock %}

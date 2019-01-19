@@ -2,165 +2,114 @@
 {% extends "base_activity.html" %}
 {% load static %}
 
-{% block contentwrap %}
-{% load guardian_tags %}
-{% get_obj_perms user for course as "course_perms" %}
-{% get_obj_perms user for activity as "activity_perms" %}
-
 {% block stylesheets %}
-    <link href="{% static "css/overdub.css" %}" rel="stylesheet">
+    <link href="{% static 'css/overdub.css' %}" rel="stylesheet">
 {% endblock %}
 
-{% include 'activity_header_template.html' %}
-<div class="container-fluid" style='height:100%;'>
-    <div class="row">
-        <h2>Instructions:</h2>
-    </div>
-    <div class="row" >
-        <div class="col-md-6">
-            {% if activity.media or activity.upload_video %}
-                <div id="overdubVideo" class='videoDiv'></div>
-                <!-- Video player script -->
-                <script>
-                    // Verification YouTube url
-                    function matchYoutubeUrl(url) {
-                        var p = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
-                        if(url.match(p)){
-                            return url.match(p)[1];
-                        }
-                        return false;
-                    }
-                                    
-                    // YouTube videoId parser
-                    function youtube_parser(url){
-                        var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
-                        var match = url.match(regExp);
-                        return (match&&match[7].length==11)? match[7] : false;
-                    }
-                                    
-                    // play only youtube video because Some users use media as a local media.                       
-                    if(matchYoutubeUrl('{{ activity.media }}')) {
-                        var ytplayer;
-                        function onYouTubeIframeAPIReady() {
-                            ytplayer = new YT.Player('overdubVideo', {
-                                width: '100%',
-                                //height: '100%',
-                                videoId: youtube_parser('{{ activity.media }}'),
-                                playerVars: { 
-                                        'autoplay': 0,
-                                        'controls': 0,
-                                        'rel': 0,
-                                        'showinfo': 0,
-                                        },
-                                        events: {
-                                                'onReady': onPlayerReady,
-                                        },
-                            });
-                        }           
-                        function onPlayerReady(event){
-                                ytplayer.stopVideo();
-                        }                                                    
-                    } else {
-                        // play all media except youtube video
-                        jwplayer("overdubVideo").setup({
-                            file: {% if activity.upload_video %}"http://{{activity.upload_video.url}}"{% else %}"{{activity.media}}"{% endif %},
-                                width: "100%",
-                                skin: "{% static "jwplayer-skins/five.xml" %}",
-                                autostart: true,
-                                controls: false,
-                                mute: true
-                        });
-                        // Added auto buffering for overdub Video
-                        initialPause = 1
-                        jwplayer('overdubVideo').onTime(function(time){
-                            if(initialPause==1){
-                                jwplayer('overdubVideo').pause()
-                                jwplayer('overdubVideo').setVolume(100)
-                                initialPause = 0
-                            
-                            }
-                        })
-                    }
-
-                </script>
-            {% endif %}
-
-            {{ activity.instructions|safe }}
+{% block contentwrap %}
+    {% load guardian_tags %}
+    {% get_obj_perms user for course as "course_perms" %}
+    {% get_obj_perms user for activity as "activity_perms" %}
+    {% include 'activity_header_template.html' %}
+    <div class="" style='height:100%;'>
+        <div class="row">
+            <h2>Instructions:</h2>
         </div>
+        <div class="row">
+            <!-- Video left panel -->
+            <div class="col-md-5">
+                <div class="row">
+                    {% if activity.media %}
+                        <div id="overdubVideo" class='videoDiv' data-media="{{ activity.media }}" data-upload-video="{{ activity.upload_video }}"></div>
+                    {% elif activity.upload_video%}
+                    <!-- TODO: upload video player-->
+                    <video width="530" height="440" controls autoplay>
+                        <source src="{% static 'mov_bbb.mp4' %}" type="video/mp4"> </source>
+                    </video>
+                    {% endif %}
 
-        <div class="row mb-3">
-                    <!-- live chatting -->
-                    <h4><i class="fas fa-comments"></i> Live Chat </h4>
-                    <!-- chat room -->
+                    {{ activity.instructions|safe }}
+                </div>
+                <hr>
+                 <!-- live chat room -->
+                <div class="row">
                     {% include 'discussionroom.html' %} 
                 </div>
-
-        <!-- TODO: Implement a web live chat socket -->
-        {% comment %} <div id='connectingDIV' class='row col-md-6 show' data-port="{{ chatserver_port}}" data-host="{{ chatserver_host }}" data-protocol="{{ chatserver_protocol }}">
-            <div id='sysMessage' ><i class="fas fa-spinner fa-pulse"></i> Connecting to server ...</div>
-        </div> {% endcomment %}
-
-        <div id="connectedDIV" class="col-md-6 hidden">
-            {% include 'discussion_form_template.html' %}
-        </div>        
-    </div>
-
-    <div class="row">
-        <!-- overdub posts -->
-        <div class="col-md-12" id='posts' data-ajaxurl="{% url 'delete_post' %}" data-saveajaxurl="{% url 'save_post' %}">
-            {% if user_post_num != 0 or not activity.read_after_post or user.is_superuser or user in private_users %}
-                <ul id='posts2' class='chat'>
-                    {% for post in posts reversed %}
-                        {% if not activity.private_mode or user in private_users or post.creator in private_users or post.creator == user %}
-                            {% if not post.parent_post %}
-                                <!-- Other's posts -->
-                                {% include 'post_template.html' with activity_type=activity.activity_type %}
-                            {% endif %}
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        </div>
-    </div>
-</div>
-
-<!-- Small modal -->
-<div>
-    <button class="btn btn-primary hide notificationButton" data-toggle="modal" data-target=".bs-example-modal-sm">Small modal</button>
-    <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-header" style='padding:9px;'>
-                    <h5 class="modal-title" id="myModalLabel">Help Text</h5>
+            </div>
+            <!--  Right record panel -->
+            <div class="col-md-7">
+                <div class="row">
+                    <!-- Recorder -->
+                    <div id="connectedDIV" class="col-md-12 hidden">
+                        {% include 'discussion_form_template.html' %}
+                    </div>  
                 </div>
-                <div class="modal-body">
-                    Please <kbd>save</kbd> recording before sending post or click <kbd>cancel</kbd>
+            </div>    
+        </div>
+
+        <!-- record posting -->
+        <div class="row">
+            <!-- overdub posts -->
+            <div class="col-md-12" id="posts" data-ajaxurl="{% url 'delete_post' %}" data-saveajaxurl="{% url 'save_post' %}">
+                {% if user_post_num != 0 or not activity.read_after_post or user.is_superuser or user in private_users %}
+                    <ul id='posts2' class='chat'>
+                        {% for post in posts reversed %}
+                            {% if not activity.private_mode or user in private_users or post.creator in private_users or post.creator == user %}
+                                {% if not post.parent_post %}
+                                    <!-- Other's posts -->
+                                    {% include 'post_template.html' with activity_type=activity.activity_type %}
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+
+
+
+    </div>
+
+    <!-- Small modal invisible` -->
+    <div>
+        <button class="btn btn-primary invisible notificationButton" data-toggle="modal" data-target=".bs-example-modal-sm">Small modal</button>
+        <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header" style='padding:9px;'>
+                        <h5 class="modal-title" id="myModalLabel">Help Text</h5>
+                    </div>
+                    <div class="modal-body">
+                        Please <kbd>save</kbd> recording before sending post or click <kbd>cancel</kbd>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 {% endblock %}
 
 {% block javascripts %}
+    {{ block.super }}
+    
     <!-- Video player -->
     <script src="https://jwpsrv.com/library/RJueXGxbEeOB1SIACi0I_Q.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
     <!-- *****************upload libs******************** -->
-    <script src="{% static "jqueryUpload/jquery.ui.widget.js" %}"></script>
-    <script src="{% static "jqueryUpload/jquery.iframe-transport.js" %}"></script>
-    <script src="{% static "jqueryUpload/jquery.fileupload.js" %}"></script>
-    <script src="{% static "jqueryUpload/jquery.cookie.js" %}"></script>
+    <script src="{% static 'vendors/jqueryUpload/jquery.ui.widget.js' %}"></script>
+    <script src="{% static 'vendors/jqueryUpload/jquery.iframe-transport.js' %}"></script>
+    <script src="{% static 'vendors/jqueryUpload/jquery.fileupload.js' %}"></script>
+    <script src="{% static 'vendors/jqueryUpload/jquery.cookie.js' %}"></script>
     <!-- *****************Chat libs******************** -->
-    <script src="{% static "js/socket.io.js" %}"></script>
-    <script src="{% static "vendors/tinymce/tinymce.min.js" %}"></script>
-    <script>WEB_SOCKET_SWF_LOCATION="{{ STATIC_URL }}flashsocket/WebSocketMain.swf"; window.room = "{{ room.id }}";</script>
-    <script src="{% static "js/utils.js" %}"></script>
-    <script src="{% static "js/global.js" %}"></script>
-    <script src="{% static "js/sockets.js" %}"></script>
-    <script src="{% static "js/overdub.js" %}"></script>
+    <script src="{% static 'vendors/tinymce/tinymce.min.js' %}"></script>
+    <script src="{% static 'js/utils.js' %}"></script>
+    <script src="{% static 'js/global.js' %}"></script>
     <!-- ******************Recorder libs****************** -->
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
-    <!-- ************************************* -->
+    <script src="{% static 'js/recorder.js' %}"></script>
+    <script src="{% static 'js/recorderControl.js' %}"></script>
+    <script src="{% static 'js/recorderDisplay.js' %}"></script>
+    <script src="{% static 'js/overdub.js' %}"></script>
+
+    <!-- Live Chat-->
+     <script src="{% static 'js/discussionroom.js' %}"></script>
 {% endblock %}

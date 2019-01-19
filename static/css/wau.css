@@ -50,3 +50,11 @@ display: table-row;
 padding: 8px;
 color  : #ccc;
 }
+
+.btn-group.special {
+    display: flex;
+  }
+  
+  .special .btn {
+    flex: 1
+  }
