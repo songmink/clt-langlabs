@@ -1,6 +1,6 @@
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
-from django.urls import re_path
+from django.urls import path
 
 from . import consumers
 
@@ -9,7 +9,7 @@ application = ProtocolTypeRouter({
     'websocket': AuthMiddlewareStack(
         URLRouter(
             [
-                re_path(r'^discussion/(?P<room_name>\w+)$', consumers.ChatConsumer),
+                path('live-chat/<room_name>', consumers.ChatConsumer),
             ]
         )
     ),

@@ -154,8 +154,8 @@ MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media')
 # If it is 'True' the django user login will be disabled
 CAS = False
 
-# chat
-ASGI_APPLICATION = "discussions.routing.application"
+# Django Channel 2
+ASGI_APPLICATION = "core.routing.application"
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',

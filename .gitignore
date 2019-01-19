@@ -50,6 +50,7 @@ _build/
 
 # VSCODE
 /.vscode
+/.env
 
 #direnv
 .envrc
