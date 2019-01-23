@@ -1,7 +1,7 @@
 {% load static %}
 <!-- TODO: Merge to discussion-form-template-->
 <!-- TODO: Chat or autoreload???-->
-<h5><i class="fas fa-comments"></i> Live Chat on this course</h5>
+<h5><i class="fas fa-comments"></i> Live chat with all people in this activity</h5>
 <textarea class="full-width" id="chat-log" rows="5" readonly></textarea>
 <br>
 
@@ -10,5 +10,6 @@
     <input class="full-width" id="chat-message-input" type="text" onkeypress = "if (event.keyCode == 13) return false;" /><br/>
     <input class="full-width" id="chat-message-submit" type="button" value="Send"/>
 </form>
-
-<!-- Pass Django variables to JS -->
+<hr>
+<p><span style="color: Dodgerblue;"><i class="fas fa-info-circle"></i></span>
+This chat window does not keep any log history and does not save any content too. If you leave this page, you will lost the chat contents.</p>  
