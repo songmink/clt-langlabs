@@ -5,97 +5,70 @@
 <div class="container-fluid" style="border: 1px solid green;">
     <br>
     <h6><i class="fas fa-microphone-alt"></i> Recording</h6>
-
-    <!-- equalizer-->
-    <div class="row">
-        <div class="col-md-12" id="equalizer">
-            <canvas id="analyser" height="64"></canvas>
-        </div>
-        <div class="col-md-12 controls-btn">
-            <button type="button" class="btn btn-secondary btn-sm btn-block" id="btn-record" onclick="toggleRecording(this);">
-                <i class="fas fa-microphone-alt"></i> Record
-            </button>
-        </div>
-        <!-- Display only for youtube video -->
-        {% if activity.media %}
-            <div class="col-md-12">
-            <input type="checkbox" id="youtube-mute" name="mute" autocomplete="off"> Mute Youtube Sound
+    <section class="main-controls">
+        <div class="row">
+            <div class="col-md-12" id="visual">
+                <canvas id="analyser"></canvas>
             </div>
-        {% endif %}
-    </div>
-    <hr>
-    <!-- wave -->
-    <div class="row">
-        <div class="col-md-12" id="wave">
-            <canvas id="wavedisplay" height="64"></canvas>
-	    </div>
-        <div class="col-md-4 controls-btn mb-1">
-            <button type="button" class="btn btn-secondary btn-sm btn-block" id="btn-play" >
-                <i class="fas fa-play-circle"></i> Play
-            </button>
-        </div>
-        <div class="col-md-4 controls-btn mb-1">
-            <a id="record-save" href="#" data-filename="{{ activity_type }}_{{ activity.id }}_{{ user }}_{% now 'Y-m-d_H-i-s'%}">
-                <button type="button" class="btn btn-secondary btn-sm btn-block" id="btn-save">
-                    <i class="fas fa-file-audio"></i> Download
+            <div class="col-md-12 controls-btn" id="record-ctrl" data-filename="{{ course.title }}_{{ activity.activity_type }}_{{ activity.id }}_{{ user }}">
+                <button type="button" class="btn btn-secondary btn-sm btn-block" id="btn-record">
+                    <i class="fas fa-microphone-alt"></i> Record
                 </button>
-            </a>
+            </div>
+            <!-- Display only for youtube video -->
+            {% if activity.media %}
+                <div class="col-md-12">
+                <input type="checkbox" id="youtube-mute" name="mute" autocomplete="off"> Mute Youtube Sound
+                </div>
+            {% endif %}
         </div>
-        <div class="col-md-4 controls-btn mb-1">
-            <button type="button" class="btn btn-secondary btn-sm btn-block" id="btn-remove" >
-                <i class="fas fa-trash"></i> Remove
-            </button>
-        </div>
-    </div>
+    </section>
     <hr>
+    <p><i class="fas fa-volume-up"></i> After recording, your temporary sound(s) will be here.<br>
+    ( <i class="fas fa-exclamation-triangle fa-sm" style="color: red;"></i>You will lost all temporary sounds, when you leave this page or refresh.)</p>
+    <form role="form">{% csrf_token %}
+        <section class="sound-clips">
+            <!-- 
+                temporary sounds list will be here 
+            --> 
+        </section>
+        <hr>
+        <!-- file attache -->
+        <div class="form-check clip">
+            <input class="form-check-input" type="radio" id="attached" name="temp" checked><h6><i class="fas fa-file-upload"></i> File: </h6>
+            <label class="form-check-label" for="filename">
+                <button id='uploadTrigger' type="button" class="btn btn-primary btn-sm">
+                    <i class="fas fa-paperclip"></i> Attachment
+                </button>
+            </label>
+        </div>
+        <hr>
+        <h6><i class="fas fa-comment-alt"></i> Message</h6>
+        <!-- TODO: Fix the message box error -->
+        <div id='postTextarea' class="form-control"></div>
 
-
-
-
-
-
-    <form full-width role="form">{% csrf_token %}
+        <!-- hidden input data -->
         <input id='activityType' type="hidden" name="activityTypes" value='{{ activity.activity_type }}'>
         <input id='activityID' type="hidden" name="activityIDs" value='{{ activity.id }}'>
         <input id='activityUSER' type="hidden" name="activityUSERs" value='{{ user }}'>
-
-
-        <!-- Test code for recorder with html5 and javascript -->
-        <div>
-
-            {% comment %} <button id='recordTrigger' type="button" class="btn btn-sm full-width" data-swfurl="{% static "swf/barebonesRecorder7.swf" %}" 
-                    data-recorderserver='{{recorder_myServer}}' data-recorderhandler='{{recorder_myHandler}}' data-recorderdirectory='{{recorder_myDirectory}}' 
-                    data-recorderlicense='{{recorder_license}}' data-userinfo='audio_{{ user.id}}_{{user.username}}' 
-                    data-playerskin="{% static "jwplayer-skins/five.xml" %}" >Button
-            </button> {% endcomment %}
-        </div>
-        
-        <div>
-            <h6><i class="fas fa-file-upload"></i> File: </h6> 
-            <button id='uploadTrigger' type="button" class="btn btn-primary btn-sm">
-                <i class="fas fa-paperclip"></i> attachments
-            </button>
-        </div>
-        <hr>
-            <h6><i class="fas fa-comment-alt"></i> Message</h6>
-            <div id='postTextarea' class="form-control"></div>
     </form>
     <br>
- </div>
+</div>
+<!-- TODO: Save all data to server -->
 <button id='sendPost' type="button" class="btn btn-success btn-sm full-width" value='{% url "save_post" %}'>
     <i class="far fa-paper-plane"></i> Submit all
 </button>
 
 
 
-    <!-- *******************file upload****************** -->
-    <!-- The file input field used as target for the file upload widget -->
-    <input id="fileupload" type="file" name="file" style="display:none;" multiple>
-        <!-- The global progress bar -->
-        <div id="progress" class="progress" style='height:1px;margin:0px;opacity:0.7;'>
-            <div class="progress-bar progress-bar-success"></div>
-        </div>
-        <!-- container for the uploaded files -->
-        <div id='inputAttachments'></div>
-        <!-- container for recorder -->
-        <div id='CLTREC_container'><div id='CLTREC'></div></div>
+<!-- *******************file upload****************** -->
+<!-- The file input field used as target for the file upload widget -->
+<input id="fileupload" type="file" name="file" style="display:none;" multiple>
+    <!-- The global progress bar -->
+    <div id="progress" class="progress" style='height:1px;margin:0px;opacity:0.7;'>
+        <div class="progress-bar progress-bar-success"></div>
+    </div>
+    <!-- container for the uploaded files -->
+    <div id='inputAttachments'></div>
+    <!-- container for recorder -->
+    <div id='CLTREC_container'><div id='CLTREC'></div></div>
