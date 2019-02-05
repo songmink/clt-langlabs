@@ -57,4 +57,9 @@ _build/
 
 # eslint
 .eslintrc.js
+
+# npm
 package.json
+package-lock.json
+
+.favorites.json
