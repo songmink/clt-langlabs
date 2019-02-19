@@ -15,8 +15,14 @@ $(function () {
     }
 });
 
-/*
- * Youtube player
+/** - Youtube iFrame API -
+ * 
+ *  See: https://developers.google.com/youtube/iframe_api_reference
+ * 
+ *  Youtube player will be controlled by HTML5 recording function. There is a 
+ * mute function. The recording does not record youtube sound eventhough youtube 
+ * sound is on. The mute funtion for Youtube is the only listener's choice. 
+ * Users can record their voice hearing or without hearing the youtube sound.  
  */
 
 function ytVideo(url) {
@@ -29,21 +35,21 @@ function ytVideo(url) {
         var firstScript = document.getElementsByTagName('script')[0];
 
         tag.src = 'https://www.youtube.com/iframe_api';
-        tag.id = ytScriptId;
+        tag.id = video;
         firstScript.parentNode.insertBefore(tag, firstScript);
     }
 
-    onYouTubeIframeAPIReady = function () {
+    window.onYouTubeIframeAPIReady = function () {
         ytPlayer = new window.YT.Player('overdubVideo', {
             heigh: '320',
             width: '480',
             videoId: videoId,
-            // host      : 'https://youtube.com',
+            // host      : 'https://youtube.com', // FIXME: DOM error because the orignal target is youtube  
             playerVars: {
-                origin: 'localhost:8000',
+                origin: 'localhost:8000', // TODO: change on a live server
                 color: 'white',
                 autoplay: 0,
-                controls: 1,
+                controls: 0,
                 rel: 0,
                 showinfo: 0,
                 audohide: 0,
@@ -130,7 +136,14 @@ function matchYoutubeUrl(url) {
 
 /*
  * HTML5 Media Stream Recorder API
- * See: 'https://developer.mozilla.org/en-US/docs/Web/API/MediaStream_Recording_API'
+ *  See: 'https://developer.mozilla.org/en-US/docs/Web/API/MediaStream_Recording_API'
+ * 
+ *  This recording system will control the Youtube video. When a user start 
+ * or stop the recording, youtube video will be started or stopped. However, the 
+ * controller of Yuotube video on the screen does not control this recording 
+ * system. In other words, during the recording, the user can stop the Youtube 
+ * video but the recoding still work. Because users can control the Youtube video
+ * without starting their record.
  */
 
 // Set up recorder's variables
@@ -142,9 +155,22 @@ var canvas = document.getElementById('analyser');
 var soundClips  = document.querySelector('.sound-clips');
 var mainSection = document.querySelector('.main-controls');
 
+var sendPost = document.querySelector('#sendPost');
+
 const filename = ()=> {
-    var now = new Date().toISOString();
-    var name = document.getElementById('record-ctrl').dataset.filename.replace(/ /g, '-')+'_'+now.replace(/:/g,'-');
+    var d = new Date();
+
+    var curr_day = d.getDate();
+    var curr_month = d.getMonth() + 1;
+    var curr_year = d.getFullYear();
+
+    var curr_hour = d.getHours();
+    var curr_min = d.getMinutes();
+    var curr_sec = d.getSeconds();
+    
+    var now =  curr_year+'-'+curr_month+'-'+curr_day+'-'+curr_hour+'-'+curr_min+'-'+curr_sec;
+
+    var name = document.getElementById('record-ctrl').dataset.filename.replace(/ /g, '-')+'_'+now;
     return name;
 };
 
@@ -188,15 +214,20 @@ const filename = ()=> {
         navigator.mediaDevices.getUserMedia = promisifiedOldGUM;
     }
 
+    // deletes a post/comment
+    $('#posts').on('click', '.removePost', function() {
+        var ajax_url = $('#posts').data('ajaxurl');
+        var post_id = $(this).closest('li').data('postid');
+        var data = {'post_id': post_id};
+        var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
+        Ajax.post(ajax_url, data, csrftoken, function() {
+            $('#'+post_id).remove();
+        });
+    });
+
 })();
 
-// visualiser setup - create web audio api context and canvas
-
-var audioCtx = new(window.AudioContext || webkitAudioContext)();
-var canvasCtx = canvas.getContext('2d');
-
 //main block for doing the audio recording
-
 if (navigator.mediaDevices.getUserMedia) {
     console.log('getUserMedia supported.');
 
@@ -225,6 +256,7 @@ if (navigator.mediaDevices.getUserMedia) {
                 btnRecord.classList.remove('btn-danger');
                 btnRecord.classList.add('btn-secondary');
                 btnRecord.innerHTML = '<i class="fas fa-microphone-alt"></i> Record';
+                sendPost.classList.remove('disabled');
                 recording = false;
             } else {
                 mediaRecorder.start();
@@ -242,16 +274,18 @@ if (navigator.mediaDevices.getUserMedia) {
                 btnRecord.classList.remove('btn-secondary');
                 btnRecord.classList.add('btn-danger');
                 btnRecord.innerHTML = '<i class="fas fa-stop-circle"></i> Recording...';
+                sendPost.classList.add('disabled');
 
                 recording = true;
             }
         };
 
         // When stopped the recording, display the recording as a temporary file
-        mediaRecorder.onstop = function (e) {
+        mediaRecorder.onstop = function () {
             console.log('data available after MediaRecorder.stop() called.');
+            var fname = filename();
 
-            var clipName = prompt('Enter a name for your sound clip?', filename());
+            var clipName = prompt('Enter a file name or use default file name for your sound clip?\n(If you click the cancel, you lost your recording.)', fname);
             if(clipName === null) {
                 return;
             }else{
@@ -270,19 +304,19 @@ if (navigator.mediaDevices.getUserMedia) {
 
                 clipInput.classList.add('form-check-input');
                 clipInput.setAttribute('type', 'radio');
-                clipInput.setAttribute('id', filename());
-                clipInput.setAttribute('name', 'temp');
+                clipInput.setAttribute('id', fname);
+                clipInput.setAttribute('name', 'temp-audio');
 
                 audio.setAttribute('controls', '');
 
                 clipLabel.classList.add('form-check-label');
-                clipLabel.setAttribute('for', filename());
+                clipLabel.setAttribute('for', fname);
 
                 deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i> Delete';
                 deleteButton.className = 'btn btn-danger btn-sm delete';
 
                 if (clipName === null) {
-                    clipLabel.textContent = filename();
+                    clipLabel.textContent = fname;
                 } else {
                     clipLabel.textContent = clipName;
                 }
@@ -298,12 +332,16 @@ if (navigator.mediaDevices.getUserMedia) {
 
                 audio.controls = true;
                 var blob = new Blob(chunks, {
-                    'type': 'audio/ogg; codecs=opus'
+                    // 'type': 'audio/ogg; codecs=opus' // MS Windows not support as a default
+                    'type': 'audio/wav'
+                    // 'type': 'audio/mpeg-3' // needs ffmpeg
                 });
                 chunks = [];
                 var audioURL = window.URL.createObjectURL(blob);
                 audio.src = audioURL;
-                console.log('recorder stopped');
+                console.log('recorder stopped and audio url is '+audio.src);
+                clipContainer.setAttribute('id', audio.src);
+                clipInput.setAttribute('value', audio.src);
 
                 deleteButton.onclick = function (e) {
                     var evtTgt = e.target;
@@ -312,7 +350,7 @@ if (navigator.mediaDevices.getUserMedia) {
 
                 clipLabel.onclick = function () {
                     var existingName = clipLabel.textContent;
-                    var newClipName = prompt('Enter a new name for your sound clip?');
+                    var newClipName = prompt('Enter a new name for your sound clip?', existingName);
                     if (newClipName === null) {
                         clipLabel.textContent = existingName;
                     } else {
@@ -334,10 +372,15 @@ if (navigator.mediaDevices.getUserMedia) {
     navigator.mediaDevices.getUserMedia(constraints).then(onSuccess, onError);
 
 } else {
+    alert('Your web browser does not support this recording system.');
     console.log('getUserMedia not supported on your browser!');
 }
 
+// visualiser setup - create web audio api context and canvas
 function visualize(stream) {
+    var audioCtx = new(window.AudioContext || webkitAudioContext)();
+    var canvasCtx = canvas.getContext('2d');
+
     var source = audioCtx.createMediaStreamSource(stream);
 
     var analyser = audioCtx.createAnalyser();
@@ -360,18 +403,14 @@ function visualize(stream) {
 
         canvasCtx.fillStyle = 'rgb(200, 200, 200)';
         canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
-
         canvasCtx.lineWidth = 2;
         canvasCtx.strokeStyle = 'rgb(0, 0, 0)';
-
         canvasCtx.beginPath();
 
         var sliceWidth = WIDTH * 1.0 / bufferLength;
         var x = 0;
 
-
         for (var i = 0; i < bufferLength; i++) {
-
             var v = dataArray[i] / 128.0;
             var y = v * HEIGHT / 2;
 
@@ -386,16 +425,69 @@ function visualize(stream) {
 
         canvasCtx.lineTo(canvas.width, canvas.height / 2);
         canvasCtx.stroke();
-
     }
 }
 
 window.onresize = function () {
     canvas.width = mainSection.offsetWidth;
 };
-
 window.onresize();
 
+// All in one upload
+$(document).ready(function () {
+    $('#sendPost').click(function () {
+        console.log('Try submit...');
+        var form = document.getElementById('overdub');
+
+        // TODO: File upload before posting, use formData
+        var blobURL = $('input[type="radio"]:checked').val();
+        var uploadFile = document.getElementById('fileupload').value;
+        var file = document.querySelector('[type=file]').files;
+
+        // Select between upload file and recordings
+        if(blobURL == 'fileupload') {
+            blobURL = uploadFile;
+        }
+
+        console.log('BlobURL: '+blobURL);
+        console.log('upload file: '+uploadFile);
+        console.log('file: '+ file);
+
+        // Post
+        $.ajax({
+            type: 'POST',
+            url: sendPost.value,
+            csrftoken: $('input[name=csrfmiddlewaretoken]').val(),
+            data: {
+                text: $('#postTextarea').val(),
+                activity_id: sendPost.dataset.activityId,
+                activity_type: sendPost.dataset.activityType,
+
+                user: sendPost.dataset.user,
+                user_is_instructor: $('#activity_title').data('userisinstructor'),
+
+                post_area: $('#posts').val(),
+                posts: $('#posts2').val(),
+
+            },
+            success: function (data) {
+                console.log('Post submitted!');
+                $('#postTextarea').val('');
+                // prepend the post on the top list without refreshing
+                $('#posts').prepend(data);
+
+            },
+            error : function(xhr,errmsg) {
+                $('#results').html('<div class="alert-box alert radius" data-alert>Oops! We have encountered an error: '+errmsg+
+                    ' <a href="#" class="close">&times;</a></div>'); // add the error to the dom
+                console.log(xhr.status + ': ' + xhr.responseText); // provide a bit more info about the error to the console
+            },
+        });
+        console.log('Finish!');
+        return false;
+    });
+
+});
 
 
 // Another player
