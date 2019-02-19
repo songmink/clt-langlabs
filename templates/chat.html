@@ -8,8 +8,8 @@
 <!-- Chat input area -->
 <form class="full-width" id="live-chat" data-activity-type="{{ activity.activity_type }}" data-activity-id="{{ activity.id }}" data-username="{{ request.user }}">
     <input class="full-width" id="chat-message-input" type="text" onkeypress = "if (event.keyCode == 13) return false;" /><br/>
-    <input class="full-width" id="chat-message-submit" type="button" value="Send"/>
+    <input class="full-width btn btn-info btn-sm" id="chat-message-submit" type="button" value="Send"/>
 </form>
 <hr>
 <p><span style="color: Dodgerblue;"><i class="fas fa-info-circle"></i></span>
-This chat window does not keep any log history and does not save any content too. If you leave this page, you will lost the chat contents.</p>  
+This chat does not keep or save any log history and content. If you leave this page, you will lost all chat contents.</p>  
