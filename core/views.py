@@ -1,7 +1,7 @@
 # core/views.py
 import json
 from datetime import datetime
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -258,9 +258,7 @@ class PostSaveView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, View):
             'recorder_myDirectory': settings.RECORDER_MYDIRECTORY,
             'recorder_myServer': settings.RECORDER_MYSERVER,
         }
-        rendered_string = render_to_string("post_template.html", context,
-                                           context_instance=RequestContext(request))
-        return self.render_json_response(rendered_string)
+        return render(request, "post_template.html", context)
 
     @staticmethod
     def create_post(request):
