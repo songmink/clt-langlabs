@@ -7,7 +7,11 @@ from django.contrib import admin, auth
 
 admin.autodiscover()
 
-from core.views import IndexView, HomeView, CourseListView, CourseIndexView, CourseCreateView, CourseUpdateView, CourseDeleteView, CourseCopyView, ActivityCreateIndexView, LessonUpdateView, LessonCreateView, LessonAddView, PostDeleteView, PostSaveView, fileUpload, subscribeCourse, changePerm, copyActivity, editLessonTitle, editEssayDraft, uhcaslogout
+from core.views import IndexView, HomeView
+from core.views import CourseListView, CourseIndexView, CourseCreateView, CourseUpdateView, CourseDeleteView, CourseCopyView
+from core.views import ActivityCreateIndexView, LessonUpdateView, LessonCreateView, LessonAddView
+from core.views import PostDeleteView, PostSaveView, fileUpload, subscribeCourse, changePerm, copyActivity
+from core.views import editLessonTitle, editEssayDraft, uhcaslogout
 from discussions.views import DiscussionCreateView, DiscussionDetailView, DiscussionUpdateView, DiscussionDeleteView
 from essays.views import EssayCreateView, EssayDetailView, EssayUpdateView, EssayDeleteView, EssayResponseUpdateView
 from overdub_discussions.views import OverdubCreateView, OverdubDetailView, OverdubUpdateView, OverdubDeleteView
