@@ -9,8 +9,8 @@ $(function () {
         'ws://' + window.location.host + '/live-chat/' + roomName);
 
     chatSocket.onmessage = function (e) {
-        var                    data                = JSON.parse(e.data);
-        var                    message             = data['message'];
+        var data = JSON.parse(e.data);
+        var message = data['message'];
         document.querySelector('#chat-log').value += (message + '\n');
     };
 
@@ -27,7 +27,7 @@ $(function () {
 
     document.querySelector('#chat-message-submit').onclick = function (e) {
         var messageInputDom = document.querySelector('#chat-message-input');
-        var message         = userName + ": " + messageInputDom.value;
+        var message = userName + ': ' + messageInputDom.value;
         chatSocket.send(JSON.stringify({
             'message': message
         }));
@@ -36,8 +36,8 @@ $(function () {
     };
 
     // auto load the end of chat page
-    var textarea = document.getElementById('chat-log');
+    var chatarea = document.getElementById('chat-log');
     setInterval(function () {
-        textarea.scrollTop = textarea.scrollHeight;
+        chatarea.scrollTop = chatarea.scrollHeight;
     }, 1000);
 });
