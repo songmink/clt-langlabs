@@ -63,3 +63,8 @@ package.json
 package-lock.json
 
 .favorites.json
+
+*.conf
+*.log
+
+*.python-version
