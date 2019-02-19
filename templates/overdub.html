@@ -17,7 +17,7 @@
         </div>
         <div class="row">
             <!-- Video left panel -->
-            <div class="col-md-5">
+            <div class="col-md-5" id="left">
                 <div class="row">
                     {% if activity.media %}
                         <div id="overdubVideo" class='videoDiv' data-media="{{ activity.media }}" data-upload-video="{{ activity.upload_video }}"></div>
@@ -36,38 +36,33 @@
                     {% include 'chat.html' %} 
                 </div>
             </div>
+
             <!--  Right record panel -->
-            <div class="col-md-7">
+            <div class="col-md-7" id="right">
                 <div class="row">
                     <!-- Recorder -->
                     <div id="connectedDIV" class="col-md-12 hidden">
                         {% include 'discussion_form_template.html' %}
-                    </div>  
-                </div>
-            </div>    
-        </div>
 
-        <!-- TODO: Right panel all contents posting -->
-        <div class="row">
-            <!-- overdub posts -->
-            <div class="col-md-12" id="posts" data-ajaxurl="{% url 'delete_post' %}" data-saveajaxurl="{% url 'save_post' %}">
-                {% if user_post_num != 0 or not activity.read_after_post or user.is_superuser or user in private_users %}
-                    <ul id='posts2' class='chat'>
-                        {% for post in posts reversed %}
-                            {% if not activity.private_mode or user in private_users or post.creator in private_users or post.creator == user %}
-                                {% if not post.parent_post %}
-                                    <!-- Other's posts -->
-                                    {% include 'post_template.html' with activity_type=activity.activity_type %}
-                                {% endif %}
+                        <!-- TODO:overdub posts -->
+                        <div id="posts" data-ajaxurl="{% url 'delete_post' %}" data-saveajaxurl="{% url 'save_post' %}">
+                            {% if user_post_num != 0 or not activity.read_after_post or user.is_superuser or user in private_users %}
+                                <ul id='posts2' class='chat' data-parent-post="{{ post.parent_post }}">
+                                    {% for post in posts reversed %}
+                                        {% if not activity.private_mode or user in private_users or post.creator in private_users or post.creator == user %}
+                                            {% if not post.parent_post %}
+                                                <!-- Other's posts -->
+                                                {% include 'post_template.html' with activity_type=activity.activity_type %}
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
                             {% endif %}
-                        {% endfor %}
-                    </ul>
-                {% endif %}
+                        </div> 
+                    </div>
+                </div>    
             </div>
         </div>
-
-
-
     </div>
 
     <!-- Small modal invisible` -->
@@ -95,6 +90,7 @@
     <!-- Video player -->
     <script src="https://jwpsrv.com/library/RJueXGxbEeOB1SIACi0I_Q.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
+    <script src='{% static "vendors/tinymce/tinymce.min.js" %}'></script>
     <!-- *****************upload libs******************** -->
     <script src="{% static 'vendors/jqueryUpload/jquery.ui.widget.js' %}"></script>
     <script src="{% static 'vendors/jqueryUpload/jquery.iframe-transport.js' %}"></script>
