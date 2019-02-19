@@ -48,6 +48,7 @@
         'max reconnection attempts': 3,
     };
 
+    // TODO: check for posting
     var attempt = 1; // reconnection attempt counter
     var s; // cache
     ChatClient = {
@@ -55,15 +56,20 @@
         /***[ module settings ]***/
         settings: {
             read_after_post_lock: setReadAfterPostLock(),
-            sendPostButton: $('#sendPost'),
-            post_area: $('#posts'),
-            posts: $('#posts2'),
+            sendPostButton: $('#sendPost'), // <- dicussion_form_template
+
+            post_area: $('#posts'), // <- discussion_template
+            posts: $('#posts2'), // <- discussion_template
+
             activity_type: $('#activityType').val(),
             activity_id: $('#activityID').val(),
+
             user: $('#activityUSER').val(),
             user_is_instructor: $('#activity_title').data('userisinstructor'),
+
             ajax_url: $('#posts').data('saveajaxurl'),
-            csrftoken: $("input[name=csrfmiddlewaretoken]").val(),
+
+            csrftoken: $('input[name=csrfmiddlewaretoken]').val(),
             remove_icon: '<small><a class="text-muted removePost" style="text-decoration:none;cursor:pointer;"><i class="fa fa-remove text-danger"></i></a></small>',
         },
 
@@ -162,6 +168,7 @@
             }
         },
 
+        // TODO: XHR for a message of live chat and save django model
         // sends a post
         sendPost: function() {
             if(recordingFlag===false){  //check if there is un-uploaded recording
@@ -218,6 +225,7 @@
 
         },
 
+        // TODO: Check this for posting
         // sendComment: sends a comment to the chat server if it's up, otherwise does an ajax post
         sendComment: function(event) {
             if (event.which == 13 && $(this).val !== "") {
@@ -237,12 +245,14 @@
             }
         },
 
+        // TODO: Use this fallbackAjaxPost as a default post
         // fallbackAjaxPost: works as a fallback for posting when the chat server is down
         fallbackAjaxPost: function(data) {
             $.extend(data, {
                activity_id: s.activity_id,
                activity_type: s.activity_type, 
             });
+
             Ajax.post(s.ajax_url, data, s.csrftoken, function(response) {
                 if (data.parent_post) { // it is a reply to a post
                     var parent_post = $("li[data-postid="+data.parent_post+"]").next().find('.comment');
