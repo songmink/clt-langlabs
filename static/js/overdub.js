@@ -437,26 +437,24 @@ window.onresize();
 $(document).ready(function () {
     $('#sendPost').click(function () {
         console.log('Try submit...');
-        var form = document.getElementById('overdub');
 
         // TODO: File upload before posting, use formData
         var blobURL = $('input[type="radio"]:checked').val();
+        var filename = $('input[type="radio"]:checked').attr('id') + ".wav";
         var uploadFile = document.getElementById('fileupload').value;
-        var file = document.querySelector('[type=file]').files;
 
         // Select between upload file and recordings
-        if(blobURL == 'fileupload') {
-            blobURL = uploadFile;
-        }
+        // if(blobURL == 'fileupload') {
+        //     blobURL = uploadFile;
+        // }
 
-        console.log('BlobURL: '+blobURL);
-        console.log('upload file: '+uploadFile);
-        console.log('file: '+ file);
+        console.log('BlobURL: ' + blobURL);
+        console.log('File uploading...');
 
         // Post
         $.ajax({
-            type: 'POST',
             url: sendPost.value,
+            type: 'POST',
             csrftoken: $('input[name=csrfmiddlewaretoken]').val(),
             data: {
                 text: $('#postTextarea').val(),
@@ -468,6 +466,8 @@ $(document).ready(function () {
 
                 post_area: $('#posts').val(),
                 posts: $('#posts2').val(),
+                filename: filename,
+                file: blobURL,
 
             },
             success: function (data) {
@@ -475,12 +475,14 @@ $(document).ready(function () {
                 $('#postTextarea').val('');
                 // prepend the post on the top list without refreshing
                 $('#posts').prepend(data);
+                console.log(data);
+
 
             },
-            error : function(xhr,errmsg) {
+            error : function(jqXHR,errmsg) {
                 $('#results').html('<div class="alert-box alert radius" data-alert>Oops! We have encountered an error: '+errmsg+
                     ' <a href="#" class="close">&times;</a></div>'); // add the error to the dom
-                console.log(xhr.status + ': ' + xhr.responseText); // provide a bit more info about the error to the console
+                console.log(jqXHR.status + ': ' + xhr.responseText); // provide a bit more info about the error to the console
             },
         });
         console.log('Finish!');
