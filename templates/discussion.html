@@ -26,9 +26,10 @@
                 {{ activity.instructions|safe }}
             </div>
             <div class="col-md-8">
-                <div class="col-mb-3">
+                <!-- REMOVED: live chat room -->
+                {% comment %} <div class="col-mb-3">
                     {% include 'chat.html' %}
-                </div>
+                </div> {% endcomment %}
                 <div class="row">
                     <div class="col-md-12 hidden" id="connectedDIV" >
                         {% include 'discussion_form_template.html' %}
@@ -42,7 +43,7 @@
             <div id='posts' data-ajaxurl="{% url 'delete_post' %}" data-saveajaxurl="{% url 'save_post' %}">
                 {% if user_post_num != 0 or not activity.read_after_post or user.is_superuser or user in private_users %}
                     <ul id='posts2' class="chat">
-                        {% for post in posts reversed%}
+                        {% for post in posts reversed %}
                             {% if not activity.private_mode or user in private_users or post.creator in private_users or post.creator == user %}
                                 {% if not post.parent_post %}
                                     <!-- Other's posts -->
