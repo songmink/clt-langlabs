@@ -2,7 +2,8 @@
 {% load static %}
 <h4><i class="fas fa-headset"></i> WAU Recording System</h4>
 <hr>
-<form id="overdub" enctype="multipart/form-data" method="POST" name="overdub" action="/upload/path"> {% csrf_token %}
+{% csrf_token %}
+<form id="overdub" enctype="multipart/form-data" method="POST" name="overdub" data-activity-type="{{ activity.activity_type }}" data-activity-id="{{ activity.id }}" data-username="{{ request.user }}""> 
     <div class="container-fluid" style="border: 1px solid green;">
         <br>
         <h6><i class="fas fa-microphone-alt"></i> Recording</h6>
@@ -26,30 +27,31 @@
         </section>
         <p><i class="fas fa-volume-up"></i> After recording, your temporary record file(s) will be here.<br>
         ( <i class="fas fa-exclamation-triangle fa-sm" style="color: red;"></i>You will lost all temporary record file(s), when you leave or refresh this page.)</p>
-            <section class="sound-clips">
-                <!-- 
-                    temporary sounds list will be here 
-                --> 
-            </section>
-            <div class="text-center" style="color: red;">
-                <p>- <u>Choose one of your records or upload your file</u> -</p>
-            </div>
+        <section class="sound-clips">
+            <!-- 
+                temporary sounds list will be here 
+            --> 
+        </section>
+        <div class="text-center" style="color: red;">
+            <p>- <u>Choose one of your records or upload your file</u> -</p>
+        </div>
 
-            <!-- Upload file-->
-            <section class="upload-file">
-                <div class="form-check clip">
-                    <input class="form-check-input" id="upload-file" type="radio" name="temp-audio" value="fileupload">
-                    <input id="fileupload" type="file" name="temp-audio">
-                </div>
-            </section>
-            <hr>
-            <h6><i class="fas fa-comment-alt"></i> Message</h6>
-            <!-- TODO: Need tinyeditor ?? -->
-            <textarea id='postTextarea' class="form-control" style='border-radius:4px 4px 0px 0px;'></textarea>
+        <!-- Upload file start -->
+        <section class="upload-file">
+            <div class="form-check clip">
+                <input class="form-check-input" id="upload-file" type="radio" name="temp-audio" value="fileupload">
+                <input id="fileupload" type="file" name="temp-audio">
+            </div>
+        </section> <!-- Upload file end -->
+        <hr>
+        <!-- TODO: realtime comment with old comment -->
+        <h6><i class="fas fa-comment-alt"></i> Message</h6>
+        <!-- TODO: Need tinyeditor ?? -->
+        <textarea id='postTextarea' class="form-control" style='border-radius:4px 4px 0px 0px;'></textarea>
         <br>
     </div>
     <!-- TODO: Save all data to server -->
-    <button id='sendPost' type="button" class="btn btn-success btn-sm full-width" value='{% url "save_post" %}' data-activity-id="{{ activity.id }}" data-activity-type="{{ activity.activity_type }}" data-user="{{ user }}">
+    <button id='sendPost' type="button" class="btn btn-success btn-sm full-width" value='{% url "save_post" %}' data-activity-id="{{ activity.id }}" data-activity-type="{{ activity.activity_type }}" data-user="{{ user }}" data-upload="/upload/">
         <i class="far fa-paper-plane"></i> Submit all
     </button>
  </form>
