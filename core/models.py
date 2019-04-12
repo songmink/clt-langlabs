@@ -28,8 +28,13 @@ class ActivityCollection(models.Model):
     title = models.CharField(max_length=100, unique=True)
     nickname = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
-    accesscode = models.CharField(max_length=255, blank=False, null=True,
-                                  unique=True, verbose_name='Access Code', validators=[MinLengthValidator(10)])
+    accesscode = models.CharField(
+        max_length=255,
+        blank=False,
+        null=True,
+        unique=True,
+        verbose_name='Access Code',
+        validators=[MinLengthValidator(10)])
     is_active = models.BooleanField(default=True)
     is_public = models.BooleanField(default=False, blank=True)
     is_deleted = models.BooleanField(default=False, blank=True)
