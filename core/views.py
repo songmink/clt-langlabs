@@ -31,6 +31,7 @@ from discussions.models import DiscussionActivity
 from essays.models import EssayActivity, EssayResponse
 from overdub_discussions.models import OverdubActivity
 
+from django.views.decorators.csrf import csrf_exempt
 
 class IndexView(TemplateView):
     ''' -- Index page of cltlanglabs '''
@@ -262,6 +263,7 @@ class PostSaveView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, View):
 
     @staticmethod
     def create_post(request):
+
         parent_post_id = request.POST.get('parent_post', '')
         if parent_post_id:
             parent_post = Post.objects.get(pk=parent_post_id)
@@ -290,13 +292,14 @@ class PostSaveView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, View):
 
         return post
 
+# TODO: seperate fileUpload or one pack????
 
 def fileUpload(request):
     ''' -- Function-based View for saving a file. '''
 
     response = {'files': []}
     # Loop through our files in the files list
-    for singleFile in request.FILES.getlist('file'):
+    for singleFile in request.FILE.get('files'):
         filename = singleFile.name
         fileExtention = filename.split(".")[-1].lower();
         video_extensions = ["m4v", "mp4", "avi", "flv", "mov", "wmv", "rmvb"]
@@ -310,7 +313,7 @@ def fileUpload(request):
             file_type = 'image'
         else:
             file_type = ''
-        # Create a new entry in our database
+        # Create a new entry in our database ???
         new_file = Document(file_upload=singleFile, file_type=file_type)
         new_file.save()
         # Grab the file
