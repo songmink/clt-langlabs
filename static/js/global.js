@@ -407,17 +407,6 @@
 
         init: function () {
             s = this.settings;
-            this.bindUIActions();
-        },
-
-        bindUIActions: function () {
-            s.upload_trigger.click(FileUploader.upload);
-            $(function () {
-                'use strict';
-                s.file_input.fileupload(FileUploader.options());
-            })
-                .prop('disabled', !$.support.fileInput)
-                .parent().addClass($.support.fileInput ? undefined : 'disabled');
         },
 
         /***[ module functions ]***/
@@ -458,7 +447,7 @@
                         })
                     }, 1000);
                 }
-            }
+            };
         },
 
     };
