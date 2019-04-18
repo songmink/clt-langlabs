@@ -491,10 +491,9 @@ $(document).ready(function () {
             success: function (data) {
                 console.log('Post submitted!');
                 $('#postTextarea').val('');
-                // TODO: prepend the post on the top list without refreshing
-                // $('#posts').prepend(data);
-                // START: Send the 'data' to chat message
-                // console.log(data);
+
+                // send the message to #posts instead prepending 
+                //$('#posts').prepend(data);
                 chatSocket.send(JSON.stringify({
                     'message': data,
                 }));
