@@ -433,8 +433,26 @@ window.onresize = function () {
 };
 window.onresize();
 
-// All in one upload
+
+// Post message by django channel
 $(document).ready(function () {
+    // start chat
+    var formChat = document.getElementById('overdub');
+    var roomName = formChat.getAttribute('data-activity-type') + '-' + formChat.getAttribute('data-activity-id');
+    var chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/overdub/' + roomName);  // Set the route on /core/routing.py
+
+    chatSocket.onmessage = function (e) {
+        var data = JSON.parse(e.data);
+        var message = data.message;
+        $('#posts').prepend(message);
+    };
+
+    chatSocket.onclose = function (e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    //
     $('#sendPost').click(function () {
         console.log('Try submit...');
 
@@ -473,11 +491,13 @@ $(document).ready(function () {
             success: function (data) {
                 console.log('Post submitted!');
                 $('#postTextarea').val('');
-                // prepend the post on the top list without refreshing
-                $('#posts').prepend(data);
-                console.log(data);
-
-
+                // TODO: prepend the post on the top list without refreshing
+                // $('#posts').prepend(data);
+                // START: Send the 'data' to chat message
+                // console.log(data);
+                chatSocket.send(JSON.stringify({
+                    'message': data,
+                }));
             },
             error : function(jqXHR,errmsg) {
                 $('#results').html('<div class="alert-box alert radius" data-alert>Oops! We have encountered an error: '+errmsg+
