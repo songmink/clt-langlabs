@@ -2,48 +2,52 @@
 {% load static %}
 <h4><i class="fas fa-headset"></i> WAU Recording System</h4>
 <hr>
-{% csrf_token %}
-<form id="overdub" enctype="multipart/form-data" method="POST" name="overdub" data-activity-type="{{ activity.activity_type }}" data-activity-id="{{ activity.id }}" data-username="{{ request.user }}""> 
-    <div class="container-fluid" style="border: 1px solid green;">
-        <br>
-        <h6><i class="fas fa-microphone-alt"></i> Recording</h6>
-        <section class="main-controls">
-            <div class="row">
-                <div class="col-md-12" id="visual">
-                    <canvas id="analyser"></canvas>
-                </div>
-                <div class="col-md-12 controls-btn" id="record-ctrl" data-filename="{{ course.title }}_{{ activity.activity_type }}_{{ activity.id }}_{{ user }}">
-                    <button type="button" class="btn btn-secondary btn-sm btn-block" id="btn-record">
-                        <i class="fas fa-microphone-alt"></i> Record
-                    </button>
-                </div>
-                <!-- Display only for youtube video -->
-                {% if activity.media %}
-                    <div class="col-md-12">
-                    <input type="checkbox" id="youtube-mute" name="mute" autocomplete="off"> Mute Youtube Sound
-                    </div>
-                {% endif %}
-            </div>
-        </section>
-        <p><i class="fas fa-volume-up"></i> After recording, your temporary record file(s) will be here.<br>
-        ( <i class="fas fa-exclamation-triangle fa-sm" style="color: red;"></i>You will lost all temporary record file(s), when you leave or refresh this page.)</p>
-        <section class="sound-clips">
-            <!-- 
-                temporary sounds list will be here 
-            --> 
-        </section>
-        <div class="text-center" style="color: red;">
-            <p>- <u>Choose one of your records or upload your file</u> -</p>
-        </div>
 
-        <!-- Upload file start -->
-        <section class="upload-file">
-            <div class="form-check clip">
-                <input class="form-check-input" id="upload-file" type="radio" name="temp-audio" value="fileupload">
-                <input id="fileupload" type="file" name="temp-audio">
+<div id="recoder-area">
+    <br>
+    <h6><i class="fas fa-microphone-alt"></i> Recording</h6>
+    <section class="main-controls">
+        <div class="row">
+            <div class="col-md-12" id="visual">
+                <canvas id="analyser"></canvas>
             </div>
-        </section> <!-- Upload file end -->
-        <hr>
+            <div class="col-md-12 controls-btn" id="record-ctrl" data-filename="{{ course.title }}_{{ activity.activity_type }}_{{ activity.id }}_{{ user }}">
+                <button type="button" class="btn btn-secondary btn-sm btn-block" id="btn-record">
+                    <i class="fas fa-microphone-alt"></i> Record
+                </button>
+            </div>
+            <!-- Display only for youtube video -->
+            {% if activity.media %}
+                <div class="col-md-12">
+                <input type="checkbox" id="youtube-mute" name="mute" autocomplete="off"> Mute Youtube Sound
+                </div>
+            {% endif %}
+        </div>
+    </section>
+    <p><i class="fas fa-volume-up"></i> After recording, your temporary record file(s) will be here.<br>
+    ( <i class="fas fa-exclamation-triangle fa-sm" style="color: red;"></i>You will lost all temporary record file(s), when you leave or refresh this page.)</p>
+    <section class="sound-clips">
+        <!-- 
+            temporary sounds list will be here 
+        --> 
+    </section>
+    <div class="text-center" style="color: red;">
+        <p>- <u>Choose one of your records or upload your file</u> -</p>
+    </div>
+
+    <!-- Upload file start -->
+    <section class="upload-file">
+        <div class="form-check clip">
+            <input class="form-check-input" id="upload-file" type="radio" name="temp-audio" value="fileupload">
+            <input id="fileupload" type="file" name="temp-audio">
+        </div>
+    </section> <!-- Upload file end -->
+    <hr>
+</div>
+
+<form id="overdub" enctype="multipart/form-data" method="POST" name="overdub" data-activity-type="{{ activity.activity_type }}" data-activity-id="{{ activity.id }}" data-username="{{ request.user }}"">
+{% csrf_token %}
+    <div class="container-fluid" style="border: 1px solid green;">
         <!-- TODO: realtime comment with old comment -->
         <h6><i class="fas fa-comment-alt"></i> Message</h6>
         <!-- TODO: Need tinyeditor ?? -->
