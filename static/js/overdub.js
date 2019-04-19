@@ -489,14 +489,16 @@ $(document).ready(function () {
 
             },
             success: function (data) {
-                console.log('Post submitted!');
                 $('#postTextarea').val('');
 
+                // remove 'remove button'
+                var message = data.replace('<small id="removeButton"><a class="text-muted removePost" style="text-decoration:none;cursor:pointer;"><i class="fas fa-times text-danger"></i></a></small>','');
                 // send the message to #posts instead prepending 
                 //$('#posts').prepend(data);
                 chatSocket.send(JSON.stringify({
-                    'message': data,
+                    'message': message,
                 }));
+                console.log('Post submitted!');
             },
             error : function(jqXHR,errmsg) {
                 $('#results').html('<div class="alert-box alert radius" data-alert>Oops! We have encountered an error: '+errmsg+
