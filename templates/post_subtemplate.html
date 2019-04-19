@@ -14,7 +14,7 @@
         <small class="pull-right text-muted">
             <span class="far fa-clock"></span> {{ comment.created }}
             {% if comment.creator == user or user in private_users %}
-            <small><a class="text-muted removePost" style='text-decoration:none;cursor:pointer;'><i class="fas fa-times text-danger"></i></a></small>
+            <small id="removeButton"><a class="text-muted removePost" style="text-decoration:none;cursor:pointer;"><i class="fas fa-times text-danger"></i></a></small>
             {% endif %}
         </small>
     </div>
