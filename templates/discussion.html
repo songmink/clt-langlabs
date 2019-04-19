@@ -35,24 +35,22 @@
                         {% include 'discussion_form_template.html' %}
                     </div>
                 </div>
-            </div>
 
-
-            <!-- TODO: display posts without refreshing the page -->
-            <!-- discussion posts -->
-            <div id='posts' data-ajaxurl="{% url 'delete_post' %}" data-saveajaxurl="{% url 'save_post' %}">
-                {% if user_post_num != 0 or not activity.read_after_post or user.is_superuser or user in private_users %}
-                    <ul id='posts2' class="chat">
-                        {% for post in posts reversed %}
-                            {% if not activity.private_mode or user in private_users or post.creator in private_users or post.creator == user %}
-                                {% if not post.parent_post %}
-                                    <!-- Other's posts -->
-                                    {% include 'post_template.html' with ativity_type=activity.activity_type %}
+                <!-- discussion posts -->
+                <div id='posts' data-ajaxurl="{% url 'delete_post' %}" data-saveajaxurl="{% url 'save_post' %}">
+                    {% if user_post_num != 0 or not activity.read_after_post or user.is_superuser or user in private_users %}
+                        <ul id='posts2' class="chat">
+                            {% for post in posts reversed %}
+                                {% if not activity.private_mode or user in private_users or post.creator in private_users or post.creator == user %}
+                                    {% if not post.parent_post %}
+                                        <!-- Other's posts -->
+                                        {% include 'post_template.html' with ativity_type=activity.activity_type %}
+                                    {% endif %}
                                 {% endif %}
-                            {% endif %}
-                        {% endfor %}
-                    </ul>
-                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
             </div>
 
             
@@ -60,7 +58,7 @@
     </div>
 
     <!-- Small modal -->
-    <div>
+    <div hidden>
         <button class="btn btn-primary hide notificationButton" data-toggle="modal" data-target=".bs-example-modal-sm">Small modal</button>
         <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-sm">
