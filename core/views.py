@@ -292,8 +292,7 @@ class PostSaveView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, View):
 
         return post
 
-# TODO: seperate fileUpload or one pack????
-
+#  TODO: file upload
 def fileUpload(request):
     ''' -- Function-based View for saving a file. '''
 
