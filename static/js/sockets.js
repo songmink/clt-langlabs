@@ -168,7 +168,7 @@
             }
         },
 
-        // TODO: XHR for a message of live chat and save django model
+        // REVIEW: XHR for a message of live chat and save django model
         // sends a post
         sendPost: function() {
             if(recordingFlag===false){  //check if there is un-uploaded recording

@@ -6,7 +6,7 @@
 {% else %}
 
 {% if not post.parent_post %}
-<div id={{ post.id }}>
+<div id={{ post.id }} class="post">
     <li class="left clearfix chatlist" data-postid={{post.id}}>
 	    {% include 'post_subtemplate.html' with comment=post private_users=private_users %}
         <!-- get attachments from fat Post Model -->
@@ -46,19 +46,10 @@
                     });
                 {% endif %}</script>
         {% endif %}
-
-
-
-
-
     </li>
 
-    <div id="reply">
-        <button type="button" class="btn btn-secondary btn-sm full-width">Add comment</button>
-    </div>
-
     <!-- comment section -->
-    <div class="">
+    <div id="{{ post.id }}-comments" class="">
         <ul class="comment">
             {% if posts %}
                 {% for post2 in posts reversed %}
@@ -72,6 +63,7 @@
                 {% endfor %}
             {% endif %}
 
+            <!-- TODO: comment --> 
             <li class="left clearfix commentlist">
                 {% include 'textarea_template.html' %}
             </li>

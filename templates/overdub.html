@@ -31,10 +31,6 @@
                     {{ activity.instructions|safe }}
                 </div>
                 <hr>
-                 <!-- REMOVED: live chat room -->
-                {% comment %} <div class="row">
-                    {% include 'chat.html' %} 
-                </div> {% endcomment %}
             </div>
 
             <!--  Right record panel -->
@@ -103,6 +99,4 @@
     <!-- ******************Recorder libs****************** -->
     <script src="{% static 'js/overdub.js' %}"></script>
 
-    <!-- Live Chat-->
-     {% comment %} <script src="{% static 'js/discussionroom.js' %}"></script> {% endcomment %}
 {% endblock %}

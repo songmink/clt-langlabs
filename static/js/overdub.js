@@ -290,73 +290,50 @@ if (navigator.mediaDevices.getUserMedia) {
                 return;
             }else{
 
-                console.log(clipName);
-
-                var clipContainer = document.createElement('div');
-                var clipInput = document.createElement('input');
-                var audio = document.createElement('audio');
-                var clipLabel = document.createElement('label');
-                var deleteButton = document.createElement('button');
-                var clipBr = document.createElement('br');
-
-                clipContainer.classList.add('form-check');
-                clipContainer.classList.add('clip');
-
-                clipInput.classList.add('form-check-input');
-                clipInput.setAttribute('type', 'radio');
-                clipInput.setAttribute('id', fname);
-                clipInput.setAttribute('name', 'temp-audio');
-
-                audio.setAttribute('controls', '');
-
-                clipLabel.classList.add('form-check-label');
-                clipLabel.setAttribute('for', fname);
-
-                deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i> Delete';
-                deleteButton.className = 'btn btn-danger btn-sm delete';
-
-                if (clipName === null) {
-                    clipLabel.textContent = fname;
-                } else {
-                    clipLabel.textContent = clipName;
-                }
-                
-                // Create temporary sound list
-                clipContainer.appendChild(audio);
-                clipContainer.appendChild(clipBr);
-                clipContainer.appendChild(clipInput);
-                clipContainer.appendChild(clipLabel);
-                clipContainer.appendChild(deleteButton);
-
-                soundClips.appendChild(clipContainer);
-
-                audio.controls = true;
+                // recorded audio blob
                 var blob = new Blob(chunks, {
                     // 'type': 'audio/ogg; codecs=opus' // MS Windows not support as a default
                     'type': 'audio/wav'
                     // 'type': 'audio/mpeg-3' // needs ffmpeg
                 });
                 chunks = [];
-                var audioURL = window.URL.createObjectURL(blob);
-                audio.src = audioURL;
-                console.log('recorder stopped and audio url is '+audio.src);
-                clipContainer.setAttribute('id', audio.src);
-                clipInput.setAttribute('value', audio.src);
 
-                deleteButton.onclick = function (e) {
+                var audioURL = window.URL.createObjectURL(blob);
+                var clip = clipName+'.wav';
+
+                // display a form for the recorded audio
+                var csrf_token = $('input[name=csrfmiddlewaretoken]').val();
+                $('#sound-clips').append('<form id="'+clipName+'" method="POST" style="border: 1px solid black; padding: 3px 3px 3px 3px;"></form>');
+                $('#'+clipName).append('<audio controls src="'+audioURL+'"></audio>');
+                $('#'+clipName).append('<input id="'+clipName+'" class="form-control" type="text" placeholder="'+clip+'" readonly>');
+                $('#'+clipName).append('<button id="'+clipName+'-upload" type="button" class="btn btn-success btn-sm upload"><i class="fas fa-cloud-upload-alt"></i> Upload</button> ');
+                $('#'+clipName).append('<button id="'+clipName+'-delete" type="button" class="btn btn-danger btn-sm delete"><i class="fas fa-trash-alt"></i> Delete</button> ');
+                
+                $('#'+clipName+'-upload').click((e) => {
+                    // START: upload indivisual file and return the url
+
+                    $.ajax({
+                        url: '/upload/',
+                        type: 'POST',
+                        data: {
+                            csrfmiddlewaretoken: csrf_token,
+                            files: []
+                        },
+
+                        success: function(data) {
+                            console.log('success');
+                            console.log(data);
+                        },
+                        error: function (errmsg) {
+                            console.log(errmsg);
+                        }
+                    });
+                });
+
+                $('#'+clipName+'-delete').click((e) => {
                     var evtTgt = e.target;
                     evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
-                };
-
-                clipLabel.onclick = function () {
-                    var existingName = clipLabel.textContent;
-                    var newClipName = prompt('Enter a new name for your sound clip?', existingName);
-                    if (newClipName === null) {
-                        clipLabel.textContent = existingName;
-                    } else {
-                        clipLabel.textContent = newClipName;
-                    }
-                };
+                });
             }
         };
 
@@ -436,7 +413,7 @@ window.onresize();
 
 // Post message by django channel
 $(document).ready(function () {
-    // start chat
+    // start channel handshaking
     var formChat = document.getElementById('overdub');
     var roomName = formChat.getAttribute('data-activity-type') + '-' + formChat.getAttribute('data-activity-id');
     var chatSocket = new WebSocket(
@@ -445,14 +422,21 @@ $(document).ready(function () {
     chatSocket.onmessage = function (e) {
         var data = JSON.parse(e.data);
         var message = data.message;
-        $('#posts').prepend(message);
+
+        //TODO: comment part
+        if (data.parent) {
+            $('#'+data.parent+'-comments').find('ul').prepend(message);
+        } else {
+            $('#posts').prepend(message);
+        }
+        
     };
 
     chatSocket.onclose = function (e) {
         console.error('Chat socket closed unexpectedly');
     };
 
-    //
+    // save post and send chat window
     $('#sendPost').click(function () {
         console.log('Try submit...');
 
@@ -467,7 +451,6 @@ $(document).ready(function () {
         // }
 
         console.log('BlobURL: ' + blobURL);
-        console.log('File uploading...');
 
         // Post
         $.ajax({
@@ -484,18 +467,14 @@ $(document).ready(function () {
 
                 post_area: $('#posts').val(),
                 posts: $('#posts2').val(),
-                filename: filename,
-                file: blobURL,
 
             },
             success: function (data) {
                 $('#postTextarea').val('');
-
-                // remove 'remove button'
+                // remove 'comment remove button'
                 var message = data.replace('<small id="removeButton"><a class="text-muted removePost" style="text-decoration:none;cursor:pointer;"><i class="fas fa-times text-danger"></i></a></small>','');
-                // send the message to #posts instead prepending 
-                //$('#posts').prepend(data);
                 chatSocket.send(JSON.stringify({
+                    'parent': '',
                     'message': message,
                 }));
                 console.log('Post submitted!');
@@ -503,15 +482,58 @@ $(document).ready(function () {
             error : function(jqXHR,errmsg) {
                 $('#results').html('<div class="alert-box alert radius" data-alert>Oops! We have encountered an error: '+errmsg+
                     ' <a href="#" class="close">&times;</a></div>'); // add the error to the dom
-                console.log(jqXHR.status + ': ' + xhr.responseText); // provide a bit more info about the error to the console
+                console.log(jqXHR.status + ': ' + errmsg); // provide a bit more info about the error to the console
             },
         });
         console.log('Finish!');
         return false;
     });
 
-});
+    // toggles comments (replies) from a post
+    $('#posts').on('click', '.chatlist', function(e) {
+        if ($(e.target).is('.fileLink'))  return;
+        if ($(e.target).is('.attachDIV')) return;
+        $(this).next().find('.comment').slideToggle('fast');
+        var postId = $(this).parent().attr('id');
+        
+        // TODO: comment 
+        $('#send-'+postId+'-comment').click(function (data) {
+            $.ajax({
+                url: sendPost.value,
+                type: 'POST',
+                csrftoken: $('input[name=csrfmiddlewaretoken]').val(),
+                data: {
+                    text: $('#'+postId+'-comment').val(),
+                    activity_id: sendPost.dataset.activityId,
+                    activity_type: sendPost.dataset.activityType,
+                    parent_post: postId,
 
+                    user: sendPost.dataset.user,
+                    user_is_instructor: $('#activity_title').data('userisinstructor'),
+
+                },
+                success: function (data) {
+                    $('#'+postId+'-comment').val('');
+                    // remove 'comment remove button' on the chat 
+                    var message = data.replace('<small id="removeButton"><a class="text-muted removePost" style="text-decoration:none;cursor:pointer;"><i class="fas fa-times text-danger"></i></a></small>','');
+                    chatSocket.send(JSON.stringify({
+                        'parent': postId,
+                        'message': message,
+                    }));
+                    console.log('Post submitted!');
+                },
+                error : function(jqXHR,errmsg) {
+                    $('#results').html('<div class="alert-box alert radius" data-alert>Oops! We have encountered an error: '+errmsg+
+                        ' <a href="#" class="close">&times;</a></div>'); // add the error to the dom
+                    console.log(jqXHR.status + ': ' + errmsg); // provide a bit more info about the error to the console
+                },
+
+            });
+
+        });
+    });
+
+});
 
 // Another player
 // TODO: it will be replaced wirh HTML5 video player

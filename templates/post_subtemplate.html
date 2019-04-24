@@ -3,9 +3,9 @@
     <span><img src="{{ comment.creator.profile.image.url}}" style="height:35px; width:35px; float:left; margin-right:15px"></span></a>
 {% else %}
     {% if comment.creator in private_users or comment.creator.is_superuser %}
-    <span><i class="fas fa-graduation-cap fa-fw fa-2x pull-left text-muted" style='font-size:2.1em; vertical-align: middle;'></i></span>
+    <span><i class="fas fa-graduation-cap fa-fw fa-1x pull-left text-muted" style='font-size:2.1em; vertical-align: middle;'></i></span>
     {% else %}
-    <span ><i class="fas fa-user fa-fw fa-2x pull-left text-muted" style='font-size:2.1em; vertical-align: middle;'></i></span>
+    <span ><i class="fas fa-user fa-fw fa-1x pull-left text-muted" style='font-size:2.1em; vertical-align: middle;'></i></span>
     {% endif %}
 {% endif %}
 <div class="chat-body clearfix">
