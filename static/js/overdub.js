@@ -494,10 +494,10 @@ $(document).ready(function () {
         if ($(e.target).is('.fileLink'))  return;
         if ($(e.target).is('.attachDIV')) return;
         $(this).next().find('.comment').slideToggle('fast');
+
+        // comment under post 
         var postId = $(this).parent().attr('id');
-        
-        // TODO: comment 
-        $('#send-'+postId+'-comment').click(function (data) {
+        $('#send-'+postId+'-comment').click(function () {
             $.ajax({
                 url: sendPost.value,
                 type: 'POST',
@@ -520,16 +520,14 @@ $(document).ready(function () {
                         'parent': postId,
                         'message': message,
                     }));
-                    console.log('Post submitted!');
+                    console.log('Comment submitted!');
                 },
                 error : function(jqXHR,errmsg) {
                     $('#results').html('<div class="alert-box alert radius" data-alert>Oops! We have encountered an error: '+errmsg+
                         ' <a href="#" class="close">&times;</a></div>'); // add the error to the dom
                     console.log(jqXHR.status + ': ' + errmsg); // provide a bit more info about the error to the console
                 },
-
             });
-
         });
     });
 
