@@ -15,7 +15,7 @@
     {% include 'activity_header_template.html' %}
 
     <!-- Essay application starts here -->
-    <div class='row'>
+    <div id="{{ activity.activity_type }}" class='row'>
         {% if "edit_course" not in course_perms %}
             <div id='essay_draftbook' class='col-xs-10 col-xs-offset-1'>
                 <div id='essay_draftbook2'>

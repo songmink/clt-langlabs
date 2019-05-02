@@ -7,7 +7,7 @@
     {% get_obj_perms user for activity as "activity_perms" %}
     {% include 'activity_header_template.html' %} 
 
-    <div>
+    <div id="{{ activity.activity_type }}">
         <div class="row " >
             <div class="col-md-2"></div>
             <div class="col-md-10 col-md-offset-1" >

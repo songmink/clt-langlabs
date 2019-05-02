@@ -11,7 +11,7 @@
     {% get_obj_perms user for course as "course_perms" %}
     {% get_obj_perms user for activity as "activity_perms" %}
     {% include 'activity_header_template.html' %}
-    <div class="" style='height:100%;'>
+    <div id="{{ activity.activity_type }}" style='height:100%;'>
         <div class="row">
             <h2>Instructions:</h2>
         </div>
@@ -20,11 +20,13 @@
             <div class="col-md-5" id="left">
                 <div class="row">
                     {% if activity.media %}
-                        <div id="overdubVideo" class='videoDiv' data-media="{{ activity.media }}" data-upload-video="{{ activity.upload_video }}"></div>
+                        <div id="overdubVideo" class='videoDiv' data-media="{{ activity.media }}" data-upload-video="{{ activity.upload_video }}">
+                            <div id="player"></div>
+                        </div>
                     {% elif activity.upload_video%}
                     <!-- TODO: upload video player-->
                     <video width="530" height="440" controls autoplay>
-                        <source src="{% static 'mov_bbb.mp4' %}" type="video/mp4"> </source>
+                        <source src="{% static 'mov_bbb.mp4' %}" type="video/mp4"></source>
                     </video>
                     {% endif %}
 
@@ -85,7 +87,6 @@
     
     <!-- Video player -->
     <script src="https://jwpsrv.com/library/RJueXGxbEeOB1SIACi0I_Q.js"></script>
-    <script src="https://www.youtube.com/iframe_api"></script>
     <script src='{% static "vendors/tinymce/tinymce.min.js" %}'></script>
     <!-- *****************upload libs******************** -->
     <script src="{% static 'vendors/jqueryUpload/jquery.ui.widget.js' %}"></script>
@@ -97,6 +98,7 @@
     <script src="{% static 'js/utils.js' %}"></script>
     <script src="{% static 'js/global.js' %}"></script>
     <!-- ******************Recorder libs****************** -->
-    <script src="{% static 'js/overdub.js' %}"></script>
+    <script src="{% static 'js/video-player.js' %}"></script>
+    <script src="{% static 'js/recorder.js' %}"></script>
 
 {% endblock %}

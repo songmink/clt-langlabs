@@ -17,7 +17,7 @@
     {% get_obj_perms user for activity as "activity_perms" %}
     {% include 'activity_header_template.html' %} 
 
-    <div class="" style='height:100%;'>
+    <div id="{{ activity.activity_type }}" style='height:100%;'>
         <div class="row">
             <h2>Instructions:</h2>
         </div>
@@ -26,10 +26,6 @@
                 {{ activity.instructions|safe }}
             </div>
             <div class="col-md-8">
-                <!-- REMOVED: live chat room -->
-                {% comment %} <div class="col-mb-3">
-                    {% include 'chat.html' %}
-                </div> {% endcomment %}
                 <div class="row">
                     <div class="col-md-12 hidden" id="connectedDIV" >
                         {% include 'discussion_form_template.html' %}
@@ -90,9 +86,6 @@
     <script src="{% static 'js/global.js' %}"></script>
     {% comment %} <script src="{% static 'js/discussion.js' %}"></script> {% endcomment %}
     <!-- ******************Recorder libs****************** -->
-    <script src="{% static 'js/overdub.js' %}"></script>
-
-    <!-- Live Chat-->
-     {% comment %} <script src="{% static 'js/discussionroom.js' %}"></script> {% endcomment %}
+    <script src="{% static 'js/recorder.js' %}"></script>
     <!-- ************************************* -->
 {% endblock %}
