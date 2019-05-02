@@ -34,28 +34,57 @@
             --> 
         <div>
     </section>
-
-    <hr>
-    <!-- Upload file start -->
-    <section class="upload-file">
-        <div class="form-check clip">
-            <input class="form-check-input" id="upload-file" type="radio" name="temp-audio" value="fileupload">
-            <input id="fileupload" type="file" name="temp-audio">
-        </div>
-    </section> <!-- Upload file end -->
     <hr>
 </div>
 
 <form id="overdub" enctype="multipart/form-data" method="POST" name="overdub" data-activity-type="{{ activity.activity_type }}" data-activity-id="{{ activity.id }}" data-username="{{ request.user }}">
-    <div class="container-fluid" style="border: 1px solid green;">
-        <!-- TODO: realtime comment with old comment -->
+    <div class="container-fluid" style="border: 1px solid green; padding: 5px;">
         <h6><i class="fas fa-comment-alt"></i> Message</h6>
-        <!-- TODO: Need tinyeditor ?? -->
+        <!-- REVIEW: Need tinyeditor ?? -->
         <textarea id='postTextarea' class="form-control" style='border-radius:4px 4px 0px 0px;'></textarea>
         <br>
+    
+        <!-- Upload file start -->
+        <section class="upload-file">
+            <!-- selected file start -->
+            <div id="selected">
+
+            </div><!-- selected file end -->
+
+            <div class="form-check clip">
+                <input id="fileupload" type="file" name="file" style="display:block;" multiple>
+                <!-- The global progress bar -->
+                <div id="progress" class="progress" style='height:1px;margin:0px;opacity:0.7;'>
+                    <div class="progress-bar progress-bar-success"></div>
+                </div>
+                <!-- container for the uploaded files -->
+                <div id='inputAttachments'></div>
+                <!-- container for recorder -->
+                <div id='CLTREC_container'><div id='CLTREC'></div></div>
+            </div>
+        </section> <!-- Upload file end -->
+        
+        <hr>
+        <!-- TODO: Save all data to server -->
+        <button id='uploadTrigger' type="button" class="btn btn-success btn-sm full-width" value='{% url "save_post" %}' data-activity-id="{{ activity.id }}" data-activity-type="{{ activity.activity_type }}" data-user="{{ user }}" data-upload="/upload/">
+            <i class="far fa-paper-plane"></i> Submit all
+        </button>
     </div>
-    <!-- TODO: Save all data to server -->
-    <button id='sendPost' type="button" class="btn btn-success btn-sm full-width" value='{% url "save_post" %}' data-activity-id="{{ activity.id }}" data-activity-type="{{ activity.activity_type }}" data-user="{{ user }}" data-upload="/upload/">
-        <i class="far fa-paper-plane"></i> Submit all
-    </button>
- </form>
+</form>
+<hr>
+<p class="text-center">- Click the post box that you want to write a comment and read comments. -</p>
+
+<div class="modal fade" id="modal-progress" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Uploading...</h4>
+      </div>
+      <div class="modal-body">
+        <div class="progress">
+          <div class="progress-bar" role="progressbar" style="width: 0%;">0%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

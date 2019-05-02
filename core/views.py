@@ -269,10 +269,23 @@ class PostSaveView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, View):
             parent_post = Post.objects.get(pk=parent_post_id)
         else:
             parent_post = None
+        
         audio_URL = request.POST.get('audioURL', '')
         attachments = request.POST.getlist('attachments[]')
         post_creator = request.user
         text = request.POST.get('text', '')
+
+        # TODO: recorded audio upload
+        if request.FILES.get('file', False):
+            file = request.FILES.get('file')
+            filename = 'media/' + str(request.FILES.get('file'))
+            with open(filename, 'wb+') as destination:
+                for chunk in file.chunks():
+                    destination.write(chunk)
+            audio_URL = '/'+filename
+        else:
+             audio_URL = '/static/test-sound.wav'
+
         if len(text) > 0:
             post = Post(text=text)
             post.creator = post_creator
@@ -291,8 +304,9 @@ class PostSaveView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, View):
                     document.save()
 
         return post
+        
 
-#  TODO: file upload
+#  TODO: file upload check http or asgi
 def fileUpload(request):
     ''' -- Function-based View for saving a file. '''
 

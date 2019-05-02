@@ -155,7 +155,8 @@ var canvas = document.getElementById('analyser');
 var soundClips  = document.querySelector('.sound-clips');
 var mainSection = document.querySelector('.main-controls');
 
-var sendPost = document.querySelector('#sendPost');
+var sendPost = document.querySelector('#uploadTrigger');
+var blob=[];
 
 const filename = ()=> {
     var d = new Date();
@@ -286,48 +287,32 @@ if (navigator.mediaDevices.getUserMedia) {
             var fname = filename();
 
             var clipName = prompt('Enter a file name or use default file name for your sound clip?\n(If you click the cancel, you lost your recording.)', fname);
-            if(clipName === null) {
+            if(clipName === '') {
+                alertMessage('alert-warning', 'A file should have a name.');
                 return;
             }else{
 
                 // recorded audio blob
-                var blob = new Blob(chunks, {
+                var last = blob.length;
+                blob[last] = new Blob(chunks, {
                     // 'type': 'audio/ogg; codecs=opus' // MS Windows not support as a default
                     'type': 'audio/wav'
                     // 'type': 'audio/mpeg-3' // needs ffmpeg
                 });
                 chunks = [];
-
-                var audioURL = window.URL.createObjectURL(blob);
-                var clip = clipName+'.wav';
+                var audioURL = window.URL.createObjectURL(blob[last]);
 
                 // display a form for the recorded audio
-                var csrf_token = $('input[name=csrfmiddlewaretoken]').val();
-                $('#sound-clips').append('<form id="'+clipName+'" method="POST" style="border: 1px solid black; padding: 3px 3px 3px 3px;"></form>');
-                $('#'+clipName).append('<audio controls src="'+audioURL+'"></audio>');
-                $('#'+clipName).append('<input id="'+clipName+'" class="form-control" type="text" placeholder="'+clip+'" readonly>');
-                $('#'+clipName).append('<button id="'+clipName+'-upload" type="button" class="btn btn-success btn-sm upload"><i class="fas fa-cloud-upload-alt"></i> Upload</button> ');
+                $('#sound-clips').append('<div id="'+clipName+'"></div>');
+                $('#'+clipName).append('<audio id="'+clipName+'-blob" controls src="'+audioURL+'" data-blob-id='+last+'></audio>');
+                $('#'+clipName).append('<button id="'+clipName+'-select" type="button" class="clip-select btn btn-success btn-sm select"><i class="fas fa-paperclip"></i> Select</button> ');
                 $('#'+clipName).append('<button id="'+clipName+'-delete" type="button" class="btn btn-danger btn-sm delete"><i class="fas fa-trash-alt"></i> Delete</button> ');
                 
-                $('#'+clipName+'-upload').click((e) => {
-                    // START: upload indivisual file and return the url
-
-                    $.ajax({
-                        url: '/upload/',
-                        type: 'POST',
-                        data: {
-                            csrfmiddlewaretoken: csrf_token,
-                            files: []
-                        },
-
-                        success: function(data) {
-                            console.log('success');
-                            console.log(data);
-                        },
-                        error: function (errmsg) {
-                            console.log(errmsg);
-                        }
-                    });
+                $('#'+clipName+'-select').click(() => {
+                    $('#selected').attr('data-filename', clipName);
+                    $('#'+clipName+'-blob').appendTo('#selected');
+                    $('#'+clipName+'-select').remove();
+                    $('#'+clipName+'-delete').remove();
                 });
 
                 $('#'+clipName+'-delete').click((e) => {
@@ -423,7 +408,7 @@ $(document).ready(function () {
         var data = JSON.parse(e.data);
         var message = data.message;
 
-        //TODO: comment part
+        // Post or Comment 
         if (data.parent) {
             $('#'+data.parent+'-comments').find('ul').prepend(message);
         } else {
@@ -433,50 +418,62 @@ $(document).ready(function () {
     };
 
     chatSocket.onclose = function (e) {
-        console.error('Chat socket closed unexpectedly');
+        alertMessage('alert-warning', 'Chat connection closed!');
+        console.error('Chat socket closed unexpectedly: ' + e);
     };
 
     // save post and send chat window
-    $('#sendPost').click(function () {
+    $('#uploadTrigger').click(function () {
         console.log('Try submit...');
 
-        // TODO: File upload before posting, use formData
-        var blobURL = $('input[type="radio"]:checked').val();
-        var filename = $('input[type="radio"]:checked').attr('id') + ".wav";
-        var uploadFile = document.getElementById('fileupload').value;
-
-        // Select between upload file and recordings
-        // if(blobURL == 'fileupload') {
-        //     blobURL = uploadFile;
-        // }
-
-        console.log('BlobURL: ' + blobURL);
-
         // Post
+        // START: post with upload file
+        // TODO: if there are recorded files, uploaded files, upload first and save all post info to chat, else save post only
+        var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
+        var formData = new FormData();
+        var filename = $('#selected').data('filename')+'.wav';
+        var blobId = $('#selected > audio').data('blob-id');
+        var file = blob[blobId];
+
+        formData.append('text', $('#postTextarea').val());
+        formData.append('activity_id', sendPost.dataset.activityId);
+        formData.append('activity_type', sendPost.dataset.activityType);
+        formData.append('user', sendPost.dataset.user);
+        formData.append('user_is_instructor', $('#activity_title').data('userisinstructor'));
+        formData.append('post_area', $('#posts').val());
+        formData.append('posts', $('#posts2').val());
+        formData.append('file', new File([file],filename));
+
         $.ajax({
             url: sendPost.value,
             type: 'POST',
-            csrftoken: $('input[name=csrfmiddlewaretoken]').val(),
-            data: {
-                text: $('#postTextarea').val(),
-                activity_id: sendPost.dataset.activityId,
-                activity_type: sendPost.dataset.activityType,
-
-                user: sendPost.dataset.user,
-                user_is_instructor: $('#activity_title').data('userisinstructor'),
-
-                post_area: $('#posts').val(),
-                posts: $('#posts2').val(),
-
+            csrftoken: csrftoken,
+            processData: false,
+            contentType: false,
+            data: formData,
+            start: function (e) {
+                $('#modal-progress').modal('show');
+            },
+            stop: function (e) {
+                $('#modal-progress').modal('hide');
+            },
+            progressall: function (e, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                var strProgress = progress + '%';
+                $('.progress-bar').css({'width': strProgress});
+                $('.progress-bar').text(strProgress);
             },
             success: function (data) {
                 $('#postTextarea').val('');
                 // remove 'comment remove button'
                 var message = data.replace('<small id="removeButton"><a class="text-muted removePost" style="text-decoration:none;cursor:pointer;"><i class="fas fa-times text-danger"></i></a></small>','');
+
                 chatSocket.send(JSON.stringify({
                     'parent': '',
                     'message': message,
                 }));
+                $('#selected').empty();
+                alertMessage('alert-success', 'Your post is submitted.');
                 console.log('Post submitted!');
             },
             error : function(jqXHR,errmsg) {
@@ -498,6 +495,7 @@ $(document).ready(function () {
         // comment under post 
         var postId = $(this).parent().attr('id');
         $('#send-'+postId+'-comment').click(function () {
+
             $.ajax({
                 url: sendPost.value,
                 type: 'POST',

@@ -29,17 +29,17 @@
                         <!-- all drafts are graded -->
                         <button id='draftSaveBtn' type="button" class="btn btn-primary btn-sm pull-left draftEditBtn" style='width:50%;border-radius:0px 0px 0px 4px;' 
                                 data-ajaxurl="{% url 'edit_essay_draft' %}" data-operation="save" data-essayid="{{activity.id}}">
-                            <i class="fa fa-floppy-o"></i> save
+                            <i class="fas fa-save"></i> save
                         </button>
                         <button id="draftSubmitBtn" type="button" class="btn btn-primary btn-sm pull-right draftEditBtn" style='width:50%;border-radius:0px 0px 4px 0px;' 
                                 data-ajaxurl="{% url 'edit_essay_draft' %}" data-operation="submit" data-essayid="{{activity.id}}">
-                            <i class="fa fa-paper-plane-o"></i> submit
+                            <i class="fas fa-paper-plane"></i></i> submit
                         </button>
                     {% else %}
                         <!-- we have ungraded essay drafts -->
                         <button id='draftSaveBtn' type="button" class="btn btn-primary btn-sm pull-left draftEditBtn" style='width:100%;border-radius:0px 0px 4px 4px;' 
                                 data-ajaxurl="{% url 'edit_essay_draft' %}" data-operation="save" data-essayid="{{activity.id}}">
-                            <i class="fa fa-floppy-o"></i> Save
+                            <i class="fas fa-save"></i> Save
                         </button>
                     {% endif %}
 
@@ -47,7 +47,7 @@
             
                     <div id ='submittedDrafts'>
                         <div id ='submittedDrafts2'>
-                            <h3><i class="fa fa-files-o"></i> Submitted Drafts</h3>
+                            <h3><i class="far fa-file"></i> Submitted Drafts</h3>
                             {% for submitted in submitted_essay_responses %}
                             <div class="panel panel-default">
                                 <div class="panel-heading">
@@ -219,8 +219,8 @@
 {% endblock %}
 
 {% block javascripts %} 
-<script src="{% static "vendors/tinymce/tinymce.min.js" %}"></script>
-<script src="{% static "js/utils.js" %}"></script>
-<script src="{% static "js/global.js" %}"></script>
-<script src="{% static "js/essay.js" %}"></script>
+<script src='{% static "vendors/tinymce/tinymce.min.js" %}'></script>
+<script src='{% static "js/utils.js" %}'></script>
+<script src='{% static "js/global.js" %}'></script>
+<script src='{% static "js/essay.js" %}'></script>
 {% endblock %}

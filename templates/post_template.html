@@ -18,33 +18,11 @@
             </div>
         {% endif %}
 
-        <!-- TODO: rebuild audio files with html 5 player -->
+        <!-- audio files with html 5 player -->
         {% if post.audio_URL %}
-            <div id="{{post.audio_URL|cut:'.'}}" class='audioDiv'></div>
-            <script>
-                var post_audio = "{{post.audio_URL|cut:'.'}}"
-                jwplayer(post_audio).setup({
-                    file: "{{recorder_myServer}}{{recorder_myDirectory}}/{{post.audio_URL}}",
-                    width: "100%",
-                    skin: "{% static 'jwplayer-skins/five.xml' %}",
-                    height: 30
-                });
-                {% if activity_type == 'overdub' %}
-                    jwplayer(post_audio).onPlay(function(){
-                        jwplayer("overdubVideo").play(true)
-                    })
-                    .onPause(function(){
-                        jwplayer("overdubVideo").pause(true)
-                    })
-                    .onSeek(function(event){
-                        jwplayer("overdubVideo").seek(event.offset)
-                    })
-                    .onComplete(function(){
-                        jwplayer("overdubVideo").stop(true)
-                        initialPause = 1
-                        jwplayer("overdubVideo").play(true)
-                    });
-                {% endif %}</script>
+            <div id="{{post.audio_URL|cut:'.'}}" class='audioDiv'>
+                <audio controls src="{{ post.audio_URL }}"></audio>
+            </div>
         {% endif %}
     </li>
 

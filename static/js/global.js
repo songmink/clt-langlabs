@@ -7,10 +7,15 @@
 // ActivityPermissionsAdmin:
 //   this module handles permission changes done by an instructor
 //
+var ActivityPermissionsAdmin;
+var ActivityCopy;
+var RichTextEditor;
+var FileUploader;
+
 (function () {
 
     var s; // cache
-    var ActivityPermissionsAdmin = {
+    ActivityPermissionsAdmin = {
 
         /***[ module settings ]***/
         settings: {
@@ -122,7 +127,7 @@
 //
 (function () {
     var s; // cache
-    var ActivityCopy = {
+    ActivityCopy = {
 
         /***[ module settings ]***/
         settings: {
@@ -417,7 +422,7 @@
         options: function () {
             var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
             return {
-                url: '/langlab/upload/',
+                url: '/upload/',
                 crossDomain: false,
                 dataType: 'json',
                 beforeSend: function (xhr, settings) {
@@ -431,7 +436,7 @@
                             '  ><i class="icon-file-alt"></i> <span class="fileName">' +
                             file.name +
                             '</span></a> <small> <i class="icon-remove removeIcon" style="color:grey; opacity:0.01;"></i></small></span>';
-                        $('#inputAttachments').append(attFile)
+                        $('#inputAttachments').append(attFile);
                     });
                 },
                 progressall: function (e, data) {
@@ -605,3 +610,14 @@
         moduleFunction: function () {},
     };
 })();
+
+// Alert message
+function alertMessage(style, message) {
+    $('#alert').addClass(style);
+    $('#alert').append('<button type="button" class="close" data-dismiss="alert">&times;</button>');
+    $('#alert').append('<strong>' + message + '</strong>');
+    $('#alert').fadeTo(2000,500).slideUp(500, function() {
+        $(this).hide();
+        $('#alert').empty();
+    });
+}
