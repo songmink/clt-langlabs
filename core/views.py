@@ -278,11 +278,11 @@ class PostSaveView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, View):
         # TODO: recorded audio upload
         if request.FILES.get('file', False):
             file = request.FILES.get('file')
-            filename = settings.MEDIA_ROOT + '/voices/' + str(request.FILES.get('file'))
+            filename = settings.MEDIA_ROOT + 'voices/' + str(request.FILES.get('file'))
             with open(filename, 'wb+') as destination:
                 for chunk in file.chunks():
                     destination.write(chunk)
-            audio_URL = settings.MEDIA_URL + '/voices/' + str(request.FILES.get('file'))
+            audio_URL = settings.MEDIA_URL + 'voices/' + str(request.FILES.get('file'))
 
         if len(text) > 0:
             post = Post(text=text)
