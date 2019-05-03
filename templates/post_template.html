@@ -7,7 +7,7 @@
 
 {% if not post.parent_post %}
 <div id={{ post.id }} class="post">
-    <li class="left clearfix chatlist" data-postid={{post.id}}>
+    <li class="left clearfix chatlist" data-postid={{post.id}} style="cursor: pointer;">
 	    {% include 'post_subtemplate.html' with comment=post private_users=private_users %}
         <!-- get attachments from fat Post Model -->
         {% if post.get_documents %}
