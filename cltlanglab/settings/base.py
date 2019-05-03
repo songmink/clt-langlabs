@@ -144,9 +144,9 @@ LOGGING = {
 MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(PROJECT_DIR, "static"),
+    os.path.join(PROJECT_DIR, "static/"),
 ]
-MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media')
+MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media/')
 # STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 
 # CAS Login
