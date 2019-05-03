@@ -36,7 +36,7 @@
         <!-- Nav Bar Start -->
         <div class="container-fullwidth">
             {% if user.is_authenticated and request.get_full_path != "/" %}
-                <nav class="navbar fixed-top navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
+                <nav id="navbar" class="navbar fixed-top navbar-expand-lg navbar-light" style="background-color: #e3f2fd;" data-username= "{{ user.username }}">
                     <a class="navbar-brand" href="{% url 'index' %}"><img src="{% static 'img/Langlab-logo.png' %}" class="img-responsive wau-logo" width=100px></a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
