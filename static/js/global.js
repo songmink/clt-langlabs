@@ -616,8 +616,7 @@ function alertMessage(style, message) {
     $('#alert').addClass(style);
     $('#alert').append('<button type="button" class="close" data-dismiss="alert">&times;</button>');
     $('#alert').append('<strong>' + message + '</strong>');
-    $('#alert').fadeTo(2000,500).slideUp(500, function() {
-        $(this).hide();
+    $('#alert').fadeIn(1500).delay(5000).fadeOut(1500, function() {
         $('#alert').empty();
     });
 }
