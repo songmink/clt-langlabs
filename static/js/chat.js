@@ -23,6 +23,11 @@ $(document).ready(function () {
         
     };
 
+    chatSocket.onopen = function (e) {
+        alertMessage('alert-info', 'Chat connection opened.');
+        console.error('Chat socket closed unexpectedly: ' + e);
+    };
+
     chatSocket.onclose = function (e) {
         alertMessage('alert-warning', 'Chat connection closed!');
         console.error('Chat socket closed unexpectedly: ' + e);
