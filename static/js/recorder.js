@@ -172,16 +172,28 @@ if (navigator.mediaDevices.getUserMedia) {
                 var audioURL = window.URL.createObjectURL(blob[last]);
 
                 // display a form for the recorded audio
-                $('#sound-clips').append('<div id="'+clipName+'"></div>');
-                $('#'+clipName).append('<audio id="'+clipName+'-blob" controls src="'+audioURL+'" data-blob-id='+last+'></audio>');
+                $('#sound-clips').append('<div id="'+clipName+'" style="border:1px solid black; padding: 5px; margin: 5px;"></div>');
+                $('#'+clipName).append('<lavel>'+clipName+'</lavel><br>');
+                $('#'+clipName).append('<audio id="'+clipName+'-blob" controls src="'+audioURL+'" data-blob-id='+last+'></audio><br>');
                 $('#'+clipName).append('<button id="'+clipName+'-select" type="button" class="clip-select btn btn-success btn-sm select"><i class="fas fa-paperclip"></i> Select</button> ');
                 $('#'+clipName).append('<button id="'+clipName+'-delete" type="button" class="btn btn-danger btn-sm delete"><i class="fas fa-trash-alt"></i> Delete</button> ');
+                $('#'+clipName).append('<button id="'+clipName+'-deselect" type="button" class="btn btn-warning btn-sm deselect" hidden><i class="fas fa-undo"></i> Deselect</button> ');
                 
                 $('#'+clipName+'-select').click(() => {
                     $('#selected').attr('data-filename', clipName);
-                    $('#'+clipName+'-blob').appendTo('#selected');
-                    $('#'+clipName+'-select').remove();
-                    $('#'+clipName+'-delete').remove();
+                    $('#'+clipName).appendTo('#selected');
+                    $('#'+clipName+'-select').hide();
+                    $('#'+clipName+'-deselect').attr('hidden', false);
+                    $('#sound-clips :button').attr('disabled', true);
+                    $('#btn-record').attr('disabled', true);
+                });
+
+                $('#'+clipName+'-deselect').click(() => {
+                    $('#'+clipName).appendTo('#sound-clips');
+                    $('#'+clipName+'-select').show();
+                    $('#'+clipName+'-deselect').attr('hidden', true);
+                    $('#sound-clips :button').attr('disabled', false);
+                    $('#btn-record').attr('disabled', false);
                 });
 
                 $('#'+clipName+'-delete').click((e) => {
@@ -301,7 +313,7 @@ $(document).ready(function () {
         var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
         var formData = new FormData();
         var filename = $('#selected').data('filename')+'.wav';
-        var blobId = $('#selected > audio').data('blob-id');
+        var blobId = $('#selected').find('audio').data('blob-id');
         
 
         formData.append('text', $('#postTextarea').val());
@@ -346,6 +358,8 @@ $(document).ready(function () {
                     'message': message,
                 }));
                 $('#selected').empty();
+                $('#sound-clips :button').attr('disabled', false);
+                $('#btn-record').attr('disabled', false);
                 alertMessage('alert-success', 'Your post is submitted.');
                 console.log('Post submitted!');
             },
