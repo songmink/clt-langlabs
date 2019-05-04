@@ -44,7 +44,14 @@ $(document).ready(function () {
         var formData = new FormData();
         var filename = $('#selected').data('filename')+'.wav';
         var blobId = $('#selected').find('audio').data('blob-id');
-        
+        var attFiles = [];
+        var attFilesName =[];
+        $("#inputAttachments").find('.fileLink').each(function(index) {
+            attFiles.push($(this).attr('href'));
+        });
+        $("#inputAttachments").find('.fileName').each(function(index) {
+            attFilesName.push($(this).text());
+        });
 
         formData.append('text', $('#postTextarea').val());
         formData.append('activity_id', sendPost.dataset.activityId);
@@ -53,6 +60,8 @@ $(document).ready(function () {
         formData.append('user_is_instructor', $('#activity_title').data('userisinstructor'));
         formData.append('post_area', $('#posts').val());
         formData.append('posts', $('#posts2').val());
+        formData.append('attachments', attFiles);
+        formData.append('attaches_name', attFilesName);
 
         if (blob.length){
             var file = blob[blobId];
@@ -83,12 +92,15 @@ $(document).ready(function () {
                 // remove 'comment remove button'
                 var message = data.replace('<small id="removeButton"><a class="text-muted removePost" style="text-decoration:none;cursor:pointer;"><i class="fas fa-times text-danger"></i></a></small>','');
 
+                // TODO: Send attachements url
                 chatSocket.send(JSON.stringify({
                     'parent': '',
                     'message': message,
                     'user': $('#navbar').data('username')
+
                 }));
                 $('#selected').empty();
+                $('#inputAttachments').empty();
                 $('#sound-clips :button').attr('disabled', false);
                 $('#btn-record').attr('disabled', false);
                 alertMessage('alert-success', 'Your post is submitted.');
@@ -150,3 +162,5 @@ $(document).ready(function () {
     });
 
 });
+
+FileUploader.init();
