@@ -36,7 +36,12 @@
     </section>
     <hr>
 </div>
-
+<div class="block" hidden>
+    <button id='uploadTrigger' type="button" class="btn btn-primary btn-sm btn-block">
+        <i class="fas fa-paperclip"></i> Attachments
+    </button>
+    <hr>
+</div>
 <form id="overdub" enctype="multipart/form-data" method="POST" name="overdub" data-activity-type="{{ activity.activity_type }}" data-activity-id="{{ activity.id }}" data-username="{{ request.user }}">
     <div class="container-fluid" style="border: 1px solid green; padding: 5px;">
         <h6><i class="fas fa-comment-alt"></i> Message</h6>
@@ -44,25 +49,19 @@
         <textarea id='postTextarea' class="form-control" style='border-radius:4px 4px 0px 0px;'></textarea>
         <br>
     
-        <!-- Upload file start -->
-        <section class="upload-file">
-            <!-- selected file start -->
-            <div id="selected">
+        <!-- selected file start -->
+        <div id="selected">
+        </div><!-- selected file end -->
 
-            </div><!-- selected file end -->
-
-            <div class="form-check clip">
-                <input id="fileupload" type="file" name="file" style="display:block;" multiple>
-                <!-- The global progress bar -->
-                <div id="progress" class="progress" style='height:1px;margin:0px;opacity:0.7;'>
-                    <div class="progress-bar progress-bar-success"></div>
-                </div>
-                <!-- container for the uploaded files -->
-                <div id='inputAttachments'></div>
-                <!-- container for recorder -->
-                <div id='CLTREC_container'><div id='CLTREC'></div></div>
+        <!-- upload files start -->
+        <div class="upload-file">
+            <!-- The global progress bar -->
+            <div id="progress" class="progress" style='height:1px;margin:0px;opacity:0.7;' hidden>
+                <div class="progress-bar progress-bar-success"></div>
             </div>
-        </section> <!-- Upload file end -->
+            <!-- container for the uploaded files -->
+            <div id='inputAttachments'></div>
+        </div><!-- upload file end -->
         
         <hr>
         <!-- TODO: Save all data to server -->
@@ -88,3 +87,6 @@
     </div>
   </div>
 </div>
+
+<!-- The file input field used as target for the file upload widget -->
+<input id="fileupload" type="file" name="file" style="display:none;" multiple>
