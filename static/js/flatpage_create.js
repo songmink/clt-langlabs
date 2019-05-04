@@ -29,8 +29,8 @@ $(function () {
         done: function (e, data) {  
             $.each(data.result.files, function (index, file) {
                 var attFile = '<span class="attachedFile" style="cursor:pointer;">'
-                              +'<small><i class="fa fa-times removeAttachment text-danger" style="cursor:pointer; padding-right:15px;" data-toggle="tooltip" data-placement="top" data-original-title="Remove"></i></small>'
-                              +'<i class="fa fa-files-o" style="padding-right: 3px;"></i><a class="fileLink text-muted" href='
+                              +'<small><i class="fas fa-times removeAttachment text-danger" style="cursor:pointer; padding-right:15px;" data-toggle="tooltip" data-placement="top" data-original-title="Remove"></i></small>'
+                              +'<i class="fas fa-file" style="padding-right: 3px;"></i><a class="fileLink text-muted" href='
                               + file.url
                               + '  target="_blank"><span class="fileName">'
                               + file.name
@@ -41,15 +41,15 @@ $(function () {
             });
             $('.removeAttachment').mouseenter(function(e) {
 
-               $(this).tooltip('show')
-               $(this).addClass('fa-times-circle')
-               $(this).removeClass('fa-times')
+               $(this).tooltip('show');
+               $(this).addClass('fa-times-circle');
+               $(this).removeClass('fa-times');
             })
             .mouseleave(function(e) {
 
-               $(this).tooltip('hide')
-               $(this).removeClass('fa-times-circle')
-               $(this).addClass('fa-times')
+               $(this).tooltip('hide');
+               $(this).removeClass('fa-times-circle');
+               $(this).addClass('fa-times');
             });
         }
     });
