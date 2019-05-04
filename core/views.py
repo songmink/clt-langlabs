@@ -275,7 +275,7 @@ class PostSaveView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, View):
         post_creator = request.user
         text = request.POST.get('text', '')
 
-        # TODO: recorded audio upload
+        # recorded audio file upload
         if request.FILES.get('file', False):
             file = request.FILES.get('file')
             filename = settings.MEDIA_ROOT + 'voices/' + str(request.FILES.get('file'))
@@ -304,20 +304,22 @@ class PostSaveView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, View):
         return post
         
 
-#  TODO: file upload check http or asgi
 def fileUpload(request):
     ''' -- Function-based View for saving a file. '''
 
     response = {'files': []}
     # Loop through our files in the files list
-    for singleFile in request.FILE.get('files'):
+    for singleFile in request.FILES.getlist('file'):
         filename = singleFile.name
         fileExtention = filename.split(".")[-1].lower();
         video_extensions = ["m4v", "mp4", "avi", "flv", "mov", "wmv", "rmvb"]
+        audio_extensions = ["mp3", "ogg", "wav"]
         doc_extensions = ["doc", "pdf", "docx", "txt"]
         image_extensions = ["png", "jpg", "jpeg", "tiff", "bmp", "bpg"]
         if fileExtention in video_extensions:
             file_type = 'video'
+        if fileExtention in audio_extensions:
+            file_type = 'audio'
         elif fileExtention in doc_extensions:
             file_type = 'doc'
         elif fileExtention in image_extensions:
