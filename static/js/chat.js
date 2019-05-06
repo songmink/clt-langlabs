@@ -1,5 +1,9 @@
 // Post message by django channel
 $(document).ready(function () {
+    // RichTextEditor.init('discussion');
+    // upload file
+    FileUploader.init();
+
     // start channel handshaking
     var formChat = document.getElementById('overdub');
     var roomName = formChat.getAttribute('data-activity-type') + '-' + formChat.getAttribute('data-activity-id');
@@ -38,16 +42,15 @@ $(document).ready(function () {
         console.log('Try submit...');
 
         // Post
-        // START: post with upload file
-        // TODO: if there are recorded files, uploaded files, upload first and save all post info to chat, else save post only
+        // post with upload file
         var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
         var formData = new FormData();
         var filename = $('#selected').data('filename')+'.wav';
         var blobId = $('#selected').find('audio').data('blob-id');
-        var attFiles = [];
+        var attFilesURL = [];
         var attFilesName =[];
         $("#inputAttachments").find('.fileLink').each(function(index) {
-            attFiles.push($(this).attr('href'));
+            attFilesURL.push($(this).attr('href'));
         });
         $("#inputAttachments").find('.fileName').each(function(index) {
             attFilesName.push($(this).text());
@@ -60,10 +63,16 @@ $(document).ready(function () {
         formData.append('user_is_instructor', $('#activity_title').data('userisinstructor'));
         formData.append('post_area', $('#posts').val());
         formData.append('posts', $('#posts2').val());
-        formData.append('attachments', attFiles);
-        formData.append('attaches_name', attFilesName);
 
-        if (blob.length){
+        // attachments upload
+        if (attFilesURL.length){
+            console.log(attFilesURL);
+            formData.append('attachments', JSON.stringify(attFilesURL));
+            formData.append('attaches_name', attFilesName);
+        }
+
+        // Records file upload
+        if (blobId != null ) {
             var file = blob[blobId];
             formData.append('file', new File([file],filename));
         }
@@ -92,7 +101,6 @@ $(document).ready(function () {
                 // remove 'comment remove button'
                 var message = data.replace('<small id="removeButton"><a class="text-muted removePost" style="text-decoration:none;cursor:pointer;"><i class="fas fa-times text-danger"></i></a></small>','');
 
-                // TODO: Send attachements url
                 chatSocket.send(JSON.stringify({
                     'parent': '',
                     'message': message,
@@ -162,5 +170,3 @@ $(document).ready(function () {
     });
 
 });
-
-FileUploader.init();
