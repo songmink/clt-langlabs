@@ -396,7 +396,6 @@ var FileUploader;
     };
 })();
 
-// TODO: File upload
 // FileUploader:
 //   file uploader for discussion/overdub rte
 //
@@ -412,6 +411,17 @@ var FileUploader;
 
         init: function () {
             s = this.settings;
+            this.bindUIActions();
+        },
+
+        bindUIActions: function() {
+            s.upload_trigger.click(FileUploader.upload);
+            $(function() {
+                'use strict';
+                s.file_input.fileupload(FileUploader.options());
+            })
+            .prop('disabled', !$.support.fileInput)
+            .parent().addClass($.support.fileInput ? undefined : 'disabled');
         },
 
         /***[ module functions ]***/
@@ -433,7 +443,7 @@ var FileUploader;
                         // $('<p/>').text(file.name).appendTo('#files');
                         var attFile = '<span class="attachedFile" style="cursor:pointer;"><a class="fileLink text-muted" href=' +
                             file.url +
-                            '  ><i class="icon-file-alt"></i> <span class="fileName">' +
+                            '  ><i class="fas fa-paperclip fa-sm"></i> <span class="fileName">' +
                             file.name +
                             '</span></a> <small> <i class="icon-remove removeIcon" style="color:grey; opacity:0.01;"></i></small></span>';
                         $('#inputAttachments').append(attFile);
