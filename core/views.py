@@ -271,7 +271,7 @@ class PostSaveView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, View):
             parent_post = None
         
         audio_URL = request.POST.get('audioURL', '')
-        attachments = request.POST.getlist('attachments[]')
+
         post_creator = request.user
         text = request.POST.get('text', '')
 
@@ -295,7 +295,8 @@ class PostSaveView(CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, View):
             post.audio_URL = audio_URL
         if post:
             post.save()
-            if attachments:
+            if request.POST.get('attachments'):
+                attachments = json.loads(request.POST.get('attachments'))
                 for attachment in attachments:
                     document = Document.objects.get(accessURL=attachment)
                     document.content_object = post
