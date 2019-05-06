@@ -12,9 +12,12 @@
         <!-- get attachments from fat Post Model -->
         {% if post.get_documents %}
             <div class="attachDIV well">
-                {% for document in post.get_documents %}
-                    <span><a href="{{ document.accessURL }}" target="_blank">{{ document }}</a></span>
-                {% endfor %}
+                <hr>
+                <ol>
+                    {% for document in post.get_documents %}
+                        <li><span><a href="{{ document.accessURL }}" target="_blank">{{ document }}</a></span></li>
+                    {% endfor %}
+                </ol>
             </div>
         {% endif %}
 
