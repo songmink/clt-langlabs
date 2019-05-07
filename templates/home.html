@@ -7,7 +7,7 @@
 {% block contentwrap %}
     <h2 class="sub-header">Courses</h2>
     <div class="form-group pull-right">
-        <input type="text" class="search form-control" placeholder="What you looking for?">
+        <input id="search-box" type="text" class="search form-control" placeholder="Search...">
     </div>
     <table class="table table-hover results" id="course">
         <thead class="thead-dark text-center">
@@ -25,7 +25,7 @@
                 <td colspan="8"><i class="fas fa-exclamation-triangle"></i> No result</td>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="coursesTable">
         {% for course in course_list %}
             {% get_obj_perms user for course as "course_temp_perms" %}
             {% if course.is_active or "edit_course" in course_temp_perms %}
