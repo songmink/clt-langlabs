@@ -13,7 +13,7 @@ import sys
 # os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cltlanglab.settings.prod")
 
 # THIS WSGI IS NOT USED FOR PRODUCTION
-sys.path.append('/pythonweb/clt-langlabs-dev-py')
+#sys.path.append('/pythonweb/clt-langlabs-dev-py')
 
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "cltlanglab.settings.dev")
