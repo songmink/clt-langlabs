@@ -5,7 +5,7 @@ $(document).ready(function () {
     FileUploader.init();
 
     // start channel handshaking
-    var formChat = document.getElementById('overdub');
+    var formChat = document.getElementById('overdub-form');
     var roomName = formChat.getAttribute('data-activity-type') + '-' + formChat.getAttribute('data-activity-id');
     var chatSocket = new WebSocket(
         'ws://' + window.location.host + '/overdub/' + roomName);  // Set the route on /core/routing.py
