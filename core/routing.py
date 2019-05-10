@@ -10,7 +10,7 @@ application = ProtocolTypeRouter({
     'websocket': AuthMiddlewareStack(
         URLRouter(
             [
-                path('overdub/<room_name>', consumers.ChatConsumer),
+                path('channels/<room_name>', consumers.ChatConsumer),
             ]
         ),
     ),

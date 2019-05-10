@@ -8,7 +8,7 @@ $(document).ready(function () {
     var formChat = document.getElementById('overdub-form');
     var roomName = formChat.getAttribute('data-activity-type') + '-' + formChat.getAttribute('data-activity-id');
     var chatSocket = new WebSocket(
-        'ws://' + window.location.host + '/overdub/' + roomName);  // Set the route on /core/routing.py
+        'ws://' + window.location.host + '/channels/' + roomName);  // Set the route on /core/routing.py
 
     chatSocket.onmessage = function (e) {
         var data = JSON.parse(e.data);
