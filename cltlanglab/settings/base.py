@@ -149,6 +149,9 @@ STATICFILES_DIRS = [
 MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media/')
 # STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 
+#File upload permission
+FILE_UPLOAD_PERMISSIONS = 0o644
+
 # CAS Login
 # Set 'True' only if you use CAS login system
 # If it is 'True' the django user login will be disabled
