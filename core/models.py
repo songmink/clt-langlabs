@@ -198,7 +198,7 @@ class AbstractActivity(models.Model):
     def __str__(self):
         return self.title
 
-# FIXME: content_object
+# content_object
 class Document(models.Model):
 
     '''-- Document Model is used to manage files in our project.
