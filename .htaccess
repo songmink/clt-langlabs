@@ -1,0 +1,34 @@
+<VirtualHost *:80>
+    ServerName dhcp-128-171-69-245.moore.manoa.hawaii.edu
+
+    # static and media directory 
+    Alias /static/ /web/pythonapps/static/cltlanglabs2/
+    Alias /media/ /web/pythonapps/media/cltlanglabs2/
+
+    # ReriteRule for websocket
+    # Apache server does not support websocket yet
+    RewriteEngine on
+    RewriteCond %{HTTP:UPGRADE} ^WebSocket$ [NC]
+    RewriteCond %{HTTP:CONNECTION} Upgrade$ [NC]
+    RewriteRule /channels/.* ws://127.0.0.1:8001%{REQUEST_URI} [P,L]
+
+    # remove static and media directory from ProxyPass since Alias supports those
+    ProxyPass /static !
+    ProxyPass /media !
+
+    # Choose one of options between ProxyPass and WSGI Deamon for django app
+    # Recommand ProxyPass with daphne websocket server
+    ProxyPass / http://127.0.0.1:8001/
+    ProxyPassReverse / /http://127.0.0.1:8001/
+
+    #WSGIDaemonProcess langlab2 python-home=/web/pythonapps/cltlanglabs2_env python-path=/web/pythonapps/cltlanglabs2_env/clt-langlabs
+    #WSGIProcessGroup langlab2
+
+    #WSGIScriptAlias / /web/pythonapps/cltlanglabs2_env/clt-langlabs/cltlanglab/wsgi.py
+
+    #<Directory /web/pythonapps/cltlanglabs2_env/clt-langlabs>
+    #       <Files wsgi.py>
+    #               Require all granted
+    #       </Files>
+    #</Directory>
+</VirtualHost>
