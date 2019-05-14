@@ -183,6 +183,7 @@ if (navigator.mediaDevices.getUserMedia) {
                     $('#selected').attr('data-filename', clipName);
                     $('#'+clipName).appendTo('#selected');
                     $('#'+clipName+'-select').hide();
+                    $('#'+clipName+'-delete').hide();
                     $('#'+clipName+'-deselect').attr('hidden', false);
                     $('#sound-clips :button').attr('disabled', true);
                     $('#btn-record').attr('disabled', true);
@@ -191,6 +192,7 @@ if (navigator.mediaDevices.getUserMedia) {
                 $('#'+clipName+'-deselect').click(() => {
                     $('#'+clipName).appendTo('#sound-clips');
                     $('#'+clipName+'-select').show();
+                    $('#'+clipName+'-delete').show();
                     $('#'+clipName+'-deselect').attr('hidden', true);
                     $('#sound-clips :button').attr('disabled', false);
                     $('#btn-record').attr('disabled', false);
