@@ -1,0 +1,20 @@
+[Unit]
+Description=cltlanglabs2 websocket service
+After=network.target
+
+
+[Service]
+PIDFile=/run/daphne/pid
+User=apache
+Group=apache
+WorkingDirectory={{ project_root }}
+Environment="DJANGO_SETTINGS_MODULE={{ project_name }}.production_settings"
+ExecStart={{ venv_bin }}/daphne --bind 127.0.0.1 --port 8001 --verbosity 0 {{project_name}}.asgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+Restart=on-abort
+PrivateTmp=true
+
+
+[Install]
+WantedBy=multi-user.target
