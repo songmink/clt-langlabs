@@ -93,13 +93,6 @@ USE_TZ = True
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
-# LOGIN_URL = '/accounts/login/'
-# LOGOUT_URL = '/accounts/logout'
-
-# LOGIN_REDIRECT_URL = '/home'
-
-# REDIRECT_FIELD_NAME = 'home'
-
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'guardian.backends.ObjectPermissionBackend',
@@ -149,7 +142,7 @@ STATICFILES_DIRS = [
 MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media/')
 # STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 
-#File upload permission
+# File upload permission
 FILE_UPLOAD_PERMISSIONS = 0o644
 
 # CAS Login

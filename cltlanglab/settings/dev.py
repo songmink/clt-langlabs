@@ -9,6 +9,7 @@ Django dev settings for cltlanglab project.
 from .base import *
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# !!! DO NOT USE THIS SECRET KEY !!!
 SECRET_KEY = '&#m+uzyu315+bpp7yhb$gsj%3d&d0p1gnw0qe@o@qd=r3e%8#m'
 ALLOWED_HOSTS = ['*']
 DEBUG = True
@@ -30,19 +31,6 @@ DATABASES = {
         'USER': 'songmink'
     }
 }
-
-
-# gevent.socket.io server settings (ssl not used in development)
-CHAT_SERVER_PROTOCOL = 'http'
-CHAT_SERVER_HOST = 'localhost'
-CHAT_SERVER_PORT = '8001'
-
-# Server side setup for Barebones Recorder
-RECORDER_MYSERVER ="http://localhost/"
-RECORDER_MYHANDLER ="phpinc/save-v7.php"
-RECORDER_MYDIRECTORY = "uploads"
-RECORDER_LICENSE = ''
-
 
 # CAS SETUP #
 
