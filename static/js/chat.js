@@ -111,6 +111,8 @@ $(document).ready(function () {
                 $('#inputAttachments').empty();
                 $('#sound-clips :button').attr('disabled', false);
                 $('#btn-record').attr('disabled', false);
+                // Reset uploader
+                FileUploader.init();
                 alertMessage('alert-success', 'Your post is submitted.');
                 console.log('Post submitted!');
             },
