@@ -239,35 +239,6 @@ class CreateActivity4UpdateMixin(object):
             ActivityCollection, pk=self.object.collection.id)
         return context
 
-
-class RecorderMixin(object):
-    ''' -- RecorderMixin extracts configuration for recorder. '''
-
-    def get_context_data(self, **kwargs):
-        ''' :returns: context that contains recorder configuration. '''
-
-        context = super(RecorderMixin, self).get_context_data(**kwargs)
-        context['recorder_myServer'] = settings.RECORDER_MYSERVER
-        context['recorder_myHandler'] = settings.RECORDER_MYHANDLER
-        context['recorder_myDirectory'] = settings.RECORDER_MYDIRECTORY
-        context['recorder_license'] = settings.RECORDER_LICENSE
-
-        return context
-
-class ChatServerMixin(object):
-    ''' -- ChatServerMixin assembles configuration info for gevent-based chat server. '''
-
-    def get_context_data(self, **kwargs):
-        ''' :returns: context that contains chatserver configuration settings. '''
-
-        context = super(ChatServerMixin, self).get_context_data(**kwargs)
-        context['chatserver_protocol'] = settings.CHAT_SERVER_PROTOCOL
-        context['chatserver_host'] = settings.CHAT_SERVER_HOST
-        context['chatserver_port'] = settings.CHAT_SERVER_PORT
-
-        return context
-
-
 class PostsListMixin(object):
     ''' --PostsListMixin used to filter non-deleted activity posts. '''
 

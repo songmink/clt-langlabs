@@ -1,5 +1,7 @@
 # discussions/views.py
 
+from django.core.exceptions import ImproperlyConfigured
+
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import DetailView, CreateView
 from django.views.generic.edit import FormView, UpdateView, DeleteView
@@ -7,7 +9,7 @@ from django.forms import ModelChoiceField
 from django.urls import reverse_lazy
 
 from core.models import ActivityCollection, AbstractActivity, Post, Lesson
-from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, RecorderMixin, CreateActivity4UpdateMixin, UsersWithPermsMixin, ActivityEditPermissionMixin, ActivityViewPermissionMixin, UserPostNumMixin, FakeDeleteMixin, ChatServerMixin, PostsListMixin
+from core.mixins import CourseListMixin, ActivityListMixin, CreateActivityMixin, CreateActivity4UpdateMixin, UsersWithPermsMixin, ActivityEditPermissionMixin, ActivityViewPermissionMixin, UserPostNumMixin, FakeDeleteMixin, PostsListMixin
 
 from django.utils.safestring import mark_safe
 import json
@@ -15,7 +17,7 @@ import json
 from .models import DiscussionActivity
 
 
-class DiscussionDetailView(ActivityViewPermissionMixin, CourseListMixin, ActivityListMixin, ChatServerMixin, RecorderMixin, UsersWithPermsMixin, UserPostNumMixin, PostsListMixin, DetailView):
+class DiscussionDetailView(ActivityViewPermissionMixin, CourseListMixin, ActivityListMixin, UsersWithPermsMixin, UserPostNumMixin, PostsListMixin, DetailView):
     ''' -- Discussion Detail Page '''
 
     model = DiscussionActivity

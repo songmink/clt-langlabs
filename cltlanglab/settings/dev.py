@@ -32,6 +32,10 @@ DATABASES = {
     }
 }
 
+# Record settings
+RECORDER_MYSERVER ="http://localhost/"
+RECORDER_MYDIRECTORY = "uploads"
+
 # CAS SETUP #
 
 # MIDDLEWARE_CLASSES += ('django_cas.middleware.CASMiddleware',)
